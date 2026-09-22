@@ -20,3 +20,7 @@ Route::get('/garkot', function () {
 Route::get('/Tasa', function () {
     return view('welcome'); 
 });
+
+Route::get('/crystian', function () {
+    return view('welcome');
+});
