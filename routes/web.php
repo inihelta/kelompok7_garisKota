@@ -16,3 +16,7 @@ Route::get('/rahman', function () {
 Route::get('/garkot', function () {
     return view('welcome');
 });
+
+Route::get('/Tasa', function () {
+    return view('welcome'); 
+});
