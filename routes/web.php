@@ -10,3 +10,7 @@ Route::get('/rahman', function () {
     return view('welcome');
 });
 
+Route::get('/garkot', function () {
+    return view('welcome');
+});
+
