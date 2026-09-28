@@ -6,6 +6,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', function () {
+    return view('login');
+});
+
 Route::get('/rafly', function () {
     return view('welcome');
 });
@@ -18,7 +22,7 @@ Route::get('/garkot', function () {
 });
 
 Route::get('/Tasa', function () {
-    return view('welcome'); 
+    return view('welcome');
 });
 
 Route::get('/crystian', function () {
