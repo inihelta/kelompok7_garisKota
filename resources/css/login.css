@@ -1,16 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Jua&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 * {
     box-sizing: border-box;
 }
 body {
     padding: 0;
     margin: 0;
+    font-family: "Inter";
 }
 .login-container {
     width: 90%;
     max-width: 50rem;
     border: 1px solid #d1d5db;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
-    height: 80%;
+    height: 35rem;
     border-radius: 10px;
     /* background-color: blue; */
     position: absolute;
@@ -21,8 +24,18 @@ body {
     overflow: hidden;
     gap: 15px;
 }
+@media (max-width: 800px) {
+    .login-container {
+        flex-direction: column;
+        height: 90%;
+    }
+    .login-box.left {
+        display: none;
+    }
+}
 .login-box {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
 }
@@ -53,7 +66,6 @@ body {
     color: #374151;
 }
 
-/* Wrapper untuk input dan ikon */
 .input-wrapper {
     position: relative;
     display: flex;
@@ -63,7 +75,7 @@ body {
 
 .input-wrapper input {
     width: 100%;
-    /* height: 56px;  */
+    height: 38px;
     padding: 0 45px 0 15px;
     border-radius: 8px;
     border: 1px solid #d1d5db;
@@ -89,16 +101,47 @@ body {
 }
 .login-form input {
     width: 100%;
-    padding: 7px 10px;
+    padding: 10px 12px;
     border-radius: 5px;
     border: 1px solid #d1d5db;
 }
 .login-form button {
     width: 100%;
-    padding: 7px 10px;
+    height: 38px;
+    padding: 10px 12px;
     border-radius: 5px;
     border: none;
     background-color: #be1a1a;
     color: white;
     cursor: pointer;
+}
+.login-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    max-width: 80%;
+    text-align: center;
+    gap: 5px;
+}
+.login-title {
+    margin: 0;
+    font-family: "Jua", sans-serif;
+    font-size: 24px;
+    color: #97461e;
+    /* text-transform: capitalize; */
+}
+.login-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: #6b7280;
+}
+.logo {
+    width: 9rem;
+    display: flex;
+    justify-content: center;
+}
+.logo img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }

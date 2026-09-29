@@ -13,15 +13,24 @@
     </head>
     <body>
         <div class="login-container">
-            <!-- Sisi Kiri (Gambar) -->
             <div class="login-box left">
                 <img src="banner.png" alt="garisKotaBanner" />
             </div>
 
-            <!-- Sisi Kanan (Form) -->
             <div class="login-box right">
                 <form class="login-form" action="" method="POST">
                     @csrf
+
+                    <div class="logo">
+                        <img src="logoRed.png" alt="logo" />
+                    </div>
+
+                    <div class="login-header">
+                        <h2 class="login-title">WELCOME BACK</h2>
+                        <p class="login-subtitle">
+                            Enter your details to get sign in to your account
+                        </p>
+                    </div>
 
                     <div class="input-group">
                         <label for="email">Email address</label>
