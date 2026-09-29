@@ -18,7 +18,11 @@
             </div>
 
             <div class="login-box right">
-                <form class="login-form" action="" method="POST">
+                <form
+                    class="login-form"
+                    method="POST"
+                    action="{{ route('login') }}"
+                >
                     @csrf
 
                     <div class="logo">
