@@ -7,15 +7,43 @@ body {
     padding: 0;
     margin: 0;
     font-family: "Inter";
-    background-color: #dfd0a9;
+    background-color: #f3eeea;
+    height: 100dvh;
+    width: 100dvw;
+    overflow: hidden;
 }
+.background {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+.background-circle {
+    fill: #8f6f6c;
+    opacity: 0.2;
+    width: 62rem;
+    height: auto;
+}
+.background-circle:nth-child(1) {
+    position: absolute;
+    transform: translate(20%, 33%);
+    right: 0;
+    bottom: 0;
+}
+.background-circle:nth-child(2) {
+    position: absolute;
+    transform: translate(-20%, -33%);
+    left: 0;
+    top: 0;
+}
+
 .login-container {
     width: 90%;
-    max-width: 50rem;
+    max-width: 56rem;
     border: 1px solid #d1d5db;
     background-color: #fff;
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.25);
-    height: 35rem;
+    height: 38rem;
     border-radius: 10px;
     /* background-color: blue; */
     position: absolute;
@@ -27,6 +55,15 @@ body {
     gap: 15px;
 }
 @media (max-width: 800px) {
+    .background-circle {
+        width: 30rem;
+    }
+    .background-circle:nth-child(1) {
+        transform: translate(30%, 30%);
+    }
+    .background-circle:nth-child(2) {
+        transform: translate(-30%, -30%);
+    }
     .login-container {
         flex-direction: column;
         height: 90%;

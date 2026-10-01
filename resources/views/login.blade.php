@@ -12,6 +12,31 @@
         <title>Login</title>
     </head>
     <body>
+        <!-- <svg
+            class="background-circle"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100"
+        >
+            <circle r="45" cx="50" cy="50" />
+        </svg> -->
+
+        <div class="background">
+            <svg
+                class="background-circle"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 100 100"
+            >
+                <circle r="45" cx="50" cy="50" />
+            </svg>
+            <svg
+                class="background-circle"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 100 100"
+            >
+                <circle r="45" cx="50" cy="50" />
+            </svg>
+        </div>
+
         <div class="login-container">
             <div class="login-box left">
                 <img src="banner.png" alt="garisKotaBanner" />
