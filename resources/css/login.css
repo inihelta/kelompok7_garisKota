@@ -12,7 +12,7 @@ body {
     width: 100dvw;
     overflow: hidden;
 }
-.background {
+/* .background {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -20,7 +20,7 @@ body {
 }
 .background-circle {
     fill: #8f6f6c;
-    opacity: 0.2;
+    opacity: 0.1;
     width: 62rem;
     height: auto;
 }
@@ -35,7 +35,7 @@ body {
     transform: translate(-20%, -33%);
     left: 0;
     top: 0;
-}
+} */
 
 .login-container {
     width: 90%;
@@ -137,6 +137,9 @@ body {
     color: #b91c1c;
     font-size: 18px;
     cursor: pointer;
+    width: 20px;
+    display: flex;
+    justify-content: center;
 }
 .login-form input {
     width: 100%;
@@ -153,7 +156,12 @@ body {
     background-color: #be1a1a;
     color: white;
     cursor: pointer;
+    transition: background-color 0.1s ease;
 }
+.login-form button:hover {
+    background-color: #93000b;
+}
+
 .login-header {
     display: flex;
     flex-direction: column;

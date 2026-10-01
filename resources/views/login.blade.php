@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        @vite(['resources/css/login.css'])
+        @vite(['resources/css/login.css', 'resources/js/login.js'])
         <!-- Tambahkan FontAwesome untuk Ikon -->
         <link
             rel="stylesheet"
@@ -20,7 +20,7 @@
             <circle r="45" cx="50" cy="50" />
         </svg> -->
 
-        <div class="background">
+        <!-- <div class="background">
             <svg
                 class="background-circle"
                 xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@
             >
                 <circle r="45" cx="50" cy="50" />
             </svg>
-        </div>
+        </div> -->
 
         <div class="login-container">
             <div class="login-box left">
@@ -85,7 +85,10 @@
                                 placeholder="Enter your password"
                                 required
                             />
-                            <i class="fa-solid fa-eye icon"></i>
+                            <i
+                                id="passwordLogo"
+                                class="fa-solid fa-eye icon"
+                            ></i>
                         </div>
                     </div>
                     <button type="submit" class="login-btn">Login</button>
