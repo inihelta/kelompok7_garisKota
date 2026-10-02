@@ -80,6 +80,257 @@
                     </button>
                 </div>
             </header>
+
+            <main class="content">
+                <div class="content-wrapper">
+                    <div class="topbar">
+                        <div class="filter-group">
+                            <button class="btn-filter active">
+                                Semua Menu
+                            </button>
+                            <button class="btn-filter">Makanan</button>
+                            <button class="btn-filter">Minuman</button>
+                            <button class="btn-filter">Snack</button>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <i data-lucide="search" class="search-icon"></i>
+
+                            <input
+                                type="text"
+                                id="search"
+                                placeholder="Cari menu, kategori, atau kode..."
+                                required
+                            />
+                        </div>
+                    </div>
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px">
+                                    <input type="checkbox" />
+                                </th>
+                                <th style="width: 80px">Gambar</th>
+                                <th>Nama Menu</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Baris 1: Mix Platter -->
+                            <tr>
+                                <td><input type="checkbox" /></td>
+                                <td>
+                                    <img
+                                        src="path_gambar_mix_platter.jpg"
+                                        alt="Mix Platter"
+                                        class="product-img"
+                                    />
+                                </td>
+                                <td>
+                                    <div class="menu-info">
+                                        <span class="menu-name"
+                                            >Mix Platter</span
+                                        >
+                                        <span class="menu-desc"
+                                            >Kentang, nugget, ayam, sosis</span
+                                        >
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-makanan"
+                                        >Makanan</span
+                                    >
+                                </td>
+                                <td>Rp 45.000</td>
+                                <td>12</td>
+                                <td>
+                                    <span class="badge badge-tersedia"
+                                        >Tersedia</span
+                                    >
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn-action" title="Edit">
+                                            <i
+                                                class="icon"
+                                                data-lucide="Pencil"
+                                            ></i>
+                                        </button>
+                                        <button
+                                            class="btn-action btn-delete"
+                                            title="Hapus"
+                                        >
+                                            <i
+                                                class="icon"
+                                                data-lucide="Trash2"
+                                            ></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Baris 2: Kentang Goreng -->
+                            <tr>
+                                <td><input type="checkbox" /></td>
+                                <td>
+                                    <img
+                                        src="path_gambar_kentang.jpg"
+                                        alt="Kentang Goreng"
+                                        class="product-img"
+                                    />
+                                </td>
+                                <td>
+                                    <div class="menu-info">
+                                        <span class="menu-name"
+                                            >Kentang Goreng</span
+                                        >
+                                        <span class="menu-desc"
+                                            >Kentang crispy</span
+                                        >
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-snack">Snack</span>
+                                </td>
+                                <td>Rp 18.000</td>
+                                <td>28</td>
+                                <td>
+                                    <span class="badge badge-tersedia"
+                                        >Tersedia</span
+                                    >
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn-action" title="Edit">
+                                            <i
+                                                class="icon"
+                                                data-lucide="Pencil"
+                                            ></i>
+                                        </button>
+                                        <button
+                                            class="btn-action btn-delete"
+                                            title="Hapus"
+                                        >
+                                            <i
+                                                class="icon"
+                                                data-lucide="Trash2"
+                                            ></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Baris 3: Hazelnut Latte -->
+                            <tr>
+                                <td><input type="checkbox" /></td>
+                                <td>
+                                    <img
+                                        src="path_gambar_hazelnut.jpg"
+                                        alt="Hazelnut Latte"
+                                        class="product-img"
+                                    />
+                                </td>
+                                <td>
+                                    <div class="menu-info">
+                                        <span class="menu-name"
+                                            >Hazelnut Latte</span
+                                        >
+                                        <span class="menu-desc"
+                                            >Hazelnut Latte dingin</span
+                                        >
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-minuman"
+                                        >Minuman</span
+                                    >
+                                </td>
+                                <td>Rp 22.000</td>
+                                <td>15</td>
+                                <td>
+                                    <span class="badge badge-tersedia"
+                                        >Tersedia</span
+                                    >
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn-action" title="Edit">
+                                            <i
+                                                class="icon"
+                                                data-lucide="Pencil"
+                                            ></i>
+                                        </button>
+                                        <button
+                                            class="btn-action btn-delete"
+                                            title="Hapus"
+                                        >
+                                            <i
+                                                class="icon"
+                                                data-lucide="Trash2"
+                                            ></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Baris 4: Pisang Gapit -->
+                            <tr>
+                                <td><input type="checkbox" /></td>
+                                <td>
+                                    <img
+                                        src="path_gambar_pisang.jpg"
+                                        alt="Pisang Gapit"
+                                        class="product-img"
+                                    />
+                                </td>
+                                <td>
+                                    <div class="menu-info">
+                                        <span class="menu-name"
+                                            >Pisang Gapit</span
+                                        >
+                                        <span class="menu-desc"
+                                            >Pisang gapit</span
+                                        >
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge badge-makanan"
+                                        >Makanan</span
+                                    >
+                                </td>
+                                <td>Rp 12.000</td>
+                                <td>18</td>
+                                <td>
+                                    <span class="badge badge-habis">Habis</span>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn-action" title="Edit">
+                                            <i
+                                                class="icon"
+                                                data-lucide="Pencil"
+                                            ></i>
+                                        </button>
+                                        <button
+                                            class="btn-action btn-delete"
+                                            title="Hapus"
+                                        >
+                                            <i
+                                                class="icon"
+                                                data-lucide="Trash2"
+                                            ></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
         <script>
             const sidebar = document.getElementById("sidebar");

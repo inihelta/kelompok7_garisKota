@@ -20,7 +20,6 @@ input.addEventListener("input", (event) => {
     }
 });
 inputLogo.addEventListener("click", (e) => {
-    console.log(input.type);
     if (inputLogo.classList.contains("fa-eye-slash")) {
         input.type = "text";
         gantiIcon(true);

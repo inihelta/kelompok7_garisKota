@@ -12,31 +12,6 @@
         <title>Login</title>
     </head>
     <body>
-        <!-- <svg
-            class="background-circle"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 100 100"
-        >
-            <circle r="45" cx="50" cy="50" />
-        </svg> -->
-
-        <!-- <div class="background">
-            <svg
-                class="background-circle"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 100 100"
-            >
-                <circle r="45" cx="50" cy="50" />
-            </svg>
-            <svg
-                class="background-circle"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 100 100"
-            >
-                <circle r="45" cx="50" cy="50" />
-            </svg>
-        </div> -->
-
         <div class="login-container">
             <div class="login-box left">
                 <img src="banner.png" alt="garisKotaBanner" />
@@ -69,10 +44,18 @@
                                 id="email"
                                 name="email"
                                 placeholder="Enter your email"
+                                value="{{ old('email') }}"
                                 required
                             />
                             <i class="fa-solid fa-user icon"></i>
                         </div>
+                        @if ($errors->any())
+                            <div style="color: red;">
+                                @foreach ($errors->all() as $error)
+                                    <span class="errormessage">{{ $error }}</span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div class="input-group">
@@ -91,7 +74,8 @@
                             ></i>
                         </div>
                     </div>
-                    <button type="submit" class="login-btn">Login</button>
+
+                    <button id="submitButton" type="submit" class="login-btn">Login</button>
                 </form>
             </div>
         </div>
