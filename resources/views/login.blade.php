@@ -36,7 +36,7 @@
                         </p>
                     </div>
 
-                    <div class="flex flex-col gap-[8px] w-full">
+                    <div class="flex flex-col gap-2 w-full">
                         <label for="email" class="text-[14px] text-[#374151]">Email address</label>
                         <div class="relative flex items-center w-full">
                             <input
@@ -59,7 +59,7 @@
                         @endif
                     </div>
 
-                    <div class="flex flex-col gap-[8px] w-full">
+                    <div class="flex flex-col gap-2 w-full">
                         <label for="password" class="text-[14px] text-[#374151]">Password</label>
                         <div class="relative flex items-center w-full">
                             <input

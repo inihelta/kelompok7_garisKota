@@ -1,76 +1,80 @@
-import { useState } from 'react';
-import { Head } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Search, Pencil, Trash2 } from 'lucide-react';
-import { PageProps } from '@/types';
+import { useState } from "react";
+import { Head } from "@inertiajs/react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Search, Pencil, Trash2 } from "lucide-react";
+import { PageProps } from "@/types";
+import { MenuItem } from "@/types/dashboard";
 
-interface MenuItem {
-    id: number;
-    name: string;
-    description: string;
-    category: 'Makanan' | 'Minuman' | 'Snack';
-    price: string;
-    stock: number;
-    status: 'Tersedia' | 'Habis';
-    image: string;
-}
+// const menus: MenuItem[] = [
+//     {
+//         id: 1,
+//         name: "Mix Platter",
+//         description: "Kentang, nugget, ayam, sosis",
+//         category: "Makanan",
+//         price: "Rp 45.000",
+//         stock: 12,
+//         status: "Tersedia",
+//         image: "path_gambar_mix_platter.jpg",
+//     },
+//     {
+//         id: 2,
+//         name: "Kentang Goreng",
+//         description: "Kentang crispy",
+//         category: "Snack",
+//         price: "Rp 18.000",
+//         stock: 28,
+//         status: "Tersedia",
+//         image: "path_gambar_kentang.jpg",
+//     },
+//     {
+//         id: 3,
+//         name: "Hazelnut Latte",
+//         description: "Hazelnut Latte dingin",
+//         category: "Minuman",
+//         price: "Rp 22.000",
+//         stock: 15,
+//         status: "Tersedia",
+//         image: "path_gambar_hazelnut.jpg",
+//     },
+//     {
+//         id: 4,
+//         name: "Pisang Gapit",
+//         description: "Pisang gapit",
+//         category: "Makanan",
+//         price: "Rp 12.000",
+//         stock: 18,
+//         status: "Habis",
+//         image: "path_gambar_pisang.jpg",
+//     },
+// ];
 
-const initialMenuItems: MenuItem[] = [
-    {
-        id: 1,
-        name: 'Mix Platter',
-        description: 'Kentang, nugget, ayam, sosis',
-        category: 'Makanan',
-        price: 'Rp 45.000',
-        stock: 12,
-        status: 'Tersedia',
-        image: 'path_gambar_mix_platter.jpg',
-    },
-    {
-        id: 2,
-        name: 'Kentang Goreng',
-        description: 'Kentang crispy',
-        category: 'Snack',
-        price: 'Rp 18.000',
-        stock: 28,
-        status: 'Tersedia',
-        image: 'path_gambar_kentang.jpg',
-    },
-    {
-        id: 3,
-        name: 'Hazelnut Latte',
-        description: 'Hazelnut Latte dingin',
-        category: 'Minuman',
-        price: 'Rp 22.000',
-        stock: 15,
-        status: 'Tersedia',
-        image: 'path_gambar_hazelnut.jpg',
-    },
-    {
-        id: 4,
-        name: 'Pisang Gapit',
-        description: 'Pisang gapit',
-        category: 'Makanan',
-        price: 'Rp 12.000',
-        stock: 18,
-        status: 'Habis',
-        image: 'path_gambar_pisang.jpg',
-    },
-];
+export default function Dashboard({
+    auth,
+    menus,
+    categories,
+}: {
+    auth: any;
+    menus: MenuItem[];
+    categories: any[];
+}) {
+    const categoryName = ["Semua Menu"].concat(
+        categories.map((cat) => cat.name),
+    );
 
-export default function Dashboard({ auth }: PageProps) {
-    const [activeCategory, setActiveCategory] = useState<string>('Semua Menu');
-    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [activeCategory, setActiveCategory] = useState<string>("Semua Menu");
+    const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-    const categories = ['Semua Menu', 'Makanan', 'Minuman', 'Snack'];
-
-    const filteredItems = initialMenuItems.filter((item) => {
+    // buat fitur & filter
+    const filteredItems = menus.filter((item) => {
         const matchesCategory =
-            activeCategory === 'Semua Menu' || item.category === activeCategory;
+            activeCategory === "Semua Menu" ||
+            item.category_id ===
+                categories.find((cat) => cat.name === activeCategory)?.id;
         const matchesSearch =
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.category_id ===
+                categories.find((cat) => cat.name === activeCategory)?.id ||
             item.description.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
@@ -91,23 +95,33 @@ export default function Dashboard({ auth }: PageProps) {
         }
     };
 
-    const getCategoryBadgeClass = (category: MenuItem['category']) => {
-        switch (category) {
-            case 'Makanan':
-                return 'bg-[#fee2e2] text-[#ef4444]';
-            case 'Minuman':
-                return 'bg-[#dbeafe] text-[#2563eb]';
-            case 'Snack':
-                return 'bg-[#ffedd5] text-[#ea580c]';
+    const getCategoryBadgeClass = (category_id: MenuItem["category_id"]) => {
+        // switch (categories.find((cat) => cat.id === category_id)?.name) {
+        //     case "Makanan":
+        //         return "bg-[#fee2e2] text-[#ef4444]";
+        //     case "Minuman":
+        //         return "bg-[#dbeafe] text-[#2563eb]";
+        //     case "Snack":
+        //         return "bg-[#ffedd5] text-[#ea580c]";
+        //     default:
+        //         return "bg-gray-100 text-gray-700";
+        // }
+        switch (category_id) {
+            case 1:
+                return "bg-[#fee2e2] text-[#ef4444]";
+            case 2:
+                return "bg-[#dbeafe] text-[#2563eb]";
+            case 3:
+                return "bg-[#ffedd5] text-[#ea580c]";
             default:
-                return 'bg-gray-100 text-gray-700';
+                return "bg-gray-100 text-gray-700";
         }
     };
 
-    const getStatusBadgeClass = (status: MenuItem['status']) => {
-        return status === 'Tersedia'
-            ? 'bg-[#dcfce7] text-[#16a34a]'
-            : 'bg-[#fee2e2] text-[#ef4444]';
+    const getStatusBadgeClass = (stock: MenuItem["stock"]) => {
+        return stock > 0
+            ? "bg-[#dcfce7] text-[#16a34a]"
+            : "bg-[#fee2e2] text-[#ef4444]";
     };
 
     return (
@@ -117,7 +131,7 @@ export default function Dashboard({ auth }: PageProps) {
             <div className="border border-[#e5e7eb] rounded-[8px] p-4 flex flex-col gap-3">
                 <div className="flex justify-between items-center pb-3 flex-wrap gap-3">
                     <div className="flex gap-2 flex-wrap">
-                        {categories.map((cat) => {
+                        {categoryName.map((cat) => {
                             const isActive = activeCategory === cat;
                             return (
                                 <button
@@ -126,8 +140,8 @@ export default function Dashboard({ auth }: PageProps) {
                                     onClick={() => setActiveCategory(cat)}
                                     className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${
                                         isActive
-                                            ? 'bg-[#fee2e2] text-[#dc2626] border border-transparent'
-                                            : 'bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]'
+                                            ? "bg-[#fee2e2] text-[#dc2626] border border-transparent"
+                                            : "bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]"
                                     }`}
                                 >
                                     {cat}
@@ -158,7 +172,8 @@ export default function Dashboard({ auth }: PageProps) {
                                         type="checkbox"
                                         checked={
                                             filteredItems.length > 0 &&
-                                            selectedItems.length === filteredItems.length
+                                            selectedItems.length ===
+                                                filteredItems.length
                                         }
                                         onChange={toggleSelectAll}
                                         className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
@@ -193,8 +208,12 @@ export default function Dashboard({ auth }: PageProps) {
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                         <input
                                             type="checkbox"
-                                            checked={selectedItems.includes(item.id)}
-                                            onChange={() => toggleSelectItem(item.id)}
+                                            checked={selectedItems.includes(
+                                                item.id,
+                                            )}
+                                            onChange={() =>
+                                                toggleSelectItem(item.id)
+                                            }
                                             className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
                                         />
                                     </td>
@@ -204,8 +223,9 @@ export default function Dashboard({ auth }: PageProps) {
                                             alt={item.name}
                                             className="w-12 h-12 rounded-[8px] object-cover bg-[#f1f5f9] block"
                                             onError={(e) => {
-                                                // Fallback gracefully if placeholder image not found
-                                                (e.target as HTMLElement).style.display = 'block';
+                                                (
+                                                    e.target as HTMLElement
+                                                ).style.display = "block";
                                             }}
                                         />
                                     </td>
@@ -221,11 +241,17 @@ export default function Dashboard({ auth }: PageProps) {
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                         <span
-                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[3rem] font-semibold inline-block text-center ${getCategoryBadgeClass(
-                                                item.category
+                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getCategoryBadgeClass(
+                                                item.category_id,
                                             )}`}
                                         >
-                                            {item.category}
+                                            {
+                                                categories.find(
+                                                    (cat) =>
+                                                        cat.id ===
+                                                        item.category_id,
+                                                )?.name
+                                            }
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
@@ -236,11 +262,13 @@ export default function Dashboard({ auth }: PageProps) {
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                         <span
-                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[3rem] font-semibold inline-block text-center ${getStatusBadgeClass(
-                                                item.status
+                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getStatusBadgeClass(
+                                                item.stock,
                                             )}`}
                                         >
-                                            {item.status}
+                                            {item.stock > 0
+                                                ? "Tersedia"
+                                                : "Habis"}
                                         </span>
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">

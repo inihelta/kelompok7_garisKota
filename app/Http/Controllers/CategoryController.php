@@ -2,26 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\menu;
 use App\Models\category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class MenuController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $menus = menu::all();
-        $categories = category::all();
-
-        return inertia('Dashboard', [
-            'auth' => Auth::user(),
-            'menus' => $menus,
-            'categories' => $categories,
-        ]);
+        //
     }
 
     /**
@@ -43,7 +34,7 @@ class MenuController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(menu $menu)
+    public function show(category $category)
     {
         //
     }
@@ -51,7 +42,7 @@ class MenuController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(menu $menu)
+    public function edit(category $category)
     {
         //
     }
@@ -59,7 +50,7 @@ class MenuController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, menu $menu)
+    public function update(Request $request, category $category)
     {
         //
     }
@@ -67,7 +58,7 @@ class MenuController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(menu $menu)
+    public function destroy(category $category)
     {
         //
     }
