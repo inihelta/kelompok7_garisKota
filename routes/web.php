@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return view('welcome');
@@ -13,29 +15,10 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
+    Route::get('/dashboard', [MenuController::class, 'index'])->name('dashboard');
+    Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
+    Route::match(['put', 'post'], '/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
+    Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });
-
-
-// Route::get('/rafly', function () {
-//     return view('welcome');
-// });
-// Route::get('/rahman', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/garkot', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/Tasa', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/crystian', function () {
-//     return view('welcome');
-// });
