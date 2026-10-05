@@ -5,6 +5,6 @@ export interface MenuItem {
     category_id: number;
     price: string;
     stock: number;
-    // status: "Tersedia" | "Habis";
+    status: "tersedia" | "draft" | "nonaktif";
     image: string;
 }

@@ -31,8 +31,8 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
         <div className="p-0 m-0 font-sans bg-[#f3eeea] bg-[url('/loginBackground.png')] bg-cover h-[100dvh] w-[100dvw] overflow-hidden relative">
             <Head title="Login" />
 
-            <div className="w-[90%] max-w-[56rem] border border-[#d1d5db] bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] h-[90%] min-[801px]:h-[38rem] rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col min-[801px]:flex-row overflow-hidden gap-[15px]">
-                <div className="hidden min-[801px]:flex w-[763px] h-full justify-center overflow-hidden bg-[#dfdad5]">
+            <div className="w-[90%] max-w-[58rem] border border-[#d1d5db] bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] h-[90%] min-[801px]:h-[38rem] rounded-[10px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col min-[801px]:flex-row overflow-hidden gap-[15px]">
+                <div className="hidden min-[801px]:flex w-[739px] h-full justify-center overflow-hidden bg-[#dfdad5]">
                     <img
                         src="/banner.png"
                         alt="garisKotaBanner"
@@ -43,7 +43,7 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
                 <div className="w-full h-full flex justify-center">
                     <form
                         onSubmit={submit}
-                        className="w-[90%] p-[20px] flex flex-col justify-center items-center gap-[10px]"
+                        className="w-[90%] lg:w-[75%] p-[20px] flex flex-col justify-center items-center gap-[10px]"
                     >
                         <div className="w-[9rem] flex justify-center">
                             <img

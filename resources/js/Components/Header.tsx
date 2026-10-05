@@ -33,7 +33,7 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
     }, []);
 
     return (
-        <header className="sticky top-0 z-20 flex items-center gap-4 h-[74px] px-4 lg:pl-[22px] lg:pr-[30px] bg-white border-b border-[#e5e7eb]">
+        <header className="sticky top-0 z-20 flex items-center gap-4 h-17 px-4 lg:pl-[22px] lg:pr-[30px] bg-white border-b border-[#e5e7eb]">
             <button
                 className="block lg:hidden p-1.5 rounded-lg hover:bg-gray-100 cursor-pointer bg-transparent border-0"
                 id="toggle"
@@ -80,7 +80,7 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                                 Admin
                             </small>
                         </span>
-                        <ChevronDown className="w-3 h-3 ml-[14px] text-[#6b7280] hidden min-[656px]:block" />
+                        <ChevronDown className="w-5 h-5 ml-[14px] text-[#6b7280] hidden min-[656px]:block" />
                     </button>
 
                     {dropdownOpen && (

@@ -16,6 +16,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [MenuController::class, 'index'])->name('dashboard');
+    Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

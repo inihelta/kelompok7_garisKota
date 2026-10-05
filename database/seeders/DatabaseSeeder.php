@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             'price' => 15000,
             'image' => 'nasi_goreng.jpg',
             'stock' => 10,
+            'status' => 'tersedia'
         ]);
         menu::create([
             'category_id' => 2,
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             'price' => 5000,
             'image' => 'es_teh_manis.jpg',
             'stock' => 20,
+            'status' => 'tersedia'
         ]);
         menu::create([
             'category_id' => 3,
@@ -64,6 +66,7 @@ class DatabaseSeeder extends Seeder
             'price' => 8000,
             'image' => 'keripik_singkong.jpg',
             'stock' => 15,
+            'status' => 'tersedia'
         ]);
         menu::create([
             'category_id' => 1,
@@ -72,6 +75,7 @@ class DatabaseSeeder extends Seeder
             'price' => 12000,
             'image' => 'mie_goreng.jpg',
             'stock' => 12,
+            'status' => 'tersedia'
         ]);
         menu::create([
             'category_id' => 2,
@@ -80,6 +84,7 @@ class DatabaseSeeder extends Seeder
             'price' => 7000,
             'image' => 'jus_jeruk.jpg',
             'stock' => 18,
+            'status' => 'draft'
         ]);
         menu::create([
             'category_id' => 3,
@@ -88,6 +93,7 @@ class DatabaseSeeder extends Seeder
             'price' => 6000,
             'image' => 'kacang_goreng.jpg',
             'stock' => 25,
+            'status' => 'nonaktif'
         ]);
     }
 }
