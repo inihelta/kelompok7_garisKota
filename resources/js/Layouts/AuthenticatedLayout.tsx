@@ -1,7 +1,7 @@
-import { useState, PropsWithChildren } from 'react';
-import Sidebar from '@/Components/Sidebar';
-import Header from '@/Components/Header';
-import { User } from '@/types';
+import { useState, PropsWithChildren } from "react";
+import Sidebar from "@/Components/Sidebar";
+import Header from "@/Components/Header";
+import { User } from "@/types";
 
 interface AuthenticatedLayoutProps {
     user?: User | null;
@@ -10,7 +10,7 @@ interface AuthenticatedLayoutProps {
 
 export default function AuthenticatedLayout({
     user,
-    activeNav = 'Dashboard',
+    activeNav = "Dashboard",
     children,
 }: PropsWithChildren<AuthenticatedLayoutProps>) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,7 +24,9 @@ export default function AuthenticatedLayout({
                 id="overlay"
                 onClick={() => setSidebarOpen(false)}
                 className={`fixed inset-0 z-30 bg-black/40 transition-opacity duration-200 lg:hidden ${
-                    sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
+                    sidebarOpen
+                        ? "opacity-100 visible"
+                        : "opacity-0 invisible pointer-events-none"
                 }`}
             />
 

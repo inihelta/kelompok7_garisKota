@@ -50,7 +50,7 @@ export default function Dashboard({
         const matchesCategory =
             activeCategory === "Semua Menu" ||
             item.category_id ===
-            categories.find((cat) => cat.name === activeCategory)?.id;
+                categories.find((cat) => cat.name === activeCategory)?.id;
         const matchesSearch =
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -196,10 +196,11 @@ export default function Dashboard({
                                     key={cat}
                                     type="button"
                                     onClick={() => setActiveCategory(cat)}
-                                    className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${isActive
+                                    className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${
+                                        isActive
                                             ? "bg-[#fee2e2] text-[#dc2626] border border-transparent"
                                             : "bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]"
-                                        }`}
+                                    }`}
                                 >
                                     {cat}
                                 </button>
@@ -230,7 +231,7 @@ export default function Dashboard({
                                         checked={
                                             filteredItems.length > 0 &&
                                             selectedItems.length ===
-                                            filteredItems.length
+                                                filteredItems.length
                                         }
                                         onChange={toggleSelectAll}
                                         className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
@@ -430,4 +431,3 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
-
