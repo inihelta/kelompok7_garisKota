@@ -6,6 +6,7 @@ use App\Models\menu;
 use App\Models\category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
@@ -25,35 +26,27 @@ class MenuController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'status' => 'required|in:tersedia,draft,nonaktif',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(menu $menu)
-    {
-        //
-    }
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('menus', 'public');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(menu $menu)
-    {
-        //
+        menu::create($validated);
+
+        return redirect()->route('dashboard')->with('success', 'Menu berhasil ditambahkan.');
     }
 
     /**
@@ -61,7 +54,26 @@ class MenuController extends Controller
      */
     public function update(Request $request, menu $menu)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'status' => 'required|in:tersedia,draft,nonaktif',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($menu->image && Storage::disk('public')->exists($menu->image)) {
+                Storage::disk('public')->delete($menu->image);
+            }
+            $validated['image'] = $request->file('image')->store('menus', 'public');
+        }
+
+        $menu->update($validated);
+
+        return redirect()->route('dashboard')->with('success', 'Menu berhasil diperbarui.');
     }
 
     /**
@@ -69,8 +81,13 @@ class MenuController extends Controller
      */
     public function destroy(menu $menu)
     {
+        if ($menu->image && Storage::disk('public')->exists($menu->image)) {
+            Storage::disk('public')->delete($menu->image);
+        }
+
         $menu->delete();
 
         return redirect()->route('dashboard')->with('success', 'Menu deleted successfully.');
     }
 }
+

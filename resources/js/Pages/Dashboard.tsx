@@ -22,50 +22,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/Components/ui/dialog";
-import { Button } from "@/components/ui/button";
-
-// const menus: MenuItem[] = [
-//     {
-//         id: 1,
-//         name: "Mix Platter",
-//         description: "Kentang, nugget, ayam, sosis",
-//         category: "Makanan",
-//         price: "Rp 45.000",
-//         stock: 12,
-//         status: "Tersedia",
-//         image: "path_gambar_mix_platter.jpg",
-//     },
-//     {
-//         id: 2,
-//         name: "Kentang Goreng",
-//         description: "Kentang crispy",
-//         category: "Snack",
-//         price: "Rp 18.000",
-//         stock: 28,
-//         status: "Tersedia",
-//         image: "path_gambar_kentang.jpg",
-//     },
-//     {
-//         id: 3,
-//         name: "Hazelnut Latte",
-//         description: "Hazelnut Latte dingin",
-//         category: "Minuman",
-//         price: "Rp 22.000",
-//         stock: 15,
-//         status: "Tersedia",
-//         image: "path_gambar_hazelnut.jpg",
-//     },
-//     {
-//         id: 4,
-//         name: "Pisang Gapit",
-//         description: "Pisang gapit",
-//         category: "Makanan",
-//         price: "Rp 12.000",
-//         stock: 18,
-//         status: "Habis",
-//         image: "path_gambar_pisang.jpg",
-//     },
-// ];
+import { Button } from "@/Components/ui/button";
+import MenuFormModal from "@/Components/MenuFormModal";
 
 export default function Dashboard({
     auth,
@@ -83,6 +41,7 @@ export default function Dashboard({
     const [activeCategory, setActiveCategory] = useState<string>("Semua Menu");
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
+    const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null);
     const [activeDialog, setActiveDialog] = useState<
         "create" | "edit" | "remove" | null
     >(null);
@@ -91,12 +50,10 @@ export default function Dashboard({
         const matchesCategory =
             activeCategory === "Semua Menu" ||
             item.category_id ===
-                categories.find((cat) => cat.name === activeCategory)?.id;
+            categories.find((cat) => cat.name === activeCategory)?.id;
         const matchesSearch =
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.category_id ===
-                categories.find((cat) => cat.name === activeCategory)?.id ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase());
+            item.description?.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
@@ -158,6 +115,14 @@ export default function Dashboard({
         });
     };
 
+    const getImageSrc = (imagePath?: string) => {
+        if (!imagePath) return "";
+        if (imagePath.startsWith("http") || imagePath.startsWith("/")) {
+            return imagePath;
+        }
+        return `/storage/${imagePath}`;
+    };
+
     return (
         <AuthenticatedLayout user={auth?.user} activeNav="Dashboard">
             <Head title="Dashboard" />
@@ -175,7 +140,14 @@ export default function Dashboard({
                         </span>
                     </div>
                 </div>
-                <button className="bg-[#D91A20] flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white">
+                <button
+                    type="button"
+                    onClick={() => {
+                        setEditingMenu(null);
+                        setActiveDialog("create");
+                    }}
+                    className="bg-[#D91A20] hover:bg-[#b91c1c] cursor-pointer flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white transition-all duration-200"
+                >
                     <Plus className="size-6 max-md:size-8" />
                     Tambah Menu
                 </button>
@@ -188,7 +160,9 @@ export default function Dashboard({
                         <ConciergeBell className="size-5 max-md:size-8" />
                     </div>
                     <span className="text-sm">Total Menu</span>
-                    <span className="text-xl font-bold -mt-2">10</span>
+                    <span className="text-xl font-bold -mt-2">
+                        {menus.length}
+                    </span>
                 </div>
                 {/* 2 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
@@ -196,7 +170,9 @@ export default function Dashboard({
                         <MenuSquare className="size-5 max-md:size-8" />
                     </div>
                     <span className="text-sm">Kategori</span>
-                    <span className="text-xl font-bold -mt-2">10</span>
+                    <span className="text-xl font-bold -mt-2">
+                        {categories.length}
+                    </span>
                 </div>
                 {/* 3 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
@@ -204,7 +180,9 @@ export default function Dashboard({
                         <ToggleRight className="size-5 max-md:size-8" />
                     </div>
                     <span className="text-sm">Menu Tersedia</span>
-                    <span className="text-xl font-bold -mt-2">10</span>
+                    <span className="text-xl font-bold -mt-2">
+                        {menus.filter((m) => m.status === "tersedia").length}
+                    </span>
                 </div>
             </div>
 
@@ -218,11 +196,10 @@ export default function Dashboard({
                                     key={cat}
                                     type="button"
                                     onClick={() => setActiveCategory(cat)}
-                                    className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${
-                                        isActive
+                                    className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${isActive
                                             ? "bg-[#fee2e2] text-[#dc2626] border border-transparent"
                                             : "bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]"
-                                    }`}
+                                        }`}
                                 >
                                     {cat}
                                 </button>
@@ -237,7 +214,7 @@ export default function Dashboard({
                             id="search"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Cari menu, kategori, atau kode..."
+                            placeholder="Cari menu atau deskripsi..."
                             className="w-full h-[38px] pl-[40px] pr-[15px] rounded-[8px] border border-[#d1d5db] text-[14px] outline-none text-[#4b5563] placeholder-[#9ca3af] focus:border-[#b91c1c] transition-colors duration-200"
                         />
                     </div>
@@ -253,7 +230,7 @@ export default function Dashboard({
                                         checked={
                                             filteredItems.length > 0 &&
                                             selectedItems.length ===
-                                                filteredItems.length
+                                            filteredItems.length
                                         }
                                         onChange={toggleSelectAll}
                                         className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
@@ -298,16 +275,22 @@ export default function Dashboard({
                                         />
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
-                                        <img
-                                            src={item.image}
-                                            alt={item.name}
-                                            className="w-12 h-12 rounded-[8px] object-cover bg-[#f1f5f9] block"
-                                            onError={(e) => {
-                                                (
-                                                    e.target as HTMLElement
-                                                ).style.display = "block";
-                                            }}
-                                        />
+                                        {item.image ? (
+                                            <img
+                                                src={getImageSrc(item.image)}
+                                                alt={item.name}
+                                                className="w-12 h-12 rounded-[8px] object-cover bg-[#f1f5f9] block"
+                                                onError={(e) => {
+                                                    (
+                                                        e.target as HTMLElement
+                                                    ).style.display = "block";
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-[8px] bg-[#f1f5f9] flex items-center justify-center text-xs text-gray-400 font-medium">
+                                                No Img
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
                                         <div className="flex flex-col">
@@ -358,6 +341,10 @@ export default function Dashboard({
                                                 type="button"
                                                 className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
                                                 title="Edit"
+                                                onClick={() => {
+                                                    setEditingMenu(item);
+                                                    setActiveDialog("edit");
+                                                }}
                                             >
                                                 <Pencil className="w-[18px] h-[18px]" />
                                             </button>
@@ -380,9 +367,22 @@ export default function Dashboard({
                     </table>
                 </div>
 
+                {/* Form Modal Tambah / Edit */}
+                <MenuFormModal
+                    isOpen={
+                        activeDialog === "create" || activeDialog === "edit"
+                    }
+                    onClose={() => {
+                        setActiveDialog(null);
+                        setEditingMenu(null);
+                    }}
+                    menu={activeDialog === "edit" ? editingMenu : null}
+                    categories={categories}
+                />
+
+                {/* Modal Hapus */}
                 <Dialog
                     open={activeDialog === "remove"}
-                    // open={true}
                     onOpenChange={(open) =>
                         setActiveDialog(open ? "remove" : null)
                     }
@@ -417,7 +417,7 @@ export default function Dashboard({
                             </Button>
                             <Button
                                 type="submit"
-                                className="bg-[#D91A20] flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white hover:bg-[#b91c1c] transition-all duration-200"
+                                className="bg-[#D91A20] flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white hover:bg-[#b91c1c] transition-all duration-200 cursor-pointer"
                                 variant="destructive"
                                 onClick={() => handleDelete(selectedItems[0])}
                             >
@@ -430,3 +430,4 @@ export default function Dashboard({
         </AuthenticatedLayout>
     );
 }
+
