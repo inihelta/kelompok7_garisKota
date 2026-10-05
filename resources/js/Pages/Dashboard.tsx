@@ -11,7 +11,6 @@ import {
     ToggleRight,
     MenuSquare,
 } from "lucide-react";
-import { PageProps } from "@/types";
 import { MenuItem } from "@/types/dashboard";
 import {
     Dialog,
@@ -20,7 +19,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import MenuFormModal from "@/Components/MenuFormModal";
@@ -72,13 +70,13 @@ export default function Dashboard({
         }
     };
 
-    const toggleSelectItem = (id: number) => {
-        if (selectedItems.includes(id)) {
-            setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
-        } else {
-            setSelectedItems([...selectedItems, id]);
-        }
-    };
+    // const toggleSelectItem = (id: number) => {
+    //     if (selectedItems.includes(id)) {
+    //         setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
+    //     } else {
+    //         setSelectedItems([...selectedItems, id]);
+    //     }
+    // };
 
     const getCategoryBadgeClass = (category_id: MenuItem["category_id"]) => {
         switch (category_id) {
@@ -226,7 +224,7 @@ export default function Dashboard({
                         <thead>
                             <tr>
                                 <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]">
-                                    <input
+                                    {/* <input
                                         type="checkbox"
                                         checked={
                                             filteredItems.length > 0 &&
@@ -235,7 +233,8 @@ export default function Dashboard({
                                         }
                                         onChange={toggleSelectAll}
                                         className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
-                                    />
+                                    /> */}
+                                    #
                                 </th>
                                 <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]">
                                     Gambar
@@ -261,10 +260,10 @@ export default function Dashboard({
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredItems.map((item) => (
+                            {filteredItems.map((item, i) => (
                                 <tr key={item.id}>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        <input
+                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
+                                        {/* <input
                                             type="checkbox"
                                             checked={selectedItems.includes(
                                                 item.id,
@@ -273,7 +272,8 @@ export default function Dashboard({
                                                 toggleSelectItem(item.id)
                                             }
                                             className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
-                                        />
+                                        /> */}
+                                        {i + 1}
                                     </td>
                                     <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
                                         {item.image ? (
@@ -368,7 +368,7 @@ export default function Dashboard({
                     </table>
                 </div>
 
-                {/* Form Modal Tambah / Edit */}
+                {/* Edit/Create Dialog */}
                 <MenuFormModal
                     isOpen={
                         activeDialog === "create" || activeDialog === "edit"
@@ -381,7 +381,7 @@ export default function Dashboard({
                     categories={categories}
                 />
 
-                {/* Modal Hapus */}
+                {/* Delete Dialog */}
                 <Dialog
                     open={activeDialog === "remove"}
                     onOpenChange={(open) =>

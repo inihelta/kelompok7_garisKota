@@ -1,7 +1,12 @@
 import { useState, FormEventHandler } from "react";
 import { Head, useForm } from "@inertiajs/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {
+    faUser,
+    faEye,
+    faEyeSlash,
+    faAt,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Login({ errors }: { errors: Record<string, string> }) {
     const {
@@ -84,7 +89,7 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
                                     className="w-full h-[38px] pl-[15px] pr-[45px] py-0 rounded-[8px] border border-[#d1d5db] text-[14px] outline-none text-[#4b5563] placeholder-[#9ca3af] focus:border-[#b91c1c]"
                                 />
                                 <span className="absolute right-[15px] text-[#b91c1c] text-[18px] cursor-pointer w-[20px] flex justify-center">
-                                    <FontAwesomeIcon icon={faUser} />
+                                    <FontAwesomeIcon icon={faAt} />
                                 </span>
                             </div>
                             {hasErrors && (
