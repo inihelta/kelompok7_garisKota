@@ -280,7 +280,7 @@ export default function Dashboard({
                                             <img
                                                 src={getImageSrc(item.image)}
                                                 alt={item.name}
-                                                className="w-12 h-12 rounded-[8px] object-cover bg-[#f1f5f9] block"
+                                                className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
                                                 onError={(e) => {
                                                     (
                                                         e.target as HTMLElement
