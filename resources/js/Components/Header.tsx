@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { Link } from "@inertiajs/react";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, usePage } from "@inertiajs/react";
 import {
     Menu,
     Search,
@@ -7,8 +7,16 @@ import {
     UserRound,
     ChevronDown,
     LogOut,
+    House,
 } from "lucide-react";
-
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/Components/ui/breadcrumb";
 interface HeaderProps {
     onToggleSidebar: () => void;
     user?: { name?: string; email?: string } | null;
@@ -17,7 +25,11 @@ interface HeaderProps {
 export default function Header({ onToggleSidebar, user }: HeaderProps) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
-
+    const { url } = usePage();
+    const paths = url
+        .split("?")[0]
+        .split("/")
+        .filter((path) => path && path.toLowerCase() !== "dashboard");
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (
@@ -43,6 +55,48 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
             >
                 <Menu className="w-6 h-6 block" />
             </button>
+            <div className="flex items-center gap-2 lg:gap-3">
+                <House className="w-6 h-6 text-[#D91A20]" />
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            {paths.length === 0 ? (
+                                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                            ) : (
+                                <BreadcrumbLink asChild>
+                                    <Link href="/dashboard">Dashboard</Link>
+                                </BreadcrumbLink>
+                            )}
+                        </BreadcrumbItem>
+
+                        {paths.map((path, index) => {
+                            const href = `/${paths.slice(0, index + 1).join("/")}`;
+                            const isLast = index === paths.length - 1;
+
+                            const title =
+                                path.charAt(0).toUpperCase() +
+                                path.slice(1).replace(/-/g, " ");
+
+                            return (
+                                <React.Fragment key={href}>
+                                    <BreadcrumbSeparator />
+                                    <BreadcrumbItem>
+                                        {isLast ? (
+                                            <BreadcrumbPage>
+                                                {title}
+                                            </BreadcrumbPage>
+                                        ) : (
+                                            <BreadcrumbLink asChild>
+                                                <Link href={href}>{title}</Link>
+                                            </BreadcrumbLink>
+                                        )}
+                                    </BreadcrumbItem>
+                                </React.Fragment>
+                            );
+                        })}
+                    </BreadcrumbList>
+                </Breadcrumb>
+            </div>
             {/* 
             <form className="relative w-full max-w-[338px]" role="search" onSubmit={(e) => e.preventDefault()}>
                 <Search className="absolute left-[10px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-[#e31b23] stroke-[2] pointer-events-none block" />
