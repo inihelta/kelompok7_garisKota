@@ -1,59 +1,185 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/logoRed.png" alt="Garis Kota - Banner" width="100%" />
 </p>
 
-## About Laravel
+<p align="center">
+  <strong>Sistem Manajemen Restoran & Point of Sale (POS) Modern Berbasis Laravel 12, Inertia.js, dan React TypeScript</strong>
+</p>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+  <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel&logoColor=white" alt="Laravel 12" /></a>
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19.x-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React 19" /></a>
+  <a href="https://inertiajs.com"><img src="https://img.shields.io/badge/Inertia.js-v2.0-9553E9?style=flat-square&logo=inertia&logoColor=white" alt="Inertia.js" /></a>
+  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+  <a href="https://vitejs.dev"><img src="https://img.shields.io/badge/Vite-7.x-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License MIT" /></a>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📌 Ringkasan Proyek (Overview)
 
-## Learning Laravel
+**Garis Kota** adalah aplikasi web Point of Sale (POS) dan sistem manajemen operasional kafe/restoran yang dirancang untuk mempercepat alur kerja pemesanan, pencatatan menu, dan pengelolaan inventaris secara real-time. 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Dibangun dengan arsitektur **Monolith Modern (Single-Page Application)** menggunakan kombinasi **Laravel 12** sebagai backend yang tangguh, **Inertia.js** sebagai jembatan data tanpa perlu membangun REST API terpisah secara manual, serta **React 19 & TypeScript** untuk antarmuka pengguna yang reaktif, cepat, dan intuitif.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Aplikasi ini dikembangkan oleh **Kelompok 7** untuk memberikan solusi digitalisasi bisnis kuliner yang efisien, mudah dikelola, dan memiliki tampilan visual elegan.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🔑 Akses Demo & Akun Pengujian
 
-### Premium Partners
+Untuk keperluan presentasi, evaluasi guru, dan pengujian fitur:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+| Role              | Email             | Password   | Hak Akses                                                          |
+| :---------------- | :---------------- | :--------- | :----------------------------------------------------------------- |
+| **Administrator** | `admin@gmail.com` | `password` | Akses penuh dashboard, manajemen menu, stok, kategori, dan pesanan |
 
-## Contributing
+> **Catatan:** Data di atas digenerate otomatis melalui database seeder (`php artisan db:seed` atau `php artisan migrate:fresh --seed`).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🚀 Fitur Utama (Key Features)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. 📋 Manajemen Katalog Menu & Kategori (CRUD)
+- **Kategorisasi Terstruktur**: Pengelompokan menu otomatis berdasarkan kategori (*Makanan*, *Minuman*, *Snack*).
+- **Pengelolaan Data Lengkap**: Tambah, edit, dan hapus menu dengan atribut nama, harga, stok, deskripsi, dan status ketersediaan.
+- **Upload Media Terintegrasi**: Unggah gambar menu secara langsung dengan penyimpanan disk publik yang aman dan penghapusan file otomatis ketika data diubah/dihapus.
+- **Status Menu Dinamis**: Pilihan status ketersediaan produk (*Tersedia*, *Draft*, *Nonaktif*).
 
-## Security Vulnerabilities
+### 2. 🔍 Pencarian & Filtering Real-Time
+- **Instant Search**: Pencarian nama atau deskripsi menu secara instan tanpa perlu reload halaman.
+- **Filter Tab Kategori**: Beralih antar kategori (*Semua Menu*, *Makanan*, *Minuman*, *Snack*) secara seamless dan responsif.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. 🧾 Manajemen Pesanan (Order Management)
+- Antarmuka khusus untuk memantau daftar antrean pesanan pelanggan, rincian pesanan, dan status transaksi yang sedang berlangsung.
 
-## License
+### 4. 🔒 Autentikasi & Keamanan Terkelola
+- Sistem login berbasis session guard Laravel yang aman dengan validasi input menyeluruh.
+- Proteksi route tertutup dengan middleware `auth` untuk area dashboard dan `guest` untuk halaman login.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. 🎨 Desain Antarmuka Modern & Responsif
+- Dibangun menggunakan **Tailwind CSS v4**, icon set modern dari **Lucide React** dan **FontAwesome**, serta komponen dialog interaktif berbasis **Radix UI / shadcn**.
+- Pengalaman pengguna yang mulus (*SPA feel*) berkat transisi cepat dari Inertia.js.
+
+---
+
+### Rincian Teknologi:
+- **Backend Framework**: [Laravel 12.x](https://laravel.com) (PHP 8.2+)
+- **Frontend Framework**: [React 19.x](https://react.dev) + [TypeScript](https://www.typescriptlang.org/)
+- **Glue Layer**: [Inertia.js](https://inertiajs.com/) (`@inertiajs/react` 3.x)
+- **Styling & UI**: [Tailwind CSS v4](https://tailwindcss.com), [shadcn UI](https://ui.shadcn.com/), [Lucide React](https://lucide.dev)
+- **Routing Helper**: [Ziggy](https://github.com/tighten/ziggy)
+- **Build Tool**: [Vite 7.x](https://vitejs.dev)
+- **Database**: SQLite (Default) / MySQL
+
+---
+
+## 💻 Panduan Instalasi & Menjalankan Lokal
+
+Ikuti langkah-langkah berikut untuk menjalankan proyek **Garis Kota** di komputer lokal Anda:
+
+### 1. Prasyarat Sistem
+Pastikan perangkat Anda telah terpasang:
+- **PHP** >= 8.2
+- **Composer** >= 2.x
+- **Node.js** >= 18.x & **npm**
+
+### 2. Kloning Repository
+```bash
+git clone https://github.com/inihelta/kelompok7_garisKota.git
+cd kelompok7_garisKota
+```
+
+### 3. Instalasi Dependensi PHP & Node
+```bash
+# Instalasi dependensi backend
+composer install
+
+# Instalasi dependensi frontend
+npm install
+```
+
+### 4. Konfigurasi Environment (`.env`)
+Salin file `.env.example` menjadi `.env` lalu generate application key:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 5. Migrasi & Seeding Database
+Jalankan migrasi database beserta data dummy bawaan:
+```bash
+php artisan migrate --seed
+```
+
+### 6. Symbolic Link Storage (Untuk Media Menu)
+Hubungkan direktori storage publik agar gambar menu dapat diakses di browser:
+```bash
+php artisan storage:link
+```
+
+### 7. Menjalankan Server Development
+Anda dapat menjalankan server backend dan frontend sekaligus dengan perintah:
+#### Opsi 1: Menjalankan otomatis (Server + Vite dev server)
+```bash
+composer run apaja
+```
+#### Opsi 2: Menjalankan manual di dua terminal terpisah
+```bash
+# Terminal 1:
+php artisan serve
+
+# Terminal 2:
+npm run dev
+```
+
+Buka browser dan akses aplikasi dengan port 8000
+
+---
+
+## 📁 Struktur Direktori Proyek
+
+```
+garisKota/
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       ├── AuthController.php      # Controller login & sesi
+│   │       └── MenuController.php      # Controller CRUD menu & kategori
+│   └── Models/
+│       ├── category.php                # Model kategori
+│       ├── menu.php                    # Model menu produk
+│       └── User.php                    # Model user / admin
+├── database/
+│   ├── migrations/                     # Skema tabel database
+│   └── seeders/
+│       └── DatabaseSeeder.php          # Seeder default user & katalog menu
+├── public/
+│   ├── banner.png                      # Aset banner visual
+│   ├── logoRed.png                     # Logo Garis Kota
+│   └── storage/                        # Tautan media gambar menu
+├── resources/
+│   ├── css/                            # Global CSS & Tailwind rules
+│   ├── js/
+│   │   ├── Components/                 # Komponen UI (Modal, Button, Dialog)
+│   │   ├── Layouts/                    # Template layout autentikasi & dashboard
+│   │   ├── Pages/
+│   │   │   ├── Dashboard.tsx           # Halaman utama manajemen katalog POS
+│   │   │   ├── Login.tsx               # Halaman login administrator
+│   │   │   └── Pesanan.tsx             # Halaman manajemen pesanan
+│   │   └── types/                      # TypeScript definitions
+│   └── views/
+│       └── app.blade.php               # Root template Inertia
+├── routes/
+│   └── web.php                         # Definisi rute web aplikasi
+├── package.json                        # Konfigurasi dependensi JavaScript
+└── composer.json                       # Konfigurasi dependensi PHP
+```
+
+---
+
+<p align="center">
+  Dibuat karna ujian blok 2 oleh <strong>Kelompok 7</strong>
+</p>
