@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logoRed.png" alt="Garis Kota - Banner" width="100%" />
+  <img src="public/logoRed.png" alt="Garis Kota - Banner" width="40%" />
 </p>
 
 <p align="center">
