@@ -62,13 +62,13 @@ export default function Dashboard({
             minimumFractionDigits: 0,
         }).format(value);
 
-    const toggleSelectAll = () => {
-        if (selectedItems.length === filteredItems.length) {
-            setSelectedItems([]);
-        } else {
-            setSelectedItems(filteredItems.map((item) => item.id));
-        }
-    };
+    // const toggleSelectAll = () => {
+    //     if (selectedItems.length === filteredItems.length) {
+    //         setSelectedItems([]);
+    //     } else {
+    //         setSelectedItems(filteredItems.map((item) => item.id));
+    //     }
+    // };
 
     // const toggleSelectItem = (id: number) => {
     //     if (selectedItems.includes(id)) {
