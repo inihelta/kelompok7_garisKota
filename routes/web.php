@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/menu', function () {
         return Inertia::render('Menu');
     })->name('dashboard.menu');
+    Route::get('/dashboard/kategori', function () {
+        return Inertia::render('Kategori');
+    })->name('dashboard.kategori');
     Route::get('/dashboard/stok', function () {
         return Inertia::render('Stok');
     })->name('dashboard.stok');

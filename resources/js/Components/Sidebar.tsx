@@ -1,5 +1,12 @@
 import { Link } from "@inertiajs/react";
-import { House, ClipboardList, Wallet, Utensils, Archive } from "lucide-react";
+import {
+    House,
+    ClipboardList,
+    Wallet,
+    Utensils,
+    Archive,
+    MenuSquare,
+} from "lucide-react";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -30,6 +37,11 @@ export default function Sidebar({
             name: "Menu",
             href: route("dashboard.menu"),
             icon: Utensils,
+        },
+        {
+            name: "Kategori",
+            href: route("dashboard.kategori"),
+            icon: MenuSquare,
         },
         {
             name: "Stok",
