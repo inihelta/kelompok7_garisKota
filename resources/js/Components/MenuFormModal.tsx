@@ -40,6 +40,7 @@ export default function MenuFormModal({
         description: "",
         status: "tersedia" as "tersedia" | "draft" | "nonaktif",
         image: null as File | null,
+        remove_image: false,
     });
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -56,11 +57,12 @@ export default function MenuFormModal({
                     description: menu.description || "",
                     status: menu.status || "tersedia",
                     image: null,
+                    remove_image: false,
                 });
                 if (menu.image) {
                     const fullImageUrl =
                         menu.image.startsWith("http") || menu.image.startsWith("/")
-                            ? menu.image
+                             ? menu.image
                             : `/storage/${menu.image}`;
                     setImagePreview(fullImageUrl);
                 } else {
@@ -75,6 +77,7 @@ export default function MenuFormModal({
                     description: "",
                     status: "tersedia",
                     image: null,
+                    remove_image: false,
                 });
                 setImagePreview(null);
             }
@@ -84,14 +87,22 @@ export default function MenuFormModal({
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setData("image", file);
+            setData((prev) => ({
+                ...prev,
+                image: file,
+                remove_image: false,
+            }));
             const objectUrl = URL.createObjectURL(file);
             setImagePreview(objectUrl);
         }
     };
 
     const handleRemoveImage = () => {
-        setData("image", null);
+        setData((prev) => ({
+            ...prev,
+            image: null,
+            remove_image: true,
+        }));
         setImagePreview(null);
     };
 

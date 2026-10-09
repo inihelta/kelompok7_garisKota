@@ -62,6 +62,7 @@ class MenuController extends Controller
             'description' => 'nullable|string',
             'status' => 'required|in:tersedia,draft,nonaktif',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'remove_image' => 'nullable|boolean',
         ]);
 
         if ($request->hasFile('image')) {
@@ -69,7 +70,16 @@ class MenuController extends Controller
                 Storage::disk('public')->delete($menu->image);
             }
             $validated['image'] = $request->file('image')->store('menus', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            if ($menu->image && Storage::disk('public')->exists($menu->image)) {
+                Storage::disk('public')->delete($menu->image);
+            }
+            $validated['image'] = null;
+        } else {
+            unset($validated['image']);
         }
+
+        unset($validated['remove_image']);
 
         $menu->update($validated);
 
