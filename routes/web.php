@@ -19,6 +19,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/pesanan', function () {
         return Inertia::render('Pesanan');
     })->name('dashboard.pesanan');
+    Route::get('/dashboard/pendapatan', function () {
+        return Inertia::render('Pendapatan');
+    })->name('dashboard.pendapatan');
+    Route::get('/dashboard/menu', function () {
+        return Inertia::render('Menu');
+    })->name('dashboard.menu');
+    Route::get('/dashboard/stok', function () {
+        return Inertia::render('Stok');
+    })->name('dashboard.stok');
+
 
     Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
     Route::match(['put', 'post'], '/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');

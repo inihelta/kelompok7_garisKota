@@ -21,9 +21,21 @@ export default function Sidebar({
             href: route("dashboard.pesanan"),
             icon: ClipboardList,
         },
-        { name: "Pendapatan", href: "#", icon: Wallet },
-        { name: "Menu", href: "#", icon: Utensils },
-        { name: "Stok", href: "#", icon: Archive },
+        {
+            name: "Pendapatan",
+            href: route("dashboard.pendapatan"),
+            icon: Wallet,
+        },
+        {
+            name: "Menu",
+            href: route("dashboard.menu"),
+            icon: Utensils,
+        },
+        {
+            name: "Stok",
+            href: route("dashboard.stok"),
+            icon: Archive,
+        },
     ];
 
     return (

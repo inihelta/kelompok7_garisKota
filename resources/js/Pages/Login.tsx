@@ -26,7 +26,9 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(typeof route !== "undefined" ? route("login") : "/login", {
-            onFinish: () => reset("password"),
+            onFinish: () => {
+                reset("password");
+            },
         });
     };
 
