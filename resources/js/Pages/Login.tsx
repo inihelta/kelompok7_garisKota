@@ -32,7 +32,8 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
         });
     };
 
-    const hasErrors = Object.keys(formErrors).length > 0;
+    const allErrors = { ...errors, ...formErrors };
+    const hasErrors = Object.keys(allErrors).length > 0;
 
     return (
         <div className="p-0 m-0 font-sans bg-[#f3eeea] bg-[url('/loginBackground.png')] bg-cover h-[100dvh] w-[100dvw] overflow-hidden relative">
@@ -96,7 +97,7 @@ export default function Login({ errors }: { errors: Record<string, string> }) {
                             </div>
                             {hasErrors && (
                                 <div className="text-red-600">
-                                    {Object.values(formErrors).map(
+                                    {(Object.values(allErrors).flat() as string[]).map(
                                         (error, idx) => (
                                             <span
                                                 key={idx}
