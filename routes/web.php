@@ -14,7 +14,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard', [MenuController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pesanan', function () {
         return Inertia::render('Pesanan');
