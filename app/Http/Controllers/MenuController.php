@@ -18,7 +18,7 @@ class MenuController extends Controller
         $menus = menu::all();
         $categories = category::all();
 
-        return inertia('Dashboard', [
+        return inertia('Menu', [
             'auth' => Auth::user(),
             'menus' => $menus,
             'categories' => $categories,
@@ -100,4 +100,3 @@ class MenuController extends Controller
         return redirect()->route('dashboard')->with('success', 'Menu deleted successfully.');
     }
 }
-

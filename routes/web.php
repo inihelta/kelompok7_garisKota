@@ -15,16 +15,16 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
-    Route::get('/dashboard', [MenuController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/menu', [MenuController::class, 'index'])->name('dashboard.menu');
     Route::get('/dashboard/pesanan', function () {
         return Inertia::render('Pesanan');
     })->name('dashboard.pesanan');
     Route::get('/dashboard/pendapatan', function () {
         return Inertia::render('Pendapatan');
     })->name('dashboard.pendapatan');
-    Route::get('/dashboard/menu', function () {
-        return Inertia::render('Menu');
-    })->name('dashboard.menu');
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
     Route::get('/dashboard/kategori', function () {
         return Inertia::render('Kategori');
     })->name('dashboard.kategori');
