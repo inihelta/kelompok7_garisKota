@@ -9,6 +9,8 @@ use App\Models\table;
 use App\Models\order;
 use App\Models\orderItem;
 use App\Models\payment;
+use App\Models\StockCategory;
+use App\Models\Stock;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -138,9 +140,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // ==========================================
-        // Data Seeder Tables (Meja)
-        // ==========================================
+        // Data Seeder meja
         $tables = [
             ['table_number' => 1, 'capacity' => 2, 'available' => true, 'location' => 'indoor'],
             ['table_number' => 2, 'capacity' => 4, 'available' => false, 'location' => 'indoor'],
@@ -360,6 +360,104 @@ class DatabaseSeeder extends Seeder
                     'payment_status' => 'done',
                     'transaction_ref' => null,
                 ]
+            );
+        }
+
+        // Data Seeder Kategori Bahan Baku & Stok
+
+        $catKopi = StockCategory::firstOrCreate(['name' => 'Biji Kopi & Bubuk']);
+        $catDairy = StockCategory::firstOrCreate(['name' => 'Susu & Dairy']);
+        $catSirup = StockCategory::firstOrCreate(['name' => 'Sirup & Topping']);
+        $catPackaging = StockCategory::firstOrCreate(['name' => 'Packaging & Cup']);
+        $catMakanan = StockCategory::firstOrCreate(['name' => 'Bahan Makanan']);
+
+        $stockItems = [
+            [
+                'stock_category_id' => $catKopi->id,
+                'name' => 'House Blend Beans',
+                'sku' => 'SKU-COF-01',
+                'stock' => 6.4,
+                'unit' => 'kg',
+                'min_stock' => 5.0,
+                'est_daily' => 1.8,
+                'icon_type' => 'coffee',
+            ],
+            [
+                'stock_category_id' => $catDairy->id,
+                'name' => 'Fresh Milk Pasteurisasi 1L',
+                'sku' => 'SKU-MLK-01',
+                'stock' => 6,
+                'unit' => 'Liter',
+                'min_stock' => 8,
+                'est_daily' => 8,
+                'icon_type' => 'milk',
+            ],
+            [
+                'stock_category_id' => $catDairy->id,
+                'name' => 'Oat Milk Barista 1L',
+                'sku' => 'SKU-MLK-02',
+                'stock' => 10,
+                'unit' => 'Liter',
+                'min_stock' => 8,
+                'est_daily' => 8,
+                'icon_type' => 'droplet',
+            ],
+            [
+                'stock_category_id' => $catSirup->id,
+                'name' => 'Hazelnut Syrup 750ML',
+                'sku' => 'SKU-SYR-01',
+                'stock' => 2,
+                'unit' => 'Botol',
+                'min_stock' => 4,
+                'est_daily' => 6,
+                'icon_type' => 'droplet',
+            ],
+            [
+                'stock_category_id' => $catSirup->id,
+                'name' => 'Caramel Syrup 750ML',
+                'sku' => 'SKU-SYR-02',
+                'stock' => 3,
+                'unit' => 'Botol',
+                'min_stock' => 4,
+                'est_daily' => 6,
+                'icon_type' => 'droplet',
+            ],
+            [
+                'stock_category_id' => $catSirup->id,
+                'name' => 'Berry Syrup 750ML',
+                'sku' => 'SKU-SYR-03',
+                'stock' => 3,
+                'unit' => 'Botol',
+                'min_stock' => 4,
+                'est_daily' => 6,
+                'icon_type' => 'droplet',
+            ],
+            [
+                'stock_category_id' => $catPackaging->id,
+                'name' => 'Paper Cup 12oz',
+                'sku' => 'SKU-PKG-01',
+                'stock' => 250,
+                'unit' => 'Pcs',
+                'min_stock' => 100,
+                'est_daily' => 50,
+                'icon_type' => 'cup',
+            ],
+            [
+                'stock_category_id' => $catMakanan->id,
+                'name' => 'Beras Pandan Wangi',
+                'sku' => 'SKU-FOD-01',
+                'stock' => 15,
+                'unit' => 'kg',
+                'min_stock' => 10,
+                'est_daily' => 3,
+                'icon_type' => 'food',
+            ],
+        ];
+
+        foreach ($stockItems as $item) {
+            Stock::updateOrCreate(
+                ['sku' => $item['sku']],
+                $item
             );
         }
     }

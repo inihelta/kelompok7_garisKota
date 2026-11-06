@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\StockController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,14 +32,14 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
         return Inertia::render('Kategori');
     })->name('dashboard.kategori');
     Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
-    Route::get('/dashboard/stok', function () {
-        return Inertia::render('Stok');
-    })->name('dashboard.stok');
-
+    Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');
 
     Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
     Route::match(['put', 'post'], '/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
     Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
+
+    Route::match(['put', 'patch'], '/stocks/{stock}', [StockController::class, 'update'])->name('stocks.update');
+    Route::delete('/stocks/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

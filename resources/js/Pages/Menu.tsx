@@ -197,7 +197,7 @@ export default function Menu({
                                     className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${
                                         isActive
                                             ? "bg-[#fee2e2] text-[#dc2626] border border-transparent"
-                                            : "bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]"
+                                            : "bg-white text-[#4b5563] border border-[#4b5563]/50 hover:bg-[#f3f4f6]"
                                     }`}
                                 >
                                     {cat}
