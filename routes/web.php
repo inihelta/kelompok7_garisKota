@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\TableController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return Inertia::render('Homepage');
 });
 
 Route::middleware('guest')->group(function () {
@@ -28,6 +30,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/kategori', function () {
         return Inertia::render('Kategori');
     })->name('dashboard.kategori');
+    Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
     Route::get('/dashboard/stok', function () {
         return Inertia::render('Stok');
     })->name('dashboard.stok');

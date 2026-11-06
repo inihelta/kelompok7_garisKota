@@ -12,7 +12,9 @@ class TableController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('Meja', [
+            'tables' => table::all()
+        ]);
     }
 
     /**

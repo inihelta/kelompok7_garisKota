@@ -5,6 +5,10 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\category;
 use App\Models\menu;
+use App\Models\table;
+use App\Models\order;
+use App\Models\orderItem;
+use App\Models\payment;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -25,11 +29,13 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::create([
-            'email' => 'admin@gmail.com',
-            'name' => 'Admin',
-            'password' => Hash::make('password'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('password'),
+            ]
+        );
 
 
         $makanan = category::firstOrCreate(['name' => 'Makanan']);
@@ -129,6 +135,231 @@ class DatabaseSeeder extends Seeder
             menu::updateOrCreate(
                 ['name' => $menuData['name']],
                 $menuData
+            );
+        }
+
+        // ==========================================
+        // Data Seeder Tables (Meja)
+        // ==========================================
+        $tables = [
+            ['table_number' => 1, 'capacity' => 2, 'available' => true, 'location' => 'indoor'],
+            ['table_number' => 2, 'capacity' => 4, 'available' => false, 'location' => 'indoor'],
+            ['table_number' => 3, 'capacity' => 4, 'available' => true, 'location' => 'indoor'],
+            ['table_number' => 4, 'capacity' => 6, 'available' => false, 'location' => 'indoor'],
+            ['table_number' => 5, 'capacity' => 4, 'available' => true, 'location' => 'outdoor'],
+            ['table_number' => 6, 'capacity' => 2, 'available' => false, 'location' => 'outdoor'],
+            ['table_number' => 7, 'capacity' => 4, 'available' => true, 'location' => 'outdoor'],
+            ['table_number' => 8, 'capacity' => 8, 'available' => true, 'location' => 'outdoor'],
+        ];
+
+        $createdTables = [];
+        foreach ($tables as $tableData) {
+            $createdTables[$tableData['table_number']] = table::updateOrCreate(
+                ['table_number' => $tableData['table_number']],
+                $tableData
+            );
+        }
+
+        // Ambil referensi menu untuk pemesanan
+        $nasgor = menu::where('name', 'Nasi Goreng')->first();
+        $kentang = menu::where('name', 'Kentang Goreng')->first();
+        $mixPlatter = menu::where('name', 'Mix Platter')->first();
+        $matcha = menu::where('name', 'Matcha Latte')->first();
+        $hazelnut = menu::where('name', 'Hazelnut Latte')->first();
+        $espresso = menu::where('name', 'Espresso')->first();
+
+        // ==========================================
+        // Data Seeder Orders, Order Items, & Payments
+        // ==========================================
+        // Order 1 (Meja 2 - Dine In - Processing)
+        if (isset($createdTables[2]) && $nasgor && $kentang) {
+            $order1 = order::updateOrCreate(
+                [
+                    'table_id' => $createdTables[2]->id,
+                    'order_status' => 'processing',
+                ],
+                [
+                    'order_type' => 'dine-in',
+                    'total_price' => 48000,
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order1->id,
+                    'menu_id' => $nasgor->id,
+                ],
+                [
+                    'quantity' => 2,
+                    'unit_price' => 18000,
+                    'notes' => 'Pedas sedang',
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order1->id,
+                    'menu_id' => $kentang->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 12000,
+                    'notes' => null,
+                ]
+            );
+
+            payment::updateOrCreate(
+                ['order_id' => $order1->id],
+                [
+                    'payment_method' => 'qris',
+                    'payment_amount' => 48000,
+                    'payment_status' => 'pending',
+                    'transaction_ref' => 'QRIS-20261104-001',
+                ]
+            );
+        }
+
+        // Order 2 (Meja 4 - Dine In - Pending)
+        if (isset($createdTables[4]) && $mixPlatter && $matcha) {
+            $order2 = order::updateOrCreate(
+                [
+                    'table_id' => $createdTables[4]->id,
+                    'order_status' => 'pending',
+                ],
+                [
+                    'order_type' => 'dine-in',
+                    'total_price' => 65000,
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order2->id,
+                    'menu_id' => $mixPlatter->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 25000,
+                    'notes' => 'Saus dipisah',
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order2->id,
+                    'menu_id' => $matcha->id,
+                ],
+                [
+                    'quantity' => 2,
+                    'unit_price' => 20000,
+                    'notes' => 'Less sugar',
+                ]
+            );
+
+            payment::updateOrCreate(
+                ['order_id' => $order2->id],
+                [
+                    'payment_method' => 'cash',
+                    'payment_amount' => 65000,
+                    'payment_status' => 'pending',
+                    'transaction_ref' => null,
+                ]
+            );
+        }
+
+        // Order 3 (Meja 6 - Dine In - Completed)
+        if (isset($createdTables[6]) && $hazelnut && $espresso) {
+            $order3 = order::updateOrCreate(
+                [
+                    'table_id' => $createdTables[6]->id,
+                    'order_status' => 'completed',
+                ],
+                [
+                    'order_type' => 'dine-in',
+                    'total_price' => 32000,
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order3->id,
+                    'menu_id' => $hazelnut->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 20000,
+                    'notes' => 'Hangat',
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order3->id,
+                    'menu_id' => $espresso->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 12000,
+                    'notes' => null,
+                ]
+            );
+
+            payment::updateOrCreate(
+                ['order_id' => $order3->id],
+                [
+                    'payment_method' => 'e_wallet',
+                    'payment_amount' => 32000,
+                    'payment_status' => 'done',
+                    'transaction_ref' => 'EWAL-20261104-003',
+                ]
+            );
+        }
+
+        // Order 4 (Meja 1 - Takeaway - Completed)
+        if (isset($createdTables[1]) && $hazelnut && $matcha) {
+            $order4 = order::updateOrCreate(
+                [
+                    'table_id' => $createdTables[1]->id,
+                    'order_type' => 'takeaway',
+                    'order_status' => 'completed',
+                ],
+                [
+                    'total_price' => 40000,
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order4->id,
+                    'menu_id' => $hazelnut->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 20000,
+                    'notes' => 'Takeaway cup',
+                ]
+            );
+
+            orderItem::firstOrCreate(
+                [
+                    'order_id' => $order4->id,
+                    'menu_id' => $matcha->id,
+                ],
+                [
+                    'quantity' => 1,
+                    'unit_price' => 20000,
+                    'notes' => 'Takeaway cup',
+                ]
+            );
+
+            payment::updateOrCreate(
+                ['order_id' => $order4->id],
+                [
+                    'payment_method' => 'cash',
+                    'payment_amount' => 40000,
+                    'payment_status' => 'done',
+                    'transaction_ref' => null,
+                ]
             );
         }
     }

@@ -6,5 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class table extends Model
 {
-    //
+    protected $table = 'tables';
+
+    protected $fillable = [
+        'table_number',
+        'capacity',
+        'available',
+        'location',
+    ];
+
+    protected $casts = [
+        'available' => 'boolean',
+        'capacity' => 'integer',
+        'table_number' => 'integer',
+    ];
+
+    public function orders()
+    {
+        return $this->hasMany(order::class);
+    }
 }

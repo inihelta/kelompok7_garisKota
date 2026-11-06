@@ -13,6 +13,16 @@ class menu extends Model
         'price',
         'image',
         'stock',
-        'status'
+        'status',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(category::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(orderItem::class);
+    }
 }
