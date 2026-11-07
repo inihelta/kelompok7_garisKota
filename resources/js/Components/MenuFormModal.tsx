@@ -32,16 +32,17 @@ export default function MenuFormModal({
 }: MenuFormModalProps) {
     const isEdit = Boolean(menu);
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
-        name: "",
-        category_id: "" as number | string,
-        price: "" as number | string,
-        stock: 0 as number | string,
-        description: "",
-        status: "tersedia" as "tersedia" | "draft" | "nonaktif",
-        image: null as File | null,
-        remove_image: false,
-    });
+    const { data, setData, post, processing, errors, reset, clearErrors } =
+        useForm({
+            name: "",
+            category_id: "" as number | string,
+            price: "" as number | string,
+            stock: 0 as number | string,
+            description: "",
+            status: "tersedia" as "tersedia" | "draft" | "nonaktif",
+            image: null as File | null,
+            remove_image: false,
+        });
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -61,8 +62,9 @@ export default function MenuFormModal({
                 });
                 if (menu.image) {
                     const fullImageUrl =
-                        menu.image.startsWith("http") || menu.image.startsWith("/")
-                             ? menu.image
+                        menu.image.startsWith("http") ||
+                        menu.image.startsWith("/")
+                            ? menu.image
                             : `/storage/${menu.image}`;
                     setImagePreview(fullImageUrl);
                 } else {
@@ -146,43 +148,51 @@ export default function MenuFormModal({
                     onSubmit={handleSubmit}
                     className="flex flex-col flex-1 overflow-hidden min-h-0 mt-2"
                 >
-                    {/* Scrollable form body */}
                     <div className="space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-2 py-1">
-                        {/* Nama Menu */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Nama Menu <span className="text-red-500">*</span>
+                                Nama Menu{" "}
+                                <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
                                 value={data.name}
-                                onChange={(e) => setData("name", e.target.value)}
+                                onChange={(e) =>
+                                    setData("name", e.target.value)
+                                }
                                 placeholder="Contoh: Kopi Susu Aren"
-                                className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${errors.name
-                                    ? "border-red-500 focus:border-red-600"
-                                    : "border-[#d1d5db] focus:border-[#D91A20]"
-                                    }`}
+                                className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${
+                                    errors.name
+                                        ? "border-red-500 focus:border-red-600"
+                                        : "border-[#d1d5db] focus:border-[#D91A20]"
+                                }`}
                             />
                             {errors.name && (
-                                <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.name}
+                                </p>
                             )}
                         </div>
 
-                        {/* Kategori & Status */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Kategori <span className="text-red-500">*</span>
+                                    Kategori{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={data.category_id}
                                     onChange={(e) =>
-                                        setData("category_id", Number(e.target.value))
+                                        setData(
+                                            "category_id",
+                                            Number(e.target.value),
+                                        )
                                     }
-                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 ${errors.category_id
-                                        ? "border-red-500 focus:border-red-600"
-                                        : "border-[#d1d5db] focus:border-[#D91A20]"
-                                        }`}
+                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 ${
+                                        errors.category_id
+                                            ? "border-red-500 focus:border-red-600"
+                                            : "border-[#d1d5db] focus:border-[#D91A20]"
+                                    }`}
                                 >
                                     <option value="" disabled>
                                         Pilih Kategori
@@ -202,7 +212,8 @@ export default function MenuFormModal({
 
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Status <span className="text-red-500">*</span>
+                                    Status{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={data.status}
@@ -210,15 +221,16 @@ export default function MenuFormModal({
                                         setData(
                                             "status",
                                             e.target.value as
-                                            | "tersedia"
-                                            | "draft"
-                                            | "nonaktif"
+                                                | "tersedia"
+                                                | "draft"
+                                                | "nonaktif",
                                         )
                                     }
-                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 ${errors.status
-                                        ? "border-red-500 focus:border-red-600"
-                                        : "border-[#d1d5db] focus:border-[#D91A20]"
-                                        }`}
+                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 ${
+                                        errors.status
+                                            ? "border-red-500 focus:border-red-600"
+                                            : "border-[#d1d5db] focus:border-[#D91A20]"
+                                    }`}
                                 >
                                     <option value="tersedia">Tersedia</option>
                                     <option value="draft">Draft</option>
@@ -232,24 +244,26 @@ export default function MenuFormModal({
                             </div>
                         </div>
 
-                        {/* Harga & Stok */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Harga (Rp) <span className="text-red-500">*</span>
+                                    Harga (Rp){" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
                                     min="0"
                                     value={data.price}
-                                    onChange={(e) => setData("price", e.target.value)}
+                                    onChange={(e) =>
+                                        setData("price", e.target.value)
+                                    }
                                     placeholder="Contoh: 25000"
-                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${errors.price
-                                        ? "border-red-500 focus:border-red-600"
-                                        : "border-[#d1d5db] focus:border-[#D91A20]"
-                                        }`}
-                                >
-                                </input>
+                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${
+                                        errors.price
+                                            ? "border-red-500 focus:border-red-600"
+                                            : "border-[#d1d5db] focus:border-[#D91A20]"
+                                    }`}
+                                ></input>
                                 {errors.price && (
                                     <p className="text-xs text-red-500 mt-1">
                                         {errors.price}
@@ -265,12 +279,15 @@ export default function MenuFormModal({
                                     type="number"
                                     min="0"
                                     value={data.stock}
-                                    onChange={(e) => setData("stock", e.target.value)}
+                                    onChange={(e) =>
+                                        setData("stock", e.target.value)
+                                    }
                                     placeholder="Contoh: 50"
-                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${errors.stock
-                                        ? "border-red-500 focus:border-red-600"
-                                        : "border-[#d1d5db] focus:border-[#D91A20]"
-                                        }`}
+                                    className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${
+                                        errors.stock
+                                            ? "border-red-500 focus:border-red-600"
+                                            : "border-[#d1d5db] focus:border-[#D91A20]"
+                                    }`}
                                 />
                                 {errors.stock && (
                                     <p className="text-xs text-red-500 mt-1">
@@ -280,7 +297,6 @@ export default function MenuFormModal({
                             </div>
                         </div>
 
-                        {/* Deskripsi */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
                                 Deskripsi
@@ -288,12 +304,15 @@ export default function MenuFormModal({
                             <textarea
                                 rows={3}
                                 value={data.description}
-                                onChange={(e) => setData("description", e.target.value)}
+                                onChange={(e) =>
+                                    setData("description", e.target.value)
+                                }
                                 placeholder="Deskripsi singkat mengenai menu..."
-                                className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none resize-none transition-colors duration-200 ${errors.description
-                                    ? "border-red-500 focus:border-red-600"
-                                    : "border-[#d1d5db] focus:border-[#D91A20]"
-                                    }`}
+                                className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none resize-none transition-colors duration-200 ${
+                                    errors.description
+                                        ? "border-red-500 focus:border-red-600"
+                                        : "border-[#d1d5db] focus:border-[#D91A20]"
+                                }`}
                             />
                             {errors.description && (
                                 <p className="text-xs text-red-500 mt-1">
@@ -302,7 +321,6 @@ export default function MenuFormModal({
                             )}
                         </div>
 
-                        {/* Upload Gambar & Live Preview */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
                                 Foto Menu
@@ -337,7 +355,8 @@ export default function MenuFormModal({
                                             atau drag & drop
                                         </p>
                                         <p className="text-[11px] text-gray-400 mt-1">
-                                            PNG, JPG, JPEG, atau WEBP (Maks. 2MB)
+                                            PNG, JPG, JPEG, atau WEBP (Maks.
+                                            2MB)
                                         </p>
                                     </div>
                                     <input
@@ -350,12 +369,13 @@ export default function MenuFormModal({
                             )}
 
                             {errors.image && (
-                                <p className="text-xs text-red-500 mt-1">{errors.image}</p>
+                                <p className="text-xs text-red-500 mt-1">
+                                    {errors.image}
+                                </p>
                             )}
                         </div>
                     </div>
 
-                    {/* Fixed Footer */}
                     <DialogFooter className="pt-3 mt-3 border-t border-gray-100 flex-shrink-0 gap-2">
                         <Button
                             type="button"
@@ -373,8 +393,8 @@ export default function MenuFormModal({
                             {processing
                                 ? "Menyimpan..."
                                 : isEdit
-                                    ? "Simpan Perubahan"
-                                    : "Tambah Menu"}
+                                  ? "Simpan Perubahan"
+                                  : "Tambah Menu"}
                         </Button>
                     </DialogFooter>
                 </form>

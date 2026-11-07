@@ -24,8 +24,24 @@ export interface CategoryItem {
     created_at?: string;
 }
 
+export type StockCategoryIcon =
+    | "coffee"
+    | "milk"
+    | "droplet"
+    | "cup"
+    | "food"
+    | "package";
+
+export interface StockCategoryItem {
+    id: number;
+    name: string;
+    icon?: StockCategoryIcon;
+    stocks_count?: number;
+}
+
 export interface StockItem {
     id: number;
+    stock_category_id?: number;
     name: string;
     sku: string;
     category: string;
@@ -34,7 +50,22 @@ export interface StockItem {
     min_stock: number;
     est_daily: number | string;
     status: "Aman" | "Menipis";
-    icon_type?: "coffee" | "milk" | "droplet" | "cup" | "food" | "package";
+    icon_type?: StockCategoryIcon;
+}
+
+export interface PaginatedData<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
 }
 
 export interface OrderItemDetail {

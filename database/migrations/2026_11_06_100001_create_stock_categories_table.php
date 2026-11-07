@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('stock_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->enum('icon', ['coffee', 'milk', 'droplet', 'cup', 'food', 'package'])->default('package');
             $table->timestamps();
         });
     }
@@ -26,4 +27,3 @@ return new class extends Migration
         Schema::dropIfExists('stock_categories');
     }
 };
-

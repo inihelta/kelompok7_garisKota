@@ -97,15 +97,6 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                     </BreadcrumbList>
                 </Breadcrumb>
             </div>
-            {/* 
-            <form className="relative w-full max-w-[338px]" role="search" onSubmit={(e) => e.preventDefault()}>
-                <Search className="absolute left-[10px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-[#e31b23] stroke-[2] pointer-events-none block" />
-                <input
-                    type="search"
-                    className="w-full h-[39px] pl-[36px] pr-[10px] text-[12px] text-[#374151] bg-white border border-[#e5e7eb] rounded-[5px] placeholder-[#9ca3af] outline-none focus:border-[#f87171] focus:ring-3 focus:ring-[#fee2e2]"
-                    placeholder="Cari menu, kategori, atau kode..."
-                />
-            </form> */}
 
             <div className="flex items-center gap-[18px] lg:gap-[30px] ml-auto">
                 <button

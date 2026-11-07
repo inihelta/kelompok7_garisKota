@@ -363,13 +363,29 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // ==========================================
         // Data Seeder Kategori Bahan Baku & Stok
-
-        $catKopi = StockCategory::firstOrCreate(['name' => 'Biji Kopi & Bubuk']);
-        $catDairy = StockCategory::firstOrCreate(['name' => 'Susu & Dairy']);
-        $catSirup = StockCategory::firstOrCreate(['name' => 'Sirup & Topping']);
-        $catPackaging = StockCategory::firstOrCreate(['name' => 'Packaging & Cup']);
-        $catMakanan = StockCategory::firstOrCreate(['name' => 'Bahan Makanan']);
+        // ==========================================
+        $catKopi = StockCategory::firstOrCreate(
+            ['name' => 'Biji Kopi & Bubuk'],
+            ['icon' => 'coffee']
+        );
+        $catDairy = StockCategory::firstOrCreate(
+            ['name' => 'Susu & Dairy'],
+            ['icon' => 'milk']
+        );
+        $catSirup = StockCategory::firstOrCreate(
+            ['name' => 'Sirup & Topping'],
+            ['icon' => 'droplet']
+        );
+        $catPackaging = StockCategory::firstOrCreate(
+            ['name' => 'Packaging & Cup'],
+            ['icon' => 'cup']
+        );
+        $catMakanan = StockCategory::firstOrCreate(
+            ['name' => 'Bahan Makanan'],
+            ['icon' => 'food']
+        );
 
         $stockItems = [
             [
@@ -380,7 +396,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'kg',
                 'min_stock' => 5.0,
                 'est_daily' => 1.8,
-                'icon_type' => 'coffee',
             ],
             [
                 'stock_category_id' => $catDairy->id,
@@ -390,7 +405,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Liter',
                 'min_stock' => 8,
                 'est_daily' => 8,
-                'icon_type' => 'milk',
             ],
             [
                 'stock_category_id' => $catDairy->id,
@@ -400,7 +414,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Liter',
                 'min_stock' => 8,
                 'est_daily' => 8,
-                'icon_type' => 'droplet',
             ],
             [
                 'stock_category_id' => $catSirup->id,
@@ -410,7 +423,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Botol',
                 'min_stock' => 4,
                 'est_daily' => 6,
-                'icon_type' => 'droplet',
             ],
             [
                 'stock_category_id' => $catSirup->id,
@@ -420,7 +432,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Botol',
                 'min_stock' => 4,
                 'est_daily' => 6,
-                'icon_type' => 'droplet',
             ],
             [
                 'stock_category_id' => $catSirup->id,
@@ -430,7 +441,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Botol',
                 'min_stock' => 4,
                 'est_daily' => 6,
-                'icon_type' => 'droplet',
             ],
             [
                 'stock_category_id' => $catPackaging->id,
@@ -440,7 +450,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'Pcs',
                 'min_stock' => 100,
                 'est_daily' => 50,
-                'icon_type' => 'cup',
             ],
             [
                 'stock_category_id' => $catMakanan->id,
@@ -450,7 +459,6 @@ class DatabaseSeeder extends Seeder
                 'unit' => 'kg',
                 'min_stock' => 10,
                 'est_daily' => 3,
-                'icon_type' => 'food',
             ],
         ];
 

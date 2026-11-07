@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Search, Pencil, Trash2, Plus, MenuSquare } from "lucide-react";
@@ -13,6 +13,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import KategoriFormModal from "@/Components/KategoriFormModal";
+import Pagination from "@/Components/Pagination";
 
 interface KategoriPageProps {
     auth: any;
@@ -32,25 +33,41 @@ export default function Kategori({
     const [categories, setCategories] = useState<CategoryItem[]>(
         propCategories && propCategories.length > 0
             ? propCategories
-            : initialCategories
+            : initialCategories,
     );
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(
-        null
+        null,
     );
     const [activeDialog, setActiveDialog] = useState<
         "create" | "edit" | "remove" | null
     >(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
     const filteredItems = categories.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
+
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = filteredItems.slice(
+        startIndex,
+        startIndex + itemsPerPage,
     );
 
     const handleSaveCategory = (data: { id?: number; name: string }) => {
         if (data.id) {
             setCategories((prev) =>
-                prev.map((c) => (c.id === data.id ? { ...c, name: data.name } : c))
+                prev.map((c) =>
+                    c.id === data.id ? { ...c, name: data.name } : c,
+                ),
             );
         } else {
             const newId =
@@ -77,7 +94,6 @@ export default function Kategori({
         <AuthenticatedLayout user={auth?.user} activeNav="Kategori">
             <Head title="Kategori" />
 
-            {/* Header */}
             <div className="flex justify-between pb-3 flex-wrap gap-3 items-center">
                 <div className="flex gap-3 my-2">
                     <div className="p-2.5 aspect-square rounded-xl border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
@@ -103,7 +119,6 @@ export default function Kategori({
                 </button>
             </div>
 
-            {/* Metric Card */}
             <div className="flex justify-between pb-3 gap-3 items-center">
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
@@ -116,7 +131,6 @@ export default function Kategori({
                 </div>
             </div>
 
-            {/* Table Section */}
             <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-3">
                 <div className="flex justify-between items-center pb-3 flex-wrap gap-3">
                     <div className="relative flex items-center w-[20rem] max-md:w-full max-w-full">
@@ -158,10 +172,10 @@ export default function Kategori({
                                     </td>
                                 </tr>
                             ) : (
-                                filteredItems.map((item, i) => (
+                                paginatedItems.map((item, i) => (
                                     <tr key={item.id}>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
-                                            {i + 1}
+                                            {startIndex + i + 1}
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                             <span className="font-semibold text-[#1e293b]">
@@ -175,7 +189,9 @@ export default function Kategori({
                                                     className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
                                                     title="Edit"
                                                     onClick={() => {
-                                                        setEditingCategory(item);
+                                                        setEditingCategory(
+                                                            item,
+                                                        );
                                                         setActiveDialog("edit");
                                                     }}
                                                 >
@@ -186,8 +202,12 @@ export default function Kategori({
                                                     className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
                                                     title="Hapus"
                                                     onClick={() => {
-                                                        setActiveDialog("remove");
-                                                        setSelectedItems([item.id]);
+                                                        setActiveDialog(
+                                                            "remove",
+                                                        );
+                                                        setSelectedItems([
+                                                            item.id,
+                                                        ]);
                                                     }}
                                                 >
                                                     <Trash2 className="w-[18px] h-[18px]" />
@@ -200,9 +220,21 @@ export default function Kategori({
                         </tbody>
                     </table>
                 </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    from={filteredItems.length > 0 ? startIndex + 1 : 0}
+                    to={Math.min(
+                        startIndex + itemsPerPage,
+                        filteredItems.length,
+                    )}
+                    total={filteredItems.length}
+                    itemName="kategori"
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
             </div>
 
-            {/* Modal Form Tambah/Edit Kategori */}
             <KategoriFormModal
                 isOpen={activeDialog === "create" || activeDialog === "edit"}
                 onClose={() => {
@@ -226,8 +258,9 @@ export default function Kategori({
                         <DialogTitle>
                             Hapus{" "}
                             {
-                                categories.find((i) => i.id === selectedItems[0])
-                                    ?.name
+                                categories.find(
+                                    (i) => i.id === selectedItems[0],
+                                )?.name
                             }
                             ?
                         </DialogTitle>
@@ -235,8 +268,9 @@ export default function Kategori({
                             Tindakan ini tidak dapat dibatalkan. Ini akan
                             menghapus kategori "
                             {
-                                categories.find((i) => i.id === selectedItems[0])
-                                    ?.name
+                                categories.find(
+                                    (i) => i.id === selectedItems[0],
+                                )?.name
                             }
                             " selamanya.
                         </DialogDescription>

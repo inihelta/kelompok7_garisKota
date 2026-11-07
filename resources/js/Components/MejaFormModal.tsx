@@ -28,7 +28,9 @@ export default function MejaFormModal({
     const [nomorMeja, setNomorMeja] = useState("");
     const [area, setArea] = useState<"Indoor" | "Outdoor">("Indoor");
     const [kapasitas, setKapasitas] = useState<number>(4);
-    const [status, setStatus] = useState<"tersedia" | "terisi" | "reservasi">("tersedia");
+    const [status, setStatus] = useState<"tersedia" | "terisi" | "reservasi">(
+        "tersedia",
+    );
     const [catatan, setCatatan] = useState("");
     const [error, setError] = useState<string | null>(null);
 
@@ -94,12 +96,11 @@ export default function MejaFormModal({
                     onSubmit={handleSubmit}
                     className="flex flex-col flex-1 overflow-hidden min-h-0 mt-2"
                 >
-                    {/* Scrollable form body */}
                     <div className="space-y-4 overflow-y-auto flex-1 pr-2 py-1">
-                        {/* Nomor Meja */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Nomor Meja <span className="text-red-500">*</span>
+                                Nomor Meja{" "}
+                                <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -116,20 +117,26 @@ export default function MejaFormModal({
                                 }`}
                             />
                             {error && (
-                                <p className="text-xs text-red-500 mt-1">{error}</p>
+                                <p className="text-xs text-red-500 mt-1">
+                                    {error}
+                                </p>
                             )}
                         </div>
 
-                        {/* Area & Status */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Area / Lokasi <span className="text-red-500">*</span>
+                                    Area / Lokasi{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={area}
                                     onChange={(e) =>
-                                        setArea(e.target.value as "Indoor" | "Outdoor")
+                                        setArea(
+                                            e.target.value as
+                                                | "Indoor"
+                                                | "Outdoor",
+                                        )
                                     }
                                     className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
                                 >
@@ -140,7 +147,8 @@ export default function MejaFormModal({
 
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Status <span className="text-red-500">*</span>
+                                    Status{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={status}
@@ -149,7 +157,7 @@ export default function MejaFormModal({
                                             e.target.value as
                                                 | "tersedia"
                                                 | "terisi"
-                                                | "reservasi"
+                                                | "reservasi",
                                         )
                                     }
                                     className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
@@ -161,23 +169,24 @@ export default function MejaFormModal({
                             </div>
                         </div>
 
-                        {/* Kapasitas */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Kapasitas Kursi (Orang) <span className="text-red-500">*</span>
+                                Kapasitas Kursi (Orang){" "}
+                                <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="number"
                                 min="1"
                                 max="20"
                                 value={kapasitas}
-                                onChange={(e) => setKapasitas(Number(e.target.value))}
+                                onChange={(e) =>
+                                    setKapasitas(Number(e.target.value))
+                                }
                                 placeholder="Contoh: 4"
                                 className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
                             />
                         </div>
 
-                        {/* Catatan / Keterangan */}
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
                                 Catatan / Keterangan
@@ -192,13 +201,8 @@ export default function MejaFormModal({
                         </div>
                     </div>
 
-                    {/* Fixed Footer */}
                     <DialogFooter className="pt-3 mt-3 border-t border-gray-100 flex-shrink-0 gap-2">
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            onClick={onClose}
-                        >
+                        <Button type="button" variant="ghost" onClick={onClose}>
                             Batal
                         </Button>
                         <Button
@@ -213,4 +217,3 @@ export default function MejaFormModal({
         </Dialog>
     );
 }
-

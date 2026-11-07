@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import MenuFormModal from "@/Components/MenuFormModal";
+import Pagination from "@/Components/Pagination";
 
 export default function Menu({
     auth,
@@ -44,6 +45,9 @@ export default function Menu({
         "create" | "edit" | "remove" | null
     >(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
     const filteredItems = menus.filter((item) => {
         const matchesCategory =
             activeCategory === "Semua Menu" ||
@@ -55,28 +59,23 @@ export default function Menu({
         return matchesCategory && matchesSearch;
     });
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, activeCategory]);
+
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedItems = filteredItems.slice(
+        startIndex,
+        startIndex + itemsPerPage,
+    );
+
     const formatIDR = (value: number) =>
         new Intl.NumberFormat("id-ID", {
             style: "currency",
             currency: "IDR",
             minimumFractionDigits: 0,
         }).format(value);
-
-    // const toggleSelectAll = () => {
-    //     if (selectedItems.length === filteredItems.length) {
-    //         setSelectedItems([]);
-    //     } else {
-    //         setSelectedItems(filteredItems.map((item) => item.id));
-    //     }
-    // };
-
-    // const toggleSelectItem = (id: number) => {
-    //     if (selectedItems.includes(id)) {
-    //         setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
-    //     } else {
-    //         setSelectedItems([...selectedItems, id]);
-    //     }
-    // };
 
     const getCategoryBadgeClass = (category_id: MenuItem["category_id"]) => {
         switch (category_id) {
@@ -152,7 +151,6 @@ export default function Menu({
             </div>
 
             <div className="flex justify-between pb-3 gap-3 items-center">
-                {/* 1 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <ConciergeBell className="size-5 max-md:size-8" />
@@ -162,7 +160,6 @@ export default function Menu({
                         {menus.length}
                     </span>
                 </div>
-                {/* 2 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <MenuSquare className="size-5 max-md:size-8" />
@@ -172,7 +169,6 @@ export default function Menu({
                         {categories.length}
                     </span>
                 </div>
-                {/* 3 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <ToggleRight className="size-5 max-md:size-8" />
@@ -224,16 +220,6 @@ export default function Menu({
                         <thead>
                             <tr>
                                 <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]">
-                                    {/* <input
-                                        type="checkbox"
-                                        checked={
-                                            filteredItems.length > 0 &&
-                                            selectedItems.length ===
-                                                filteredItems.length
-                                        }
-                                        onChange={toggleSelectAll}
-                                        className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
-                                    /> */}
                                     #
                                 </th>
                                 <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]">
@@ -260,113 +246,134 @@ export default function Menu({
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredItems.map((item, i) => (
-                                <tr key={item.id}>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
-                                        {/* <input
-                                            type="checkbox"
-                                            checked={selectedItems.includes(
-                                                item.id,
-                                            )}
-                                            onChange={() =>
-                                                toggleSelectItem(item.id)
-                                            }
-                                            className="w-[18px] h-[18px] rounded border border-[#cbd5e1] cursor-pointer accent-[#ef4444]"
-                                        /> */}
-                                        {i + 1}
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
-                                        {item.image ? (
-                                            <img
-                                                src={getImageSrc(item.image)}
-                                                alt={item.name}
-                                                className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
-                                                onError={(e) => {
-                                                    (
-                                                        e.target as HTMLElement
-                                                    ).style.display = "block";
-                                                }}
-                                            />
-                                        ) : (
-                                            <div className="w-12 h-12 rounded-[8px] bg-[#f1f5f9] flex items-center justify-center text-xs text-gray-400 font-medium">
-                                                No Img
-                                            </div>
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
-                                        <div className="flex flex-col">
-                                            <span className="font-semibold text-[#1e293b] mb-1">
-                                                {item.name}
-                                            </span>
-                                            <span className="text-[13px] text-[#94a3b8]">
-                                                {item.description}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        <span
-                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getCategoryBadgeClass(
-                                                item.category_id,
-                                            )}`}
-                                        >
-                                            {
-                                                categories.find(
-                                                    (cat) =>
-                                                        cat.id ===
-                                                        item.category_id,
-                                                )?.name
-                                            }
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        {formatIDR(Number(item.price))}
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        {item.stock}
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        <span
-                                            className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getStatusBadgeClass(
-                                                item.status,
-                                            )}`}
-                                        >
-                                            {item.status
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                                item.status.slice(1)}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                        <div className="flex gap-2">
-                                            <button
-                                                type="button"
-                                                className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
-                                                title="Edit"
-                                                onClick={() => {
-                                                    setEditingMenu(item);
-                                                    setActiveDialog("edit");
-                                                }}
-                                            >
-                                                <Pencil className="w-[18px] h-[18px]" />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
-                                                title="Hapus"
-                                                onClick={() => {
-                                                    setActiveDialog("remove");
-                                                    setSelectedItems([item.id]);
-                                                }}
-                                            >
-                                                <Trash2 className="w-[18px] h-[18px]" />
-                                            </button>
-                                        </div>
+                            {filteredItems.length === 0 ? (
+                                <tr>
+                                    <td
+                                        colSpan={8}
+                                        className="text-center py-8 text-gray-400 text-[14px]"
+                                    >
+                                        Tidak ada menu ditemukan.
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                paginatedItems.map((item, i) => (
+                                    <tr key={item.id}>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
+                                            {startIndex + i + 1}
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
+                                            {item.image ? (
+                                                <img
+                                                    src={getImageSrc(
+                                                        item.image,
+                                                    )}
+                                                    alt={item.name}
+                                                    className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
+                                                    onError={(e) => {
+                                                        (
+                                                            e.target as HTMLElement
+                                                        ).style.display =
+                                                            "block";
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-[8px] bg-[#f1f5f9] flex items-center justify-center text-xs text-gray-400 font-medium">
+                                                    No Img
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-[#1e293b] mb-1">
+                                                    {item.name}
+                                                </span>
+                                                <span className="text-[13px] text-[#94a3b8]">
+                                                    {item.description}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                            <span
+                                                className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getCategoryBadgeClass(
+                                                    item.category_id,
+                                                )}`}
+                                            >
+                                                {
+                                                    categories.find(
+                                                        (cat) =>
+                                                            cat.id ===
+                                                            item.category_id,
+                                                    )?.name
+                                                }
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                            {formatIDR(Number(item.price))}
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                            {item.stock}
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                            <span
+                                                className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center ${getStatusBadgeClass(
+                                                    item.status,
+                                                )}`}
+                                            >
+                                                {item.status
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    item.status.slice(1)}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                            <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
+                                                    title="Edit"
+                                                    onClick={() => {
+                                                        setEditingMenu(item);
+                                                        setActiveDialog("edit");
+                                                    }}
+                                                >
+                                                    <Pencil className="w-[18px] h-[18px]" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
+                                                    title="Hapus"
+                                                    onClick={() => {
+                                                        setActiveDialog(
+                                                            "remove",
+                                                        );
+                                                        setSelectedItems([
+                                                            item.id,
+                                                        ]);
+                                                    }}
+                                                >
+                                                    <Trash2 className="w-[18px] h-[18px]" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    from={filteredItems.length > 0 ? startIndex + 1 : 0}
+                    to={Math.min(
+                        startIndex + itemsPerPage,
+                        filteredItems.length,
+                    )}
+                    total={filteredItems.length}
+                    itemName="menu"
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
 
                 {/* Edit/Create Dialog */}
                 <MenuFormModal

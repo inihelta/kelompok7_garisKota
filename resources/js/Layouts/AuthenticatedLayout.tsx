@@ -19,7 +19,6 @@ export default function AuthenticatedLayout({
         <div className="m-0 font-sans text-[#111827] bg-white antialiased min-h-screen">
             <Sidebar isOpen={sidebarOpen} activeNav={activeNav} />
 
-            {/* Backdrop overlay for mobile drawer */}
             <div
                 id="overlay"
                 onClick={() => setSidebarOpen(false)}

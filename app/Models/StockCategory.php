@@ -10,6 +10,7 @@ class StockCategory extends Model
 
     protected $fillable = [
         'name',
+        'icon',
     ];
 
     public function stocks()
@@ -17,4 +18,3 @@ class StockCategory extends Model
         return $this->hasMany(Stock::class, 'stock_category_id');
     }
 }
-

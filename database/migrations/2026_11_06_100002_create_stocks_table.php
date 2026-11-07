@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('unit')->default('Pcs');
             $table->decimal('min_stock', 10, 2)->default(0);
             $table->decimal('est_daily', 10, 2)->default(0);
-            $table->string('icon_type')->nullable();
             $table->timestamps();
         });
     }
@@ -33,4 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('stocks');
     }
 };
-

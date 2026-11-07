@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
@@ -15,8 +15,15 @@ import {
     Package,
     ChevronLeft,
     ChevronRight,
+    Layers,
+    Plus,
 } from "lucide-react";
-import { StockItem } from "@/types/dashboard";
+import {
+    StockItem,
+    StockCategoryItem,
+    StockCategoryIcon,
+    PaginatedData,
+} from "@/types/dashboard";
 import {
     Dialog,
     DialogContent,
@@ -27,11 +34,14 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import StokFormModal from "@/Components/StokFormModal";
+import StockCategoryModal from "@/Components/StockCategoryModal";
+import Pagination from "@/Components/Pagination";
 
 interface StokPageProps {
     auth: any;
-    stockItems?: StockItem[];
+    stockItems?: StockItem[] | PaginatedData<StockItem>;
     categories?: string[];
+    categoryList?: StockCategoryItem[];
 }
 
 const initialStockItems: StockItem[] = [
@@ -45,7 +55,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 5.0,
         est_daily: 1.8,
         status: "Aman",
-        icon_type: "coffee",
     },
     {
         id: 2,
@@ -57,7 +66,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 8,
         est_daily: 8,
         status: "Menipis",
-        icon_type: "milk",
     },
     {
         id: 3,
@@ -69,7 +77,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 8,
         est_daily: 8,
         status: "Aman",
-        icon_type: "droplet",
     },
     {
         id: 4,
@@ -81,7 +88,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 4,
         est_daily: 6,
         status: "Menipis",
-        icon_type: "droplet",
     },
     {
         id: 5,
@@ -93,7 +99,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 4,
         est_daily: 6,
         status: "Aman",
-        icon_type: "droplet",
     },
     {
         id: 6,
@@ -105,7 +110,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 4,
         est_daily: 6,
         status: "Aman",
-        icon_type: "droplet",
     },
     {
         id: 7,
@@ -117,7 +121,6 @@ const initialStockItems: StockItem[] = [
         min_stock: 100,
         est_daily: 50,
         status: "Aman",
-        icon_type: "cup",
     },
     {
         id: 8,
@@ -129,40 +132,151 @@ const initialStockItems: StockItem[] = [
         min_stock: 10,
         est_daily: 3,
         status: "Aman",
-        icon_type: "food",
     },
 ];
 
-const defaultCategories = [
-    "Semua Kategori",
-    "Biji Kopi & Bubuk",
-    "Susu & Dairy",
-    "Sirup & Topping",
-    "Packaging & Cup",
-    "Bahan Makanan",
+const initialCategoryList: StockCategoryItem[] = [
+    { id: 1, name: "Biji Kopi & Bubuk", icon: "coffee" },
+    { id: 2, name: "Susu & Dairy", icon: "milk" },
+    { id: 3, name: "Sirup & Topping", icon: "droplet" },
+    { id: 4, name: "Packaging & Cup", icon: "cup" },
+    { id: 5, name: "Bahan Makanan", icon: "food" },
 ];
 
 export default function Stok({
     auth,
     stockItems: propStock,
     categories: propCategories,
+    categoryList: propCategoryList,
 }: StokPageProps) {
-    const categories =
+    const [categoryList, setCategoryList] = useState<StockCategoryItem[]>(
+        propCategoryList && propCategoryList.length > 0
+            ? propCategoryList
+            : initialCategoryList,
+    );
+
+    const [categories, setCategories] = useState<string[]>(
         propCategories && propCategories.length > 0
             ? propCategories
-            : defaultCategories;
-
-    const [stockItems, setStockItems] = useState<StockItem[]>(
-        propStock && propStock.length > 0 ? propStock : initialStockItems,
+            : ["Semua Kategori", ...initialCategoryList.map((c) => c.name)],
     );
+
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+    const isPaginated = Boolean(
+        propStock &&
+        typeof propStock === "object" &&
+        "data" in propStock &&
+        (propStock as PaginatedData<StockItem>).data.length > 0,
+    );
+    const paginatedMeta = isPaginated
+        ? (propStock as PaginatedData<StockItem>)
+        : null;
+
+    const initialItems = paginatedMeta
+        ? paginatedMeta.data
+        : (propStock as StockItem[]) && (propStock as StockItem[]).length > 0
+          ? (propStock as StockItem[])
+          : initialStockItems;
+
+    const [stockItems, setStockItems] = useState<StockItem[]>(initialItems);
+    const [currentPage, setCurrentPage] = useState(1);
     const [activeCategory, setActiveCategory] =
         useState<string>("Semua Kategori");
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [editingStock, setEditingStock] = useState<StockItem | null>(null);
-    const [activeDialog, setActiveDialog] = useState<"edit" | "remove" | null>(
-        null,
-    );
+    const [activeDialog, setActiveDialog] = useState<
+        "edit" | "remove" | "create" | null
+    >(null);
+
+    const handleAddCategory = (
+        name: string,
+        icon: StockCategoryIcon = "package",
+    ) => {
+        const newId =
+            categoryList.length > 0
+                ? Math.max(...categoryList.map((c) => c.id)) + 1
+                : 1;
+        const newCat: StockCategoryItem = { id: newId, name, icon };
+        setCategoryList((prev) => [...prev, newCat]);
+        setCategories((prev) => (prev.includes(name) ? prev : [...prev, name]));
+
+        router.post(
+            "/stock-categories",
+            { name, icon },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+    };
+
+    const handleUpdateCategory = (
+        id: number,
+        name: string,
+        icon: StockCategoryIcon = "package",
+    ) => {
+        const oldCat = categoryList.find((c) => c.id === id);
+        const oldName = oldCat?.name;
+
+        setCategoryList((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, name, icon } : c)),
+        );
+
+        if (oldName) {
+            setCategories((prev) =>
+                prev.map((c) => (c === oldName ? name : c)),
+            );
+            if (activeCategory === oldName) {
+                setActiveCategory(name);
+            }
+            setStockItems((prev) =>
+                prev.map((item) =>
+                    item.category === oldName
+                        ? { ...item, category: name, icon_type: icon }
+                        : item,
+                ),
+            );
+        }
+
+        router.put(
+            `/stock-categories/${id}`,
+            { name, icon },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+    };
+
+    const handleDeleteCategory = (id: number) => {
+        const cat = categoryList.find((c) => c.id === id);
+        const catName = cat?.name;
+
+        setCategoryList((prev) => prev.filter((c) => c.id !== id));
+        if (catName) {
+            setCategories((prev) => prev.filter((c) => c !== catName));
+            if (activeCategory === catName) {
+                setActiveCategory("Semua Kategori");
+            }
+        }
+
+        router.delete(`/stock-categories/${id}`, {
+            preserveScroll: true,
+            onError: () => {},
+        });
+    };
+
+    const getCategoryIcon = (categoryName: string) => {
+        const cat = categoryList.find(
+            (c) =>
+                c.name === categoryName ||
+                (c.name === "Biji Kopi & Bubuk" &&
+                    categoryName.includes("Biji Kopi")),
+        );
+        return cat?.icon || "package";
+    };
 
     const filteredItems = stockItems.filter((item) => {
         const matchesCategory =
@@ -179,11 +293,22 @@ export default function Stok({
         return matchesCategory && matchesSearch;
     });
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, activeCategory]);
+
+    const itemsPerPage = 8;
+    const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedDisplayItems = isPaginated
+        ? filteredItems
+        : filteredItems.slice(startIndex, startIndex + itemsPerPage);
+
     const needRestockCount = stockItems.filter(
         (i) => i.status === "Menipis" || i.stock <= i.min_stock,
     ).length;
 
-    const renderItemIcon = (type?: StockItem["icon_type"]) => {
+    const renderItemIcon = (type?: string) => {
         switch (type) {
             case "coffee":
                 return <Coffee className="w-5 h-5 text-[#ef4444]" />;
@@ -204,40 +329,95 @@ export default function Stok({
         if (!est && est !== 0) return "-";
         if (typeof est === "string" && est.startsWith("~")) return est;
         const unitLabel = unit === "Liter" ? "L" : unit;
-        return `~${est} ${unitLabel}/hr`;
+        return `~${est} ${unitLabel}/hari`;
     };
 
     const handleSaveStock = (data: {
-        id: number;
+        id?: number;
+        stock_category_id: number;
+        name: string;
+        sku: string;
+        category: string;
         stock: number;
+        unit: string;
         min_stock: number;
+        est_daily: number;
     }) => {
-        setStockItems((prev) =>
-            prev.map((item) => {
-                if (item.id === data.id) {
-                    const status =
-                        data.stock <= data.min_stock ? "Menipis" : "Aman";
-                    return {
-                        ...item,
-                        stock: data.stock,
-                        min_stock: data.min_stock,
-                        status,
-                    };
-                }
-                return item;
-            }),
-        );
-        router.put(
-            `/stocks/${data.id}`,
-            {
+        const status = data.stock <= data.min_stock ? "Menipis" : "Aman";
+
+        if (data.id) {
+            setStockItems((prev) =>
+                prev.map((item) => {
+                    if (item.id === data.id) {
+                        return {
+                            ...item,
+                            stock_category_id: data.stock_category_id,
+                            name: data.name,
+                            sku: data.sku,
+                            category: data.category,
+                            stock: data.stock,
+                            unit: data.unit,
+                            min_stock: data.min_stock,
+                            est_daily: data.est_daily,
+                            status,
+                        };
+                    }
+                    return item;
+                }),
+            );
+            router.put(
+                `/stocks/${data.id}`,
+                {
+                    stock_category_id: data.stock_category_id,
+                    name: data.name,
+                    sku: data.sku,
+                    stock: data.stock,
+                    unit: data.unit,
+                    min_stock: data.min_stock,
+                    est_daily: data.est_daily,
+                },
+                {
+                    preserveScroll: true,
+                    onError: () => {},
+                },
+            );
+        } else {
+            const newId =
+                stockItems.length > 0
+                    ? Math.max(...stockItems.map((i) => i.id)) + 1
+                    : 1;
+            const newItem: StockItem = {
+                id: newId,
+                stock_category_id: data.stock_category_id,
+                name: data.name,
+                sku: data.sku,
+                category: data.category,
                 stock: data.stock,
+                unit: data.unit,
                 min_stock: data.min_stock,
-            },
-            {
-                preserveScroll: true,
-                onError: () => {},
-            },
-        );
+                est_daily: data.est_daily,
+                status,
+            };
+            setStockItems((prev) => [newItem, ...prev]);
+
+            router.post(
+                "/stocks",
+                {
+                    stock_category_id: data.stock_category_id,
+                    name: data.name,
+                    sku: data.sku,
+                    stock: data.stock,
+                    unit: data.unit,
+                    min_stock: data.min_stock,
+                    est_daily: data.est_daily,
+                },
+                {
+                    preserveScroll: true,
+                    onError: () => {},
+                },
+            );
+        }
+
         setActiveDialog(null);
         setEditingStock(null);
     };
@@ -256,7 +436,6 @@ export default function Stok({
         <AuthenticatedLayout user={auth?.user} activeNav="Stok">
             <Head title="Stok" />
 
-            {/* Header */}
             <div className="flex justify-between pb-3 flex-wrap gap-3 items-center">
                 <div className="flex gap-3 my-2">
                     <div className="p-2.5 aspect-square rounded-xl border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
@@ -270,21 +449,31 @@ export default function Stok({
                         </span>
                     </div>
                 </div>
+                <div className="flex items-center gap-2 max-md:w-full flex-wrap">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setEditingStock(null);
+                            setActiveDialog("create");
+                        }}
+                        className="bg-[#D91A20] hover:bg-[#b91c1c] cursor-pointer flex items-center justify-center gap-1.5 rounded-lg max-md:w-full px-4 py-2 text-white transition-all duration-200 text-sm font-medium shadow-xs"
+                    >
+                        <Plus className="size-5" />
+                        Tambah Bahan
+                    </button>
+                </div>
             </div>
 
-            {/* 2 Metric Cards */}
             <div className="flex justify-between pb-3 gap-3 items-center">
-                {/* 1 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <Archive className="size-5 max-md:size-8" />
                     </div>
-                    <span className="text-sm">Stok Saat Ini</span>
+                    <span className="text-sm">Total Item Bahan</span>
                     <span className="text-xl font-bold -mt-2">
                         {stockItems.length > 0 ? 325 : 0}
                     </span>
                 </div>
-                {/* 2 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <AlertTriangle className="size-5 max-md:size-8" />
@@ -296,10 +485,8 @@ export default function Stok({
                 </div>
             </div>
 
-            {/* Table Section */}
             <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-3">
-                {/* Category Pills */}
-                <div className="flex gap-2 flex-wrap pb-1">
+                <div className="flex gap-2 flex-wrap items-center pb-1">
                     {categories.map((cat) => {
                         const isActive = activeCategory === cat;
                         return (
@@ -317,9 +504,17 @@ export default function Stok({
                             </button>
                         );
                     })}
+                    <button
+                        type="button"
+                        onClick={() => setIsCategoryModalOpen(true)}
+                        className={`px-4 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out bg-white text-[#4b5563] border border-[#4b5563]/50 hover:bg-[#f3f4f6] flex items-center justify-center"
+                        }`}
+                        title="Atur Kategori"
+                    >
+                        <Layers className="size-5" />
+                    </button>
                 </div>
 
-                {/* Search Bar */}
                 <div className="relative flex items-center w-full">
                     <Search className="absolute left-[15px] w-[18px] h-[18px] text-[#9ca3af] pointer-events-none block" />
                     <input
@@ -327,12 +522,11 @@ export default function Stok({
                         id="search"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Cari nomor meja"
+                        placeholder="Cari bahan, SKU, atau kategori..."
                         className="w-full h-[38px] pl-[40px] pr-[15px] rounded-[8px] border border-[#d1d5db] text-[14px] outline-none text-[#4b5563] placeholder-[#9ca3af] focus:border-[#b91c1c] transition-colors duration-200"
                     />
                 </div>
 
-                {/* Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse text-left">
                         <thead>
@@ -374,158 +568,160 @@ export default function Stok({
                                     </td>
                                 </tr>
                             ) : (
-                                filteredItems.map((item, i) => (
-                                    <tr key={item.id}>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
-                                            {i + 1}
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-[8px] bg-[#fee2e2] flex items-center justify-center flex-shrink-0">
-                                                    {renderItemIcon(
-                                                        item.icon_type,
-                                                    )}
+                                paginatedDisplayItems.map((item, i) => {
+                                    const actualIndex =
+                                        isPaginated && paginatedMeta?.from
+                                            ? paginatedMeta.from + i
+                                            : startIndex + i + 1;
+                                    return (
+                                        <tr key={item.id}>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
+                                                {actualIndex}
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-[8px] bg-[#fee2e2] flex items-center justify-center flex-shrink-0">
+                                                        {renderItemIcon(
+                                                            item.icon_type ||
+                                                                getCategoryIcon(
+                                                                    item.category,
+                                                                ),
+                                                        )}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span
+                                                            className={`font-semibold ${
+                                                                item.status ===
+                                                                "Menipis"
+                                                                    ? "text-[#D91A20]"
+                                                                    : "text-[#1e293b]"
+                                                            }`}
+                                                        >
+                                                            {item.name}
+                                                        </span>
+                                                        <span className="text-[12px] text-[#94a3b8] uppercase">
+                                                            {item.sku}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex flex-col">
-                                                    <span
-                                                        // className="font-semibold text-[#1e293b]"
-                                                        className={`font-semibold ${
-                                                            item.status ===
-                                                            "Menipis"
-                                                                ? "text-[#D91A20]"
-                                                                : "text-[#1e293b]"
-                                                        }`}
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                {item.category}
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                <span
+                                                    className={`font-bold ${
+                                                        item.status ===
+                                                        "Menipis"
+                                                            ? "text-[#D91A20]"
+                                                            : "text-[#1e293b]"
+                                                    }`}
+                                                >
+                                                    {item.stock}
+                                                </span>{" "}
+                                                <span className="text-[#64748b] text-[13px]">
+                                                    {item.unit}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                {item.min_stock} {item.unit}
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                {formatEstDaily(
+                                                    item.est_daily,
+                                                    item.unit,
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                <span
+                                                    className={`px-4 py-1.5 rounded-full text-[12px] font-semibold inline-block text-center min-w-[5rem] ${
+                                                        item.status === "Aman"
+                                                            ? "bg-[#dcfce7] text-[#16a34a]"
+                                                            : "bg-[#fee2e2] text-[#ef4444]"
+                                                    }`}
+                                                >
+                                                    {item.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        type="button"
+                                                        className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
+                                                        title="Edit"
+                                                        onClick={() => {
+                                                            setEditingStock(
+                                                                item,
+                                                            );
+                                                            setActiveDialog(
+                                                                "edit",
+                                                            );
+                                                        }}
                                                     >
-                                                        {item.name}
-                                                    </span>
-                                                    <span className="text-[12px] text-[#94a3b8] uppercase">
-                                                        {item.sku}
-                                                    </span>
+                                                        <Pencil className="w-[18px] h-[18px]" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
+                                                        title="Hapus"
+                                                        onClick={() => {
+                                                            setActiveDialog(
+                                                                "remove",
+                                                            );
+                                                            setSelectedItems([
+                                                                item.id,
+                                                            ]);
+                                                        }}
+                                                    >
+                                                        <Trash2 className="w-[18px] h-[18px]" />
+                                                    </button>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            {item.category}
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            <span
-                                                className={`font-bold ${
-                                                    item.status === "Menipis"
-                                                        ? "text-[#D91A20]"
-                                                        : "text-[#1e293b]"
-                                                }`}
-                                            >
-                                                {item.stock}
-                                            </span>{" "}
-                                            <span className="text-[#64748b] text-[13px]">
-                                                {item.unit}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            {item.min_stock} {item.unit}
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            {formatEstDaily(
-                                                item.est_daily,
-                                                item.unit
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            <span
-                                                className={`px-4 py-1.5 rounded-full text-[12px] font-semibold inline-block text-center min-w-[5rem] ${
-                                                    item.status === "Aman"
-                                                        ? "bg-[#dcfce7] text-[#16a34a]"
-                                                        : "bg-[#fee2e2] text-[#ef4444]"
-                                                }`}
-                                            >
-                                                {item.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
-                                                    title="Edit"
-                                                    onClick={() => {
-                                                        setEditingStock(item);
-                                                        setActiveDialog("edit");
-                                                    }}
-                                                >
-                                                    <Pencil className="w-[18px] h-[18px]" />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
-                                                    title="Hapus"
-                                                    onClick={() => {
-                                                        setActiveDialog(
-                                                            "remove",
-                                                        );
-                                                        setSelectedItems([
-                                                            item.id,
-                                                        ]);
-                                                    }}
-                                                >
-                                                    <Trash2 className="w-[18px] h-[18px]" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* Footer Pagination */}
-                <div className="flex justify-between items-center pt-3 text-[14px] text-[#64748b] flex-wrap gap-2">
-                    <div>
-                        Menampilkan 1 - {filteredItems.length} dari 24 menu
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <button
-                            type="button"
-                            className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white flex items-center justify-center text-[#64748b] hover:bg-gray-50"
-                        >
-                            <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <button
-                            type="button"
-                            className="w-8 h-8 rounded-[8px] bg-[#D91A20] text-white font-medium flex items-center justify-center"
-                        >
-                            1
-                        </button>
-                        <button
-                            type="button"
-                            className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white text-[#64748b] flex items-center justify-center hover:bg-gray-50"
-                        >
-                            2
-                        </button>
-                        <button
-                            type="button"
-                            className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white text-[#64748b] flex items-center justify-center hover:bg-gray-50"
-                        >
-                            3
-                        </button>
-                        <button
-                            type="button"
-                            className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white flex items-center justify-center text-[#64748b] hover:bg-gray-50"
-                        >
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
-                    </div>
-                </div>
+                <Pagination
+                    links={paginatedMeta?.links}
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    from={
+                        isPaginated
+                            ? paginatedMeta?.from
+                            : filteredItems.length > 0
+                              ? startIndex + 1
+                              : 0
+                    }
+                    to={
+                        isPaginated
+                            ? paginatedMeta?.to
+                            : Math.min(
+                                  startIndex + itemsPerPage,
+                                  filteredItems.length,
+                              )
+                    }
+                    total={
+                        isPaginated
+                            ? paginatedMeta?.total
+                            : filteredItems.length
+                    }
+                    itemName="bahan"
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
             </div>
 
-            {/* Modal Edit Stok */}
             <StokFormModal
-                isOpen={activeDialog === "edit"}
+                isOpen={activeDialog === "create" || activeDialog === "edit"}
                 onClose={() => {
                     setActiveDialog(null);
                     setEditingStock(null);
                 }}
                 stockItem={editingStock}
+                categories={categoryList}
                 onSave={handleSaveStock}
             />
 
@@ -578,6 +774,15 @@ export default function Stok({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <StockCategoryModal
+                isOpen={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                categories={categoryList}
+                onAddCategory={handleAddCategory}
+                onUpdateCategory={handleUpdateCategory}
+                onDeleteCategory={handleDeleteCategory}
+            />
         </AuthenticatedLayout>
     );
 }

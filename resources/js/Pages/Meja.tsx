@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import MejaFormModal from "@/Components/MejaFormModal";
+import Pagination from "@/Components/Pagination";
 
 const TableIcon = ({
     color = "currentColor",
@@ -133,12 +134,26 @@ export default function Meja({
         "create" | "edit" | "remove" | null
     >(null);
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
     const filteredTables = tables.filter((item) => {
         const matchesSearch =
             item.table_number.toString().includes(searchQuery) ||
             item.location.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesSearch;
     });
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery]);
+
+    const totalPages = Math.ceil(filteredTables.length / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedTables = filteredTables.slice(
+        startIndex,
+        startIndex + itemsPerPage,
+    );
 
     const getAreaBadgeClass = (area: TableItem["location"]) => {
         switch (area) {
@@ -164,14 +179,12 @@ export default function Meja({
 
     const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number }) => {
         if (data.id) {
-            // Edit existing
             setTables((prev) =>
                 prev.map((t) =>
                     t.id === data.id ? ({ ...t, ...data } as TableItem) : t,
                 ),
             );
         } else {
-            // Create new
             const newId =
                 tables.length > 0
                     ? Math.max(...tables.map((t) => t.id)) + 1
@@ -201,7 +214,6 @@ export default function Meja({
         <AuthenticatedLayout user={auth?.user} activeNav="Meja">
             <Head title="Meja" />
 
-            {/* Header */}
             <div className="flex justify-between pb-3 flex-wrap gap-3 items-center">
                 <div className="flex gap-3 my-2">
                     <div className="p-2.5 aspect-square rounded-xl border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
@@ -228,9 +240,7 @@ export default function Meja({
                 </button>
             </div>
 
-            {/* Top Metric Cards */}
             <div className="flex justify-between pb-3 gap-3 items-center">
-                {/* 1 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <TableIcon size={20} color="#ef4444" />
@@ -240,7 +250,6 @@ export default function Meja({
                         {tables.length}
                     </span>
                 </div>
-                {/* 2 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <CheckCircle2 className="size-5 max-md:size-8" />
@@ -250,7 +259,6 @@ export default function Meja({
                         {tables.filter((t) => t.available === true).length}
                     </span>
                 </div>
-                {/* 3 */}
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
                     <div className="size-10 max-md:size-12 rounded-lg border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]">
                         <Clock className="size-5 max-md:size-8" />
@@ -262,30 +270,8 @@ export default function Meja({
                 </div>
             </div>
 
-            {/* Main Content Card */}
             <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-3">
-                {/* Filter & Search Bar */}
                 <div className="flex justify-between items-center pb-3 flex-wrap gap-3">
-                    {/* <div className="flex gap-2 flex-wrap">
-                        {areaTabs.map((area) => {
-                            const isActive = activeArea === area;
-                            return (
-                                <button
-                                    key={area}
-                                    type="button"
-                                    onClick={() => setActiveArea(area)}
-                                    className={`px-6 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out ${
-                                        isActive
-                                            ? "bg-[#fee2e2] text-[#dc2626] border border-transparent"
-                                            : "bg-white text-[#4b5563] border border-[#4b5563] hover:bg-[#f3f4f6]"
-                                    }`}
-                                >
-                                    {area}
-                                </button>
-                            );
-                        })}
-                    </div> */}
-
                     <div className="relative flex items-center w-[20rem] max-md:w-full max-w-full">
                         <Search className="absolute left-[15px] w-[18px] h-[18px] text-[#9ca3af] pointer-events-none block" />
                         <input
@@ -299,7 +285,6 @@ export default function Meja({
                     </div>
                 </div>
 
-                {/* Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse text-left">
                         <thead>
@@ -338,10 +323,10 @@ export default function Meja({
                                     </td>
                                 </tr>
                             ) : (
-                                filteredTables.map((item, i) => (
+                                paginatedTables.map((item, i) => (
                                     <tr key={item.id}>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]/50">
-                                            {i + 1}
+                                            {startIndex + i + 1}
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                             <span className="font-semibold tabular-nums text-[#1e293b]">
@@ -423,6 +408,19 @@ export default function Meja({
                         </tbody>
                     </table>
                 </div>
+
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    from={filteredTables.length > 0 ? startIndex + 1 : 0}
+                    to={Math.min(
+                        startIndex + itemsPerPage,
+                        filteredTables.length,
+                    )}
+                    total={filteredTables.length}
+                    itemName="meja"
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
 
                 {/* Edit/Create Dialog Modal */}
                 <MejaFormModal

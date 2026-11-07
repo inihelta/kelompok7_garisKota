@@ -68,17 +68,20 @@ export default function KategoriFormModal({
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit} className="flex flex-col mt-3 space-y-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col mt-3 space-y-4"
+                >
                     {error && (
                         <div className="p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
                             {error}
                         </div>
                     )}
 
-                    {/* Nama Kategori */}
                     <div>
                         <label className="block text-sm font-medium text-[#334155] mb-1">
-                            Nama Kategori <span className="text-[#ef4444]">*</span>
+                            Nama Kategori{" "}
+                            <span className="text-[#ef4444]">*</span>
                         </label>
                         <input
                             type="text"
@@ -111,4 +114,3 @@ export default function KategoriFormModal({
         </Dialog>
     );
 }
-

@@ -1,4 +1,3 @@
-// console.log("");
 let input = document.getElementById("password");
 
 function gantiIcon(par) {

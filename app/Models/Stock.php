@@ -16,7 +16,6 @@ class Stock extends Model
         'unit',
         'min_stock',
         'est_daily',
-        'icon_type',
     ];
 
     protected $casts = [
@@ -35,4 +34,3 @@ class Stock extends Model
         return $this->stock <= $this->min_stock ? 'Menipis' : 'Aman';
     }
 }
-

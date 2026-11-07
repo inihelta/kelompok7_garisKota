@@ -235,7 +235,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Baris 1: Mix Platter -->
                                 <tr>
                                     <td
                                         class="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]"
@@ -317,7 +316,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- Baris 2: Kentang Goreng -->
                                 <tr>
                                     <td
                                         class="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]"
@@ -398,7 +396,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- Baris 3: Hazelnut Latte -->
                                 <tr>
                                     <td
                                         class="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]"
@@ -479,7 +476,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- Baris 4: Pisang Gapit -->
                                 <tr>
                                     <td
                                         class="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]"
@@ -563,38 +559,3 @@
                         </table>
                     </div>
 
-                    <!-- bagian pagination -->
-                    <!-- <div class="flex justify-between items-center">
-                        <span class="text-[14px] text-[#64748b]"
-                            >Menampilkan 1-4 dari 4 menu</span
-                        >
-
-                        <div class="flex gap-2">
-                            <button
-                                class="flex items-center justify-center w-9 h-9 bg-[#dc2626] border border-[#dc2626] rounded-[8px] text-white text-[14px] font-medium cursor-pointer transition-all duration-200 ease-in-out"
-                            >
-                                1
-                            </button>
-                        </div>
-                    </div> -->
-                </div>
-            </main>
-        </div>
-
-        <script>
-            const sidebar = document.getElementById("sidebar");
-            const overlay = document.getElementById("overlay");
-            const toggle = document.getElementById("toggle");
-            const setOpen = (open) => {
-                sidebar.classList.toggle("is-open", open);
-                overlay.classList.toggle("is-open", open);
-            };
-            toggle.addEventListener("click", () => setOpen(true));
-            overlay.addEventListener("click", () => setOpen(false));
-        </script>
-        <script src="https://unpkg.com/lucide@latest"></script>
-        <script>
-            lucide.createIcons();
-        </script>
-    </body>
-</html>
