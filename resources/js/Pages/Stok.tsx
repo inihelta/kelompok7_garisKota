@@ -725,7 +725,6 @@ export default function Stok({
                 onSave={handleSaveStock}
             />
 
-            {/* Dialog Hapus */}
             <Dialog
                 open={activeDialog === "remove"}
                 onOpenChange={() => {

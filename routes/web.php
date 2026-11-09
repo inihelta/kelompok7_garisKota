@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockCategoryController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -29,9 +30,6 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-    Route::get('/dashboard/kategori', function () {
-        return Inertia::render('Kategori');
-    })->name('dashboard.kategori');
     Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
     Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');
 
@@ -41,6 +39,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
 
     Route::resource('stocks', StockController::class)->except(['create', 'edit']);
     Route::resource('stock-categories', StockCategoryController::class)->except(['create', 'edit']);
+    Route::resource('categories', CategoryController::class)->except(['index', 'create', 'edit', 'show']);
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

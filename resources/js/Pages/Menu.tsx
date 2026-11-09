@@ -10,8 +10,9 @@ import {
     ConciergeBell,
     ToggleRight,
     MenuSquare,
+    Layers,
 } from "lucide-react";
-import { MenuItem } from "@/types/dashboard";
+import { CategoryItem, MenuItem } from "@/types/dashboard";
 import {
     Dialog,
     DialogContent,
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/Components/ui/button";
 import MenuFormModal from "@/Components/MenuFormModal";
 import Pagination from "@/Components/Pagination";
+import MenuCategoryModal from "@/Components/MenuCategoryModal";
 
 export default function Menu({
     auth,
@@ -31,13 +33,17 @@ export default function Menu({
 }: {
     auth: any;
     menus: MenuItem[];
-    categories: any[];
+    categories: CategoryItem[];
 }) {
+    const [categoryList, setCategoryList] = useState<CategoryItem[]>(
+        categories,
+    );
     const categoryName = ["Semua Menu"].concat(
-        categories.map((cat) => cat.name),
+        categoryList.map((cat) => cat.name),
     );
 
     const [activeCategory, setActiveCategory] = useState<string>("Semua Menu");
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [editingMenu, setEditingMenu] = useState<MenuItem | null>(null);
@@ -52,7 +58,7 @@ export default function Menu({
         const matchesCategory =
             activeCategory === "Semua Menu" ||
             item.category_id ===
-                categories.find((cat) => cat.name === activeCategory)?.id;
+                categoryList.find((cat) => cat.name === activeCategory)?.id;
         const matchesSearch =
             item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             item.description?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -109,6 +115,61 @@ export default function Menu({
                 setSelectedItems([]);
                 setActiveDialog(null);
             },
+        });
+    };
+
+    const handleAddCategory = (name: string) => {
+        const newId =
+            categoryList.length > 0
+                ? Math.max(...categoryList.map((c) => c.id)) + 1
+                : 1;
+        const newCat: CategoryItem = { id: newId, name };
+        setCategoryList((prev) => [...prev, newCat]);
+
+        router.post(
+            "/categories",
+            { name },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+    };
+
+    const handleUpdateCategory = (id: number, name: string) => {
+        const oldCat = categoryList.find((c) => c.id === id);
+        const oldName = oldCat?.name;
+
+        setCategoryList((prev) =>
+            prev.map((c) => (c.id === id ? { ...c, name } : c)),
+        );
+
+        if (oldName && activeCategory === oldName) {
+            setActiveCategory(name);
+        }
+
+        router.put(
+            `/categories/${id}`,
+            { name },
+            {
+                preserveScroll: true,
+                onError: () => {},
+            },
+        );
+    };
+
+    const handleDeleteCategory = (id: number) => {
+        const cat = categoryList.find((c) => c.id === id);
+        const catName = cat?.name;
+
+        setCategoryList((prev) => prev.filter((c) => c.id !== id));
+        if (catName && activeCategory === catName) {
+            setActiveCategory("Semua Menu");
+        }
+
+        router.delete(`/categories/${id}`, {
+            preserveScroll: true,
+            onError: () => {},
         });
     };
 
@@ -200,6 +261,14 @@ export default function Menu({
                                 </button>
                             );
                         })}
+                        <button
+                            type="button"
+                            onClick={() => setIsCategoryModalOpen(true)}
+                            className={`px-4 py-2 rounded-full text-[14px] font-semibold cursor-pointer transition-all duration-200 ease-in-out bg-white text-[#4b5563] border border-[#4b5563]/50 hover:bg-[#f3f4f6] flex items-center justify-center`}
+                            title="Atur Kategori"
+                        >
+                            <Layers className="size-5" />
+                        </button>
                     </div>
 
                     <div className="relative flex items-center w-[20rem] max-md:w-full max-w-full">
@@ -299,7 +368,7 @@ export default function Menu({
                                                 )}`}
                                             >
                                                 {
-                                                    categories.find(
+                                                    categoryList.find(
                                                         (cat) =>
                                                             cat.id ===
                                                             item.category_id,
@@ -435,6 +504,15 @@ export default function Menu({
                     </DialogContent>
                 </Dialog>
             </div>
+
+            <MenuCategoryModal
+                isOpen={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                categories={categoryList}
+                onAddCategory={handleAddCategory}
+                onUpdateCategory={handleUpdateCategory}
+                onDeleteCategory={handleDeleteCategory}
+            />
         </AuthenticatedLayout>
     );
 }

@@ -62,11 +62,6 @@ export default function Sidebar({
             icon: Utensils,
         },
         {
-            name: "Kategori",
-            href: route("dashboard.kategori"),
-            icon: MenuSquare,
-        },
-        {
             name: "Meja",
             href: route("dashboard.meja"),
             icon: TableIcon,
