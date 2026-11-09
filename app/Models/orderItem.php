@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class orderItem extends Model
+class OrderItem extends Model
 {
     protected $table = 'order_items';
 
@@ -18,11 +18,11 @@ class orderItem extends Model
 
     public function order()
     {
-        return $this->belongsTo(order::class);
+        return $this->belongsTo(Order::class);
     }
 
     public function menu()
     {
-        return $this->belongsTo(menu::class);
+        return $this->belongsTo(Menu::class);
     }
 }

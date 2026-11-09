@@ -20,12 +20,6 @@ interface KategoriPageProps {
     categories?: CategoryItem[];
 }
 
-const initialCategories: CategoryItem[] = [
-    { id: 1, name: "Makanan" },
-    { id: 2, name: "Minuman" },
-    { id: 3, name: "Snack" },
-];
-
 export default function Kategori({
     auth,
     categories: propCategories,
@@ -33,7 +27,7 @@ export default function Kategori({
     const [categories, setCategories] = useState<CategoryItem[]>(
         propCategories && propCategories.length > 0
             ? propCategories
-            : initialCategories,
+            : [],
     );
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedItems, setSelectedItems] = useState<number[]>([]);

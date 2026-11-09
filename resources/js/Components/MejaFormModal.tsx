@@ -31,24 +31,21 @@ export default function MejaFormModal({
     const [status, setStatus] = useState<"tersedia" | "terisi" | "reservasi">(
         "tersedia",
     );
-    const [catatan, setCatatan] = useState("");
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
             setError(null);
             if (meja) {
-                setNomorMeja(meja.nomor_meja || "");
-                setArea(meja.area || "Indoor");
-                setKapasitas(meja.kapasitas || 4);
-                setStatus(meja.status || "tersedia");
-                setCatatan(meja.catatan || "");
+                setNomorMeja(meja.table_number?.toString() || "");
+                setArea(meja.location === "outdoor" ? "Outdoor" : "Indoor");
+                setKapasitas(meja.capacity || 4);
+                setStatus(meja.available ? "tersedia" : "terisi");
             } else {
                 setNomorMeja("");
                 setArea("Indoor");
                 setKapasitas(4);
                 setStatus("tersedia");
-                setCatatan("");
             }
         }
     }, [isOpen, meja]);
@@ -68,11 +65,10 @@ export default function MejaFormModal({
 
         onSave({
             ...(meja ? { id: meja.id } : {}),
-            nomor_meja: nomorMeja.trim(),
-            area,
-            kapasitas: Number(kapasitas),
-            status,
-            catatan: catatan.trim() || "-",
+            table_number: Number(nomorMeja.trim()),
+            capacity: Number(kapasitas),
+            available: status === "tersedia",
+            location: area.toLowerCase() as "indoor" | "outdoor",
         });
 
         onClose();
@@ -184,19 +180,6 @@ export default function MejaFormModal({
                                 }
                                 placeholder="Contoh: 4"
                                 className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Catatan / Keterangan
-                            </label>
-                            <textarea
-                                rows={3}
-                                value={catatan}
-                                onChange={(e) => setCatatan(e.target.value)}
-                                placeholder="Contoh: Dekat jendela, area non-smoking"
-                                className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none resize-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
                             />
                         </div>
                     </div>

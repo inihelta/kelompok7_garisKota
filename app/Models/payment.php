@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class payment extends Model
+class Payment extends Model
 {
     protected $table = 'payments';
 
@@ -18,7 +18,7 @@ class payment extends Model
 
     public function order()
     {
-        return $this->belongsTo(order::class);
+        return $this->belongsTo(Order::class);
     }
 }
 

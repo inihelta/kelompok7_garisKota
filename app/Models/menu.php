@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class menu extends Model
+class Menu extends Model
 {
     protected $fillable = [
         'category_id',
@@ -18,11 +18,11 @@ class menu extends Model
 
     public function category()
     {
-        return $this->belongsTo(category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function orderItems()
     {
-        return $this->hasMany(orderItem::class);
+        return $this->hasMany(OrderItem::class);
     }
 }

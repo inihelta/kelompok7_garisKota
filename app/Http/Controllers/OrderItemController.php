@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\orderItem;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 
 class OrderItemController extends Controller
@@ -34,7 +34,7 @@ class OrderItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(orderItem $orderItem)
+    public function show(OrderItem $orderItem)
     {
         //
     }
@@ -42,7 +42,7 @@ class OrderItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(orderItem $orderItem)
+    public function edit(OrderItem $orderItem)
     {
         //
     }
@@ -50,7 +50,7 @@ class OrderItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, orderItem $orderItem)
+    public function update(Request $request, OrderItem $orderItem)
     {
         //
     }
@@ -58,7 +58,7 @@ class OrderItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(orderItem $orderItem)
+    public function destroy(OrderItem $orderItem)
     {
         //
     }

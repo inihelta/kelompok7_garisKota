@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\category;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -13,12 +13,12 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
         ]);
 
-        category::create($validated);
+        Category::create($validated);
 
         return redirect()->back()->with('success', 'Kategori menu berhasil ditambahkan.');
     }
 
-    public function update(Request $request, category $category)
+    public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
@@ -29,7 +29,7 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori menu berhasil diperbarui.');
     }
 
-    public function destroy(category $category)
+    public function destroy(Category $category)
     {
         $category->delete();
 

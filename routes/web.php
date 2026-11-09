@@ -6,6 +6,7 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockCategoryController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,9 +22,9 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/menu', [MenuController::class, 'index'])->name('dashboard.menu');
-    Route::get('/dashboard/pesanan', function () {
-        return Inertia::render('Pesanan');
-    })->name('dashboard.pesanan');
+    Route::get('/dashboard/pesanan', [OrderController::class, 'index'])->name('dashboard.pesanan');
+    Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+    Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/dashboard/pendapatan', function () {
         return Inertia::render('Pendapatan');
     })->name('dashboard.pendapatan');
@@ -39,7 +40,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
 
     Route::resource('stocks', StockController::class)->except(['create', 'edit']);
     Route::resource('stock-categories', StockCategoryController::class)->except(['create', 'edit']);
-    Route::resource('categories', CategoryController::class)->except(['index', 'create', 'edit', 'show']);
+    Route::resource('categories', CategoryController::class)->except(['create', 'edit', 'show']);
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

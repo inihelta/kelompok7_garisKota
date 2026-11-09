@@ -74,6 +74,7 @@ export interface OrderItemDetail {
     menu_id: number;
     menu?: MenuItem;
     menu_name?: string;
+    menu_image?: string;
     quantity: number;
     unit_price: number | string;
     notes?: string | null;
@@ -94,10 +95,14 @@ export interface OrderItem {
     table_id?: number | null;
     table?: TableItem;
     table_number?: number;
+    customer_name?: string | null;
     order_type: "dine-in" | "takeaway";
     total_price: number | string;
     order_status: "pending" | "processing" | "completed" | "cancelled";
     created_at: string;
+    formatted_time?: string;
+    relative_time?: string;
+    location?: string;
     order_items?: OrderItemDetail[];
     payment?: PaymentItem;
 }

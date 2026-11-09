@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class table extends Model
+class Table extends Model
 {
     protected $table = 'tables';
 
@@ -23,6 +23,6 @@ class table extends Model
 
     public function orders()
     {
-        return $this->hasMany(order::class);
+        return $this->hasMany(Order::class);
     }
 }

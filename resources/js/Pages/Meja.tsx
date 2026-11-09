@@ -46,79 +46,6 @@ const TableIcon = ({
     </svg>
 );
 
-const initialTables: TableItem[] = [
-    {
-        id: 1,
-        table_number: 1,
-        capacity: 2,
-        available: true,
-        location: "indoor",
-    },
-    {
-        id: 2,
-        table_number: 2,
-        capacity: 4,
-        available: true,
-        location: "indoor",
-    },
-    {
-        id: 3,
-        table_number: 3,
-        capacity: 4,
-        available: false,
-        location: "indoor",
-    },
-    {
-        id: 4,
-        table_number: 4,
-        capacity: 6,
-        available: true,
-        location: "indoor",
-    },
-    {
-        id: 5,
-        table_number: 5,
-        capacity: 2,
-        available: true,
-        location: "indoor",
-    },
-    {
-        id: 6,
-        table_number: 6,
-        capacity: 4,
-        available: true,
-        location: "outdoor",
-    },
-    {
-        id: 7,
-        table_number: 7,
-        capacity: 4,
-        available: false,
-        location: "outdoor",
-    },
-    {
-        id: 8,
-        table_number: 8,
-        capacity: 6,
-        available: true,
-        location: "outdoor",
-    },
-    {
-        id: 9,
-        table_number: 9,
-        capacity: 8,
-        available: true,
-        location: "outdoor",
-    },
-    {
-        id: 10,
-        table_number: 10,
-        capacity: 2,
-        available: true,
-        location: "outdoor",
-    },
-];
-
 export default function Meja({
     auth,
     tables: propTables,
@@ -126,7 +53,9 @@ export default function Meja({
     auth?: any;
     tables?: TableItem[];
 }) {
-    const [tables, setTables] = useState<TableItem[]>(initialTables);
+    const [tables, setTables] = useState<TableItem[]>(
+        propTables && propTables.length > 0 ? propTables : [],
+    );
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
     const [editingMeja, setEditingMeja] = useState<TableItem | null>(null);

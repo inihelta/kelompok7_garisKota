@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\menu;
-use App\Models\category;
+use App\Models\Menu;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $menus = menu::all();
-        $categories = category::all();
+        $menus = Menu::all();
+        $categories = Category::all();
 
         return inertia('Menu', [
             'auth' => Auth::user(),
@@ -25,9 +22,6 @@ class MenuController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -44,15 +38,12 @@ class MenuController extends Controller
             $validated['image'] = $request->file('image')->store('menus', 'public');
         }
 
-        menu::create($validated);
+        Menu::create($validated);
 
         return redirect()->route('dashboard.menu')->with('success', 'Menu berhasil ditambahkan.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, menu $menu)
+    public function update(Request $request, Menu $menu)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -86,10 +77,7 @@ class MenuController extends Controller
         return redirect()->route('dashboard.menu')->with('success', 'Menu berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(menu $menu)
+    public function destroy(Menu $menu)
     {
         if ($menu->image && Storage::disk('public')->exists($menu->image)) {
             Storage::disk('public')->delete($menu->image);

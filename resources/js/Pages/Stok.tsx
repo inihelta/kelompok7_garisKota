@@ -44,105 +44,6 @@ interface StokPageProps {
     categoryList?: StockCategoryItem[];
 }
 
-const initialStockItems: StockItem[] = [
-    {
-        id: 1,
-        name: "House Blend Beans",
-        sku: "SKU-COF-01",
-        category: "Biji Kopi",
-        stock: 6.4,
-        unit: "kg",
-        min_stock: 5.0,
-        est_daily: 1.8,
-        status: "Aman",
-    },
-    {
-        id: 2,
-        name: "Fresh Milk Pasteurisasi 1L",
-        sku: "SKU-MLK-01",
-        category: "Susu & Dairy",
-        stock: 6,
-        unit: "Liter",
-        min_stock: 8,
-        est_daily: 8,
-        status: "Menipis",
-    },
-    {
-        id: 3,
-        name: "Oat Milk Barista 1L",
-        sku: "SKU-MLK-02",
-        category: "Susu & Dairy",
-        stock: 10,
-        unit: "Liter",
-        min_stock: 8,
-        est_daily: 8,
-        status: "Aman",
-    },
-    {
-        id: 4,
-        name: "Hazelnut Syrup 750ML",
-        sku: "SKU-SYR-01",
-        category: "Sirup & Topping",
-        stock: 2,
-        unit: "Botol",
-        min_stock: 4,
-        est_daily: 6,
-        status: "Menipis",
-    },
-    {
-        id: 5,
-        name: "Caramel Syrup 750ML",
-        sku: "SKU-SYR-02",
-        category: "Sirup & Topping",
-        stock: 3,
-        unit: "Botol",
-        min_stock: 4,
-        est_daily: 6,
-        status: "Aman",
-    },
-    {
-        id: 6,
-        name: "Berry Syrup 750ML",
-        sku: "SKU-SYR-02",
-        category: "Sirup & Topping",
-        stock: 3,
-        unit: "Botol",
-        min_stock: 4,
-        est_daily: 6,
-        status: "Aman",
-    },
-    {
-        id: 7,
-        name: "Paper Cup 12oz",
-        sku: "SKU-PKG-01",
-        category: "Packaging & Cup",
-        stock: 250,
-        unit: "Pcs",
-        min_stock: 100,
-        est_daily: 50,
-        status: "Aman",
-    },
-    {
-        id: 8,
-        name: "Beras Pandan Wangi",
-        sku: "SKU-FOD-01",
-        category: "Bahan Makanan",
-        stock: 15,
-        unit: "kg",
-        min_stock: 10,
-        est_daily: 3,
-        status: "Aman",
-    },
-];
-
-const initialCategoryList: StockCategoryItem[] = [
-    { id: 1, name: "Biji Kopi & Bubuk", icon: "coffee" },
-    { id: 2, name: "Susu & Dairy", icon: "milk" },
-    { id: 3, name: "Sirup & Topping", icon: "droplet" },
-    { id: 4, name: "Packaging & Cup", icon: "cup" },
-    { id: 5, name: "Bahan Makanan", icon: "food" },
-];
-
 export default function Stok({
     auth,
     stockItems: propStock,
@@ -152,13 +53,13 @@ export default function Stok({
     const [categoryList, setCategoryList] = useState<StockCategoryItem[]>(
         propCategoryList && propCategoryList.length > 0
             ? propCategoryList
-            : initialCategoryList,
+            : [],
     );
 
     const [categories, setCategories] = useState<string[]>(
         propCategories && propCategories.length > 0
             ? propCategories
-            : ["Semua Kategori", ...initialCategoryList.map((c) => c.name)],
+            : ["Semua Kategori"],
     );
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -177,7 +78,7 @@ export default function Stok({
         ? paginatedMeta.data
         : (propStock as StockItem[]) && (propStock as StockItem[]).length > 0
           ? (propStock as StockItem[])
-          : initialStockItems;
+          : [];
 
     const [stockItems, setStockItems] = useState<StockItem[]>(initialItems);
     const [currentPage, setCurrentPage] = useState(1);

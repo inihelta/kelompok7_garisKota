@@ -168,9 +168,7 @@ class DatabaseSeeder extends Seeder
         $hazelnut = menu::where('name', 'Hazelnut Latte')->first();
         $espresso = menu::where('name', 'Espresso')->first();
 
-        // ==========================================
         // Data Seeder Orders, Order Items, & Payments
-        // ==========================================
         // Order 1 (Meja 2 - Dine In - Processing)
         if (isset($createdTables[2]) && $nasgor && $kentang) {
             $order1 = order::updateOrCreate(
@@ -363,9 +361,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // ==========================================
         // Data Seeder Kategori Bahan Baku & Stok
-        // ==========================================
         $catKopi = StockCategory::firstOrCreate(
             ['name' => 'Biji Kopi & Bubuk'],
             ['icon' => 'coffee']
