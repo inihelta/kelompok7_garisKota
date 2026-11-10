@@ -7,6 +7,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockCategoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,9 +29,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/pendapatan', function () {
         return Inertia::render('Pendapatan');
     })->name('dashboard.pendapatan');
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
     Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');
 

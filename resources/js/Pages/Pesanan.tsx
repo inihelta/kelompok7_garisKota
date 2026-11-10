@@ -329,12 +329,10 @@ export default function Pesanan({
                                                         </div>
                                                     </td>
 
-                                                    {/* Kolom ID: #150 */}
                                                     <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-sm font-semibold text-[#475569]">
                                                         #{item.id}
                                                     </td>
 
-                                                    {/* Kolom NAMA MENU: Tombol Detail Pesanan */}
                                                     <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-sm">
                                                         <button
                                                             type="button"
@@ -349,7 +347,6 @@ export default function Pesanan({
                                                         </button>
                                                     </td>
 
-                                                    {/* Kolom WAKTU: e.g. 15 Menit */}
                                                     <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-sm text-[#475569]">
                                                         <div className="flex items-center gap-1.5">
                                                             <Clock className="w-3.5 h-3.5 text-gray-400" />

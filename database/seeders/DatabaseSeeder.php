@@ -361,6 +361,72 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // ========================================================
+        // Seeder Pesanan Historis 7 Hari Terakhir (Untuk Grafik & Metrik)
+        // ========================================================
+        $historicalOrders = [
+            ['days_ago' => 6, 'name' => 'Fakhri', 'table' => 1, 'type' => 'dine-in', 'status' => 'completed', 'total' => 45000],
+            ['days_ago' => 6, 'name' => 'Budi', 'table' => 2, 'type' => 'dine-in', 'status' => 'completed', 'total' => 30000],
+            ['days_ago' => 5, 'name' => 'Aripandi', 'table' => 3, 'type' => 'dine-in', 'status' => 'completed', 'total' => 65000],
+            ['days_ago' => 4, 'name' => 'Fathur', 'table' => 4, 'type' => 'dine-in', 'status' => 'completed', 'total' => 40000],
+            ['days_ago' => 3, 'name' => 'Adzima', 'table' => 5, 'type' => 'dine-in', 'status' => 'completed', 'total' => 55000],
+            ['days_ago' => 2, 'name' => 'Agustian', 'table' => 6, 'type' => 'dine-in', 'status' => 'completed', 'total' => 48000],
+            ['days_ago' => 1, 'name' => 'Tamzi', 'table' => 7, 'type' => 'dine-in', 'status' => 'completed', 'total' => 75000],
+            ['days_ago' => 1, 'name' => 'Tini', 'table' => 8, 'type' => 'takeaway', 'status' => 'completed', 'total' => 35000],
+            ['days_ago' => 0, 'name' => 'Abdul', 'table' => 1, 'type' => 'dine-in', 'status' => 'completed', 'total' => 35000],
+            ['days_ago' => 0, 'name' => 'Tasya', 'table' => 2, 'type' => 'dine-in', 'status' => 'completed', 'total' => 18000],
+            ['days_ago' => 0, 'name' => 'Rahman', 'table' => 3, 'type' => 'dine-in', 'status' => 'completed', 'total' => 35000],
+        ];
+
+        foreach ($historicalOrders as $ho) {
+            $tbl = $createdTables[$ho['table']] ?? null;
+            if ($tbl && $nasgor) {
+                $orderDate = \Carbon\Carbon::today()->subDays($ho['days_ago'])->setHour(12)->setMinute(rand(10, 50));
+                
+                $ord = order::create([
+                    'table_id' => $tbl->id,
+                    'customer_name' => $ho['name'],
+                    'order_type' => $ho['type'],
+                    'total_price' => $ho['total'],
+                    'order_status' => $ho['status'],
+                    'created_at' => $orderDate,
+                    'updated_at' => $orderDate,
+                ]);
+
+                orderItem::create([
+                    'order_id' => $ord->id,
+                    'menu_id' => $nasgor->id,
+                    'quantity' => 1,
+                    'unit_price' => 18000,
+                    'notes' => null,
+                    'created_at' => $orderDate,
+                    'updated_at' => $orderDate,
+                ]);
+
+                if ($matcha) {
+                    orderItem::create([
+                        'order_id' => $ord->id,
+                        'menu_id' => $matcha->id,
+                        'quantity' => 1,
+                        'unit_price' => ($ho['total'] - 18000) > 0 ? ($ho['total'] - 18000) : 20000,
+                        'notes' => null,
+                        'created_at' => $orderDate,
+                        'updated_at' => $orderDate,
+                    ]);
+                }
+
+                payment::create([
+                    'order_id' => $ord->id,
+                    'payment_method' => 'qris',
+                    'payment_amount' => $ho['total'],
+                    'payment_status' => 'done',
+                    'transaction_ref' => 'HIST-' . $ord->id,
+                    'created_at' => $orderDate,
+                    'updated_at' => $orderDate,
+                ]);
+            }
+        }
+
         // Data Seeder Kategori Bahan Baku & Stok
         $catKopi = StockCategory::firstOrCreate(
             ['name' => 'Biji Kopi & Bubuk'],
