@@ -106,3 +106,66 @@ export interface OrderItem {
     order_items?: OrderItemDetail[];
     payment?: PaymentItem;
 }
+
+export interface PerformanceItem {
+    day_index: number;
+    label: string;
+    date: string;
+    pesanan: number;
+    pendapatan: number;
+    pendapatan_ribu?: number;
+}
+
+export interface TopSellingItem {
+    id: number;
+    name: string;
+    image: string | null;
+    price: number;
+    total_sold: number;
+}
+
+export interface PaymentSourceItem {
+    key: string;
+    name: string;
+    value: number;
+    percentage: number;
+    color?: string;
+}
+
+export interface DashboardMetrics {
+    today_revenue: number;
+    revenue_growth: number;
+    today_orders: number;
+    orders_growth: number;
+}
+
+export interface PendapatanMetrics extends DashboardMetrics {
+    average_transaction: number;
+    total_cost: number;
+}
+
+export interface PerformanceData {
+    days7: PerformanceItem[];
+    days30: PerformanceItem[];
+}
+
+export interface PaymentSourcesData {
+    items: PaymentSourceItem[];
+    total: number;
+}
+
+export interface DashboardPageProps {
+    auth: any;
+    metrics: DashboardMetrics;
+    performance: PerformanceData;
+    topSelling: TopSellingItem[];
+    recentOrders: PaginatedData<OrderItem>;
+}
+
+export interface PendapatanPageProps {
+    auth: any;
+    metrics: PendapatanMetrics;
+    performance: PerformanceData;
+    paymentSources: PaymentSourcesData;
+    recentOrders: PaginatedData<OrderItem>;
+}

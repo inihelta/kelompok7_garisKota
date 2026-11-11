@@ -8,6 +8,7 @@ use App\Http\Controllers\StockCategoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\IncomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,9 +27,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/pesanan', [OrderController::class, 'index'])->name('dashboard.pesanan');
     Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-    Route::get('/dashboard/pendapatan', function () {
-        return Inertia::render('Pendapatan');
-    })->name('dashboard.pendapatan');
+    Route::get('/dashboard/pendapatan', [IncomeController::class, 'index'])->name('dashboard.pendapatan');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
     Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');

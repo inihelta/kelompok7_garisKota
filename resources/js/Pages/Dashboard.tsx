@@ -18,42 +18,17 @@ import {
     YAxis,
     Tooltip,
 } from "recharts";
-import { OrderItem, PaginatedData } from "@/types/dashboard";
+import {
+    OrderItem,
+    PaginatedData,
+    PerformanceItem,
+    TopSellingItem,
+    DashboardPageProps,
+    DashboardMetrics,
+    PerformanceData,
+} from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
 import OrderDetailModal from "@/Components/OrderDetailModal";
-
-interface PerformanceItem {
-    day_index: number;
-    label: string;
-    date: string;
-    pesanan: number;
-    pendapatan: number;
-    pendapatan_ribu: number;
-}
-
-interface TopSellingItem {
-    id: number;
-    name: string;
-    image: string | null;
-    price: number;
-    total_sold: number;
-}
-
-interface DashboardPageProps {
-    auth: any;
-    metrics: {
-        today_revenue: number;
-        revenue_growth: number;
-        today_orders: number;
-        orders_growth: number;
-    };
-    performance: {
-        days7: PerformanceItem[];
-        days30: PerformanceItem[];
-    };
-    topSelling: TopSellingItem[];
-    recentOrders: PaginatedData<OrderItem>;
-}
 
 export default function Dashboard({
     auth,
@@ -329,9 +304,6 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* ======================================================== */}
-                {/* 3. BOTTOM SECTION: Tabel Riwayat Pesanan Terbaru         */}
-                {/* ======================================================== */}
                 <div className="border border-[#e5e7eb] rounded-xl p-4 bg-white flex flex-col gap-3 shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse text-left">

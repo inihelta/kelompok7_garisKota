@@ -361,9 +361,6 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // ========================================================
-        // Seeder Pesanan Historis 7 Hari Terakhir (Untuk Grafik & Metrik)
-        // ========================================================
         $historicalOrders = [
             ['days_ago' => 6, 'name' => 'Fakhri', 'table' => 1, 'type' => 'dine-in', 'status' => 'completed', 'total' => 45000],
             ['days_ago' => 6, 'name' => 'Budi', 'table' => 2, 'type' => 'dine-in', 'status' => 'completed', 'total' => 30000],
@@ -382,7 +379,7 @@ class DatabaseSeeder extends Seeder
             $tbl = $createdTables[$ho['table']] ?? null;
             if ($tbl && $nasgor) {
                 $orderDate = \Carbon\Carbon::today()->subDays($ho['days_ago'])->setHour(12)->setMinute(rand(10, 50));
-                
+
                 $ord = order::create([
                     'table_id' => $tbl->id,
                     'customer_name' => $ho['name'],

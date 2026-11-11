@@ -6,7 +6,6 @@ use App\Models\order;
 use App\Models\menu;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -59,14 +58,12 @@ class DashboardController extends Controller
 
                 $data[] = [
                     'day_index' => $days - 1 - $i,
-                    'label' => $days === 7 
-                        ? (string) ($days - 1 - $i) // Index 0..6 persis seperti screenshot
+                    'label' => $days === 7
+                        ? (string) ($days - 1 - $i)
                         : $targetDate->format('d/m'),
                     'date' => $targetDate->translatedFormat('d M'),
                     'pesanan' => $dayOrders,
                     'pendapatan' => $dayRevenue,
-                    // Format scaled untuk bar chart jika dibutuhkan perbandingan skala
-                    'pendapatan_ribu' => round($dayRevenue / 1000),
                 ];
             }
             return $data;
@@ -108,7 +105,7 @@ class DashboardController extends Controller
                     ? Carbon::parse($order->created_at)->locale('id')->diffForHumans(null, true)
                     : '-';
 
-                $formattedDate = $order->created_at 
+                $formattedDate = $order->created_at
                     ? Carbon::parse($order->created_at)->locale('id')->translatedFormat('d M Y, h.i A')
                     : '-';
 
@@ -163,4 +160,3 @@ class DashboardController extends Controller
         ]);
     }
 }
-
