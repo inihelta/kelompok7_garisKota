@@ -152,6 +152,7 @@ export default function Dashboard({
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
                                     data={activePerformanceData}
+                                    barGap={8}
                                     margin={{
                                         top: 10,
                                         right: 10,
@@ -223,7 +224,6 @@ export default function Dashboard({
                                         barSize={24}
                                         minPointSize={4}
                                     />
-                                    {/* Black Bars: Jumlah Pesanan */}
                                     <Bar
                                         yAxisId="pesanan"
                                         dataKey="pesanan"
