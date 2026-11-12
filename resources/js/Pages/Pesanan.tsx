@@ -95,36 +95,33 @@ export default function Pesanan({
             />
 
             <div className="flex flex-col gap-5 max-w-full">
-                {/* 2 Stat Cards Header (Screenshot 1) */}
-                {activeTab === "pesanan" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Card 1: Pesanan Diproses */}
-                        <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
-                            <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
-                                <CookingPot className="w-5 h-5" />
-                            </div>
-                            <span className="text-sm font-medium text-[#475569]">
-                                Pesanan Diproses
-                            </span>
-                            <span className="text-2xl font-bold text-[#1e293b]">
-                                {processingCount}
-                            </span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Card 1: Pesanan Diproses */}
+                    <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
+                        <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
+                            <CookingPot className="w-5 h-5" />
                         </div>
-
-                        {/* Card 2: Pesanan Selesai */}
-                        <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
-                            <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
-                                <CheckCircle className="w-5 h-5" />
-                            </div>
-                            <span className="text-sm font-medium text-[#475569]">
-                                Pesanan Selesai
-                            </span>
-                            <span className="text-2xl font-bold text-[#1e293b]">
-                                {completedCount}
-                            </span>
-                        </div>
+                        <span className="text-sm font-medium text-[#475569]">
+                            Pesanan Diproses
+                        </span>
+                        <span className="text-2xl font-bold text-[#1e293b]">
+                            {processingCount}
+                        </span>
                     </div>
-                )}
+
+                    {/* Card 2: Pesanan Selesai */}
+                    <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
+                        <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
+                            <CheckCircle className="w-5 h-5" />
+                        </div>
+                        <span className="text-sm font-medium text-[#475569]">
+                            Pesanan Selesai
+                        </span>
+                        <span className="text-2xl font-bold text-[#1e293b]">
+                            {completedCount}
+                        </span>
+                    </div>
+                </div>
 
                 {/* Tab Switcher Buttons */}
                 <div className="flex items-center gap-2">
