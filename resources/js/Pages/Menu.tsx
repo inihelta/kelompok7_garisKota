@@ -25,6 +25,9 @@ import { Button } from "@/Components/ui/button";
 import MenuFormModal from "@/Components/MenuFormModal";
 import Pagination from "@/Components/Pagination";
 import MenuCategoryModal from "@/Components/MenuCategoryModal";
+import { formatIDR, getImageSrc, getCategoryBadgeClass, getStatusBadgeClass } from "@/lib/utils";
+import { toast } from "sonner";
+import { ImageWithFallback } from "@/Components/ui/ImageWithFallback";
 
 export default function Menu({
     auth,
@@ -76,44 +79,15 @@ export default function Menu({
         startIndex + itemsPerPage,
     );
 
-    const formatIDR = (value: number) =>
-        new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-        }).format(value);
-
-    const getCategoryBadgeClass = (category_id: MenuItem["category_id"]) => {
-        switch (category_id) {
-            case 1:
-                return "bg-[#fee2e2] text-[#ef4444]";
-            case 2:
-                return "bg-[#dbeafe] text-[#2563eb]";
-            case 3:
-                return "bg-[#ffedd5] text-[#ea580c]";
-            default:
-                return "bg-gray-100 text-gray-700";
-        }
-    };
-
-    const getStatusBadgeClass = (status: MenuItem["status"]) => {
-        switch (status) {
-            case "tersedia":
-                return "bg-[#dcfce7] text-[#16a34a]";
-            case "draft":
-                return "bg-[#fef3c7] text-[#d97706]";
-            case "nonaktif":
-                return "bg-[#fee2e2] text-[#ef4444]";
-            default:
-                return "bg-gray-100 text-gray-700";
-        }
-    };
-
     const handleDelete = (id: number) => {
         router.delete(`/menus/${id}`, {
             onSuccess: () => {
                 setSelectedItems([]);
                 setActiveDialog(null);
+                toast.success("Menu dihapus");
+            },
+            onError: (errors) => {
+                toast.error(errors.message || "Gagal menghapus menu");
             },
         });
     };
@@ -131,7 +105,8 @@ export default function Menu({
             { name },
             {
                 preserveScroll: true,
-                onError: () => {},
+                onSuccess: () => toast.success("Kategori ditambahkan"),
+                onError: (errors) => toast.error(errors.message || "Gagal menambahkan kategori"),
             },
         );
     };
@@ -153,7 +128,15 @@ export default function Menu({
             { name },
             {
                 preserveScroll: true,
-                onError: () => {},
+                onSuccess: () => toast.success("Kategori diperbarui"),
+                onError: (errors) => {
+                    toast.error(errors.message || "Gagal memperbarui kategori");
+                    if (oldName) {
+                        setCategoryList((prev) =>
+                            prev.map((c) => (c.id === id ? { ...c, name: oldName } : c)),
+                        );
+                    }
+                },
             },
         );
     };
@@ -169,16 +152,14 @@ export default function Menu({
 
         router.delete(`/categories/${id}`, {
             preserveScroll: true,
-            onError: () => {},
+            onSuccess: () => toast.success("Kategori dihapus"),
+            onError: (errors) => {
+                toast.error(errors.message || "Gagal menghapus kategori");
+                if (catName) {
+                    setCategoryList((prev) => [...prev, { id, name: catName }]);
+                }
+            },
         });
-    };
-
-    const getImageSrc = (imagePath?: string) => {
-        if (!imagePath) return "";
-        if (imagePath.startsWith("http") || imagePath.startsWith("/")) {
-            return imagePath;
-        }
-        return `/storage/${imagePath}`;
     };
 
     return (
@@ -288,28 +269,28 @@ export default function Menu({
                     <table className="w-full border-collapse text-left">
                         <thead>
                             <tr>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]">
                                     #
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]">
                                     Gambar
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Nama Menu
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Kategori
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Harga
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Stok
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Status
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Aksi
                                 </th>
                             </tr>
@@ -331,25 +312,12 @@ export default function Menu({
                                             {startIndex + i + 1}
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
-                                            {item.image ? (
-                                                <img
-                                                    src={getImageSrc(
-                                                        item.image,
-                                                    )}
-                                                    alt={item.name}
-                                                    className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
-                                                    onError={(e) => {
-                                                        (
-                                                            e.target as HTMLElement
-                                                        ).style.display =
-                                                            "block";
-                                                    }}
-                                                />
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-[8px] bg-[#f1f5f9] flex items-center justify-center text-xs text-gray-400 font-medium">
-                                                    No Img
-                                                </div>
-                                            )}
+                                            <ImageWithFallback
+                                                src={getImageSrc(item.image)}
+                                                alt={item.name}
+                                                className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
+                                                fallbackIcon={<Utensils className="w-6 h-6 text-gray-300" />}
+                                            />
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
                                             <div className="flex flex-col">
@@ -400,17 +368,19 @@ export default function Menu({
                                                     type="button"
                                                     className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
                                                     title="Edit"
+                                                    aria-label="Edit menu"
                                                     onClick={() => {
                                                         setEditingMenu(item);
                                                         setActiveDialog("edit");
                                                     }}
                                                 >
-                                                    <Pencil className="w-[18px] h-[18px]" />
+                                                    <Pencil className="w-[18px] h-[18px]" aria-hidden="true" />
                                                 </button>
                                                 <button
                                                     type="button"
                                                     className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
                                                     title="Hapus"
+                                                    aria-label="Hapus menu"
                                                     onClick={() => {
                                                         setActiveDialog(
                                                             "remove",
@@ -420,7 +390,7 @@ export default function Menu({
                                                         ]);
                                                     }}
                                                 >
-                                                    <Trash2 className="w-[18px] h-[18px]" />
+                                                    <Trash2 className="w-[18px] h-[18px]" aria-hidden="true" />
                                                 </button>
                                             </div>
                                         </td>

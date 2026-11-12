@@ -29,6 +29,8 @@ import {
 } from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
 import OrderDetailModal from "@/Components/OrderDetailModal";
+import { formatIDR, getImageSrc } from "@/lib/utils";
+import { ImageWithFallback } from "@/Components/ui/ImageWithFallback";
 
 export default function Dashboard({
     auth,
@@ -40,23 +42,8 @@ export default function Dashboard({
     const [period, setPeriod] = useState<"7" | "30">("7");
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
 
-    const formatIDR = (value: number | string) =>
-        new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-        }).format(Number(value) || 0);
-
     const activePerformanceData =
         period === "7" ? performance?.days7 || [] : performance?.days30 || [];
-
-    const getImageSrc = (imagePath: string | null) => {
-        if (!imagePath) return null;
-        if (imagePath.startsWith("http") || imagePath.startsWith("/")) {
-            return imagePath;
-        }
-        return `/storage/${imagePath}`;
-    };
 
     return (
         <AuthenticatedLayout user={auth?.user} activeNav="Dashboard">
@@ -268,20 +255,10 @@ export default function Dashboard({
                                     >
                                         <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden mb-1.5 p-1">
                                             {menu.image ? (
-                                                <img
-                                                    src={
-                                                        getImageSrc(
-                                                            menu.image,
-                                                        ) || ""
-                                                    }
+                                                <ImageWithFallback
+                                                    src={getImageSrc(menu.image) || ""}
                                                     alt={menu.name}
                                                     className="w-full h-full object-contain"
-                                                    onError={(e) => {
-                                                        (
-                                                            e.target as HTMLElement
-                                                        ).style.display =
-                                                            "none";
-                                                    }}
                                                 />
                                             ) : (
                                                 <Utensils className="w-6 h-6 text-gray-300" />
@@ -309,19 +286,19 @@ export default function Dashboard({
                         <table className="w-full border-collapse text-left">
                             <thead>
                                 <tr>
-                                    <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                    <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                         PELANGGAN
                                     </th>
-                                    <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                    <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                         ID
                                     </th>
-                                    <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                    <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                         PESANAN
                                     </th>
-                                    <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                    <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                         WAKTU
                                     </th>
-                                    <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] text-center w-[120px]">
+                                    <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] text-center w-[120px]">
                                         STATUS
                                     </th>
                                 </tr>

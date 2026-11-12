@@ -48,18 +48,24 @@ export default function Pendapatan({
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
 
     // Filter tanggal dropdown di frontend
-    const [dateRangeLabel, setDateRangeLabel] = useState<string>("16 Sept 2026 - 16 Sept 2026");
+    const [dateRangeLabel, setDateRangeLabel] = useState<string>(
+        "16 Sept 2026 - 16 Sept 2026",
+    );
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
                 setIsDateDropdownOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const formatIDR = (value: number | string) =>
@@ -84,20 +90,25 @@ export default function Pendapatan({
     const defaultPaymentSources: PaymentSourceItem[] = [
         { key: "cash", name: "Cash", value: 5964000, percentage: 56 },
         { key: "qris", name: "Qris", value: 2553000, percentage: 24 },
-        { key: "bank_transfer", name: "Transfer Bank", value: 1278000, percentage: 12 },
+        {
+            key: "bank_transfer",
+            name: "Transfer Bank",
+            value: 1278000,
+            percentage: 12,
+        },
         { key: "e_wallet", name: "Debit", value: 855000, percentage: 8 },
     ];
 
     const donutData =
         paymentSources?.items && paymentSources.items.some((i) => i.value > 0)
             ? paymentSources.items.map((item) => ({
-                ...item,
-                color: paymentColorMap[item.key] || "#94a3b8",
-            }))
+                  ...item,
+                  color: paymentColorMap[item.key] || "#94a3b8",
+              }))
             : defaultPaymentSources.map((item) => ({
-                ...item,
-                color: paymentColorMap[item.key] || "#94a3b8",
-            }));
+                  ...item,
+                  color: paymentColorMap[item.key] || "#94a3b8",
+              }));
 
     const totalRevenueSource =
         paymentSources?.total > 0 ? paymentSources.total : 10650000;
@@ -109,12 +120,19 @@ export default function Pendapatan({
             <div className="flex flex-col gap-5 max-w-full">
                 {/* Header Title & Date Range Filter Dropdown */}
                 <div className="flex flex-col gap-3">
-                    <h1 className="text-2xl font-bold text-[#1e293b]">Pendapatan</h1>
+                    <h1 className="text-2xl font-bold text-[#1e293b]">
+                        Pendapatan
+                    </h1>
 
-                    <div className="relative inline-block w-fit" ref={dropdownRef}>
+                    <div
+                        className="relative inline-block w-fit"
+                        ref={dropdownRef}
+                    >
                         <button
                             type="button"
-                            onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                            onClick={() =>
+                                setIsDateDropdownOpen(!isDateDropdownOpen)
+                            }
                             className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#D91A20] text-white text-xs font-semibold shadow-xs hover:bg-[#b91c1c] transition-all cursor-pointer"
                         >
                             <Calendar className="w-4 h-4 text-white" />
@@ -168,7 +186,9 @@ export default function Pendapatan({
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setDateRangeLabel("16 Sept 2026 - 16 Sept 2026");
+                                        setDateRangeLabel(
+                                            "16 Sept 2026 - 16 Sept 2026",
+                                        );
                                         setIsDateDropdownOpen(false);
                                     }}
                                     className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-semibold text-[#D91A20]"
@@ -180,9 +200,6 @@ export default function Pendapatan({
                     </div>
                 </div>
 
-                {/* ======================================================== */}
-                {/* 1. TOP 4 METRIC CARDS (Screenshot: 4 cards)              */}
-                {/* ======================================================== */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {/* Card 1: Pendapatan Hari Ini */}
                     <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
@@ -251,9 +268,6 @@ export default function Pendapatan({
                     </div>
                 </div>
 
-                {/* ======================================================== */}
-                {/* 2. MIDDLE SECTION: Performa Penjualan & Sumber Pendapatan*/}
-                {/* ======================================================== */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                     {/* Left Card: Performa Penjualan (7 Cols on desktop) */}
                     <div className="lg:col-span-7 border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col justify-between shadow-xs">
@@ -266,8 +280,10 @@ export default function Pendapatan({
                                     </h3>
                                 </div>
                                 <p className="text-xs text-[#94a3b8] mt-1">
-                                    Perbandingan pendapatan dan jumlah pesanan dalam{" "}
-                                    {period === "7" ? "7 hari" : "30 hari"} terakhir
+                                    Perbandingan pendapatan dan jumlah pesanan
+                                    dalam{" "}
+                                    {period === "7" ? "7 hari" : "30 hari"}{" "}
+                                    terakhir
                                 </p>
                             </div>
 
@@ -303,7 +319,12 @@ export default function Pendapatan({
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
                                     data={activePerformanceData}
-                                    margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+                                    margin={{
+                                        top: 10,
+                                        right: 10,
+                                        left: -15,
+                                        bottom: 0,
+                                    }}
                                 >
                                     <XAxis
                                         dataKey="label"
@@ -319,8 +340,10 @@ export default function Pendapatan({
                                         tickLine={false}
                                         domain={[0, "auto"]}
                                         tickFormatter={(val) => {
-                                            if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-                                            if (val >= 1000) return `${Math.round(val / 1000)}k`;
+                                            if (val >= 1000000)
+                                                return `${(val / 1000000).toFixed(1)}M`;
+                                            if (val >= 1000)
+                                                return `${Math.round(val / 1000)}k`;
                                             return val;
                                         }}
                                     />
@@ -337,11 +360,19 @@ export default function Pendapatan({
                                     <RechartsTooltip
                                         formatter={(value: any, name: any) => {
                                             if (name === "jumlah pendapatan") {
-                                                return [formatIDR(value), "Pendapatan"];
+                                                return [
+                                                    formatIDR(value),
+                                                    "Pendapatan",
+                                                ];
                                             }
-                                            return [`${value} pesanan`, "Jumlah Pesanan"];
+                                            return [
+                                                `${value} pesanan`,
+                                                "Jumlah Pesanan",
+                                            ];
                                         }}
-                                        labelFormatter={(label) => `Hari ke-${label}`}
+                                        labelFormatter={(label) =>
+                                            `Hari ke-${label}`
+                                        }
                                         contentStyle={{
                                             backgroundColor: "#ffffff",
                                             borderRadius: "8px",
@@ -355,8 +386,8 @@ export default function Pendapatan({
                                         dataKey="pendapatan"
                                         name="jumlah pendapatan"
                                         fill="#D91A20"
-                                        radius={[4, 4, 0, 0]}
-                                        barSize={14}
+                                        radius={[2, 2, 0, 0]}
+                                        barSize={24}
                                         minPointSize={4}
                                     />
                                     {/* Black Bars: Jumlah Pesanan */}
@@ -365,8 +396,8 @@ export default function Pendapatan({
                                         dataKey="pesanan"
                                         name="jumlah pesanan"
                                         fill="#1e293b"
-                                        radius={[4, 4, 0, 0]}
-                                        barSize={14}
+                                        radius={[2, 2, 0, 0]}
+                                        barSize={24}
                                         minPointSize={4}
                                     />
                                 </BarChart>
@@ -412,14 +443,17 @@ export default function Pendapatan({
                                             paddingAngle={2}
                                         >
                                             {donutData.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={entry.color} />
+                                                <Cell
+                                                    key={`cell-${index}`}
+                                                    fill={entry.color}
+                                                />
                                             ))}
                                         </Pie>
                                         <RechartsTooltip
-                                            formatter={(value: any, name: any) => [
-                                                `${value}%`,
-                                                name,
-                                            ]}
+                                            formatter={(
+                                                value: any,
+                                                name: any,
+                                            ) => [`${value}%`, name]}
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
@@ -435,7 +469,9 @@ export default function Pendapatan({
                                         <div className="flex items-center gap-2">
                                             <span
                                                 className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                                                style={{ backgroundColor: item.color }}
+                                                style={{
+                                                    backgroundColor: item.color,
+                                                }}
                                             />
                                             <span className="font-medium text-[#1e293b]">
                                                 {item.name}
@@ -469,9 +505,6 @@ export default function Pendapatan({
                     </div>
                 </div>
 
-                {/* ======================================================== */}
-                {/* 3. BOTTOM SECTION: Tabel Riwayat Pesanan Terbaru         */}
-                {/* ======================================================== */}
                 <div className="border border-[#e5e7eb] rounded-xl p-4 bg-white flex flex-col gap-3 shadow-xs">
                     <div className="overflow-x-auto">
                         <table className="w-full border-collapse text-left">
@@ -495,7 +528,9 @@ export default function Pendapatan({
                                 </tr>
                             </thead>
                             <tbody>
-                                {recentOrders && recentOrders.data && recentOrders.data.length > 0 ? (
+                                {recentOrders &&
+                                recentOrders.data &&
+                                recentOrders.data.length > 0 ? (
                                     recentOrders.data.map((item) => (
                                         <tr
                                             key={item.id}
@@ -508,7 +543,8 @@ export default function Pendapatan({
                                                         <User className="w-5 h-5 text-white" />
                                                     </div>
                                                     <span className="font-semibold text-[#1e293b]">
-                                                        {item.customer_name || `Pelanggan #${item.id}`}
+                                                        {item.customer_name ||
+                                                            `Pelanggan #${item.id}`}
                                                     </span>
                                                 </div>
                                             </td>
@@ -522,7 +558,9 @@ export default function Pendapatan({
                                             <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-sm">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setSelectedOrder(item)}
+                                                    onClick={() =>
+                                                        setSelectedOrder(item)
+                                                    }
                                                     className="px-3.5 py-1.5 rounded-full bg-[#D91A20] hover:bg-[#b91c1c] text-white text-xs font-semibold transition-all cursor-pointer shadow-xs inline-flex items-center gap-1"
                                                 >
                                                     Detail Pesanan
@@ -534,18 +572,22 @@ export default function Pendapatan({
                                                 <div className="flex items-center gap-1.5">
                                                     <Clock className="w-3.5 h-3.5 text-gray-400" />
                                                     <span>
-                                                        {item.relative_time || item.formatted_time || "-"}
+                                                        {item.relative_time ||
+                                                            item.formatted_time ||
+                                                            "-"}
                                                     </span>
                                                 </div>
                                             </td>
 
                                             {/* STATUS */}
                                             <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-center">
-                                                {item.order_status === "cancelled" ? (
+                                                {item.order_status ===
+                                                "cancelled" ? (
                                                     <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-[#fee2e2] text-[#ef4444] inline-block">
                                                         Dibatalkan
                                                     </span>
-                                                ) : item.order_status === "completed" ? (
+                                                ) : item.order_status ===
+                                                  "completed" ? (
                                                     <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-[#dcfce7] text-[#16a34a] inline-block">
                                                         Selesai
                                                     </span>
@@ -563,7 +605,8 @@ export default function Pendapatan({
                                             colSpan={5}
                                             className="text-center py-8 text-gray-400 text-sm"
                                         >
-                                            Belum ada transaksi riwayat pesanan di database.
+                                            Belum ada transaksi riwayat pesanan
+                                            di database.
                                         </td>
                                     </tr>
                                 )}

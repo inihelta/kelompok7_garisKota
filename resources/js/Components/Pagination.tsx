@@ -32,10 +32,10 @@ export default function Pagination({
 }: PaginationProps) {
     const cleanLabel = (label: string) => {
         if (label.includes("Previous") || label.includes("&laquo;")) {
-            return <ChevronLeft className="w-4 h-4" />;
+            return <ChevronLeft className="w-4 h-4" aria-hidden="true" />;
         }
         if (label.includes("Next") || label.includes("&raquo;")) {
-            return <ChevronRight className="w-4 h-4" />;
+            return <ChevronRight className="w-4 h-4" aria-hidden="true" />;
         }
         return label;
     };
@@ -95,6 +95,8 @@ export default function Pagination({
                                         ? "bg-[#D91A20] text-white shadow-xs"
                                         : "border border-[#e2e8f0] bg-white text-[#64748b] hover:bg-gray-50"
                                 }`}
+                                aria-label={link.label}
+                                aria-current={link.active ? "page" : undefined}
                             >
                                 {cleanLabel(link.label)}
                             </Link>
@@ -139,8 +141,10 @@ export default function Pagination({
                         onPageChange && onPageChange(currentPage - 1)
                     }
                     className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white flex items-center justify-center text-[#64748b] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                    aria-label="Halaman sebelumnya"
+                    aria-disabled={currentPage <= 1}
                 >
-                    <ChevronLeft className="w-4 h-4" />
+                    <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                 </button>
 
                 {pages.map((p) => (
@@ -153,6 +157,8 @@ export default function Pagination({
                                 ? "bg-[#D91A20] text-white shadow-xs"
                                 : "border border-[#e2e8f0] bg-white text-[#64748b] hover:bg-gray-50"
                         }`}
+                        aria-label={`Halaman ${p}`}
+                        aria-current={currentPage === p ? "page" : undefined}
                     >
                         {p}
                     </button>
@@ -165,8 +171,10 @@ export default function Pagination({
                         onPageChange && onPageChange(currentPage + 1)
                     }
                     className="w-8 h-8 rounded-[8px] border border-[#e2e8f0] bg-white flex items-center justify-center text-[#64748b] hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                    aria-label="Halaman selanjutnya"
+                    aria-disabled={currentPage >= totalPages}
                 >
-                    <ChevronRight className="w-4 h-4" />
+                    <ChevronRight className="w-4 h-4" aria-hidden="true" />
                 </button>
             </div>
         </div>

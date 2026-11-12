@@ -36,6 +36,8 @@ import { Button } from "@/Components/ui/button";
 import StokFormModal from "@/Components/StokFormModal";
 import StockCategoryModal from "@/Components/StockCategoryModal";
 import Pagination from "@/Components/Pagination";
+import { formatEstDaily, getCategoryBadgeClass, getStatusBadgeClass } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface StokPageProps {
     auth: any;
@@ -108,7 +110,12 @@ export default function Stok({
             { name, icon },
             {
                 preserveScroll: true,
-                onError: () => {},
+                onSuccess: () => toast.success("Kategori ditambahkan"),
+                onError: (errors) => {
+                    toast.error(errors.message || "Gagal menambahkan kategori");
+                    setCategoryList((prev) => prev.filter((c) => c.id !== newId));
+                    setCategories((prev) => prev.filter((c) => c !== name));
+                },
             },
         );
     };
@@ -142,13 +149,27 @@ export default function Stok({
         }
 
         router.put(
-            `/stock-categories/${id}`,
-            { name, icon },
-            {
-                preserveScroll: true,
-                onError: () => {},
-            },
-        );
+                `/stock-categories/${id}`,
+                { name, icon },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => toast.success("Kategori diperbarui"),
+                    onError: (errors) => {
+                        toast.error(errors.message || "Gagal memperbarui kategori");
+                        if (oldName) {
+                            setCategoryList((prev) =>
+                                prev.map((c) => (c.id === id ? { ...c, name: oldName, icon: oldCat?.icon } : c)),
+                            );
+                            setCategories((prev) =>
+                                prev.map((c) => (c === name ? oldName : c)),
+                            );
+                            if (activeCategory === name) {
+                                setActiveCategory(oldName);
+                            }
+                        }
+                    },
+                },
+            );
     };
 
     const handleDeleteCategory = (id: number) => {
@@ -165,7 +186,14 @@ export default function Stok({
 
         router.delete(`/stock-categories/${id}`, {
             preserveScroll: true,
-            onError: () => {},
+            onSuccess: () => toast.success("Kategori dihapus"),
+            onError: (errors) => {
+                toast.error(errors.message || "Gagal menghapus kategori");
+                if (catName) {
+                    setCategoryList((prev) => [...prev, { id, name: catName, icon: cat?.icon }]);
+                    setCategories((prev) => [...prev, catName]);
+                }
+            },
         });
     };
 
@@ -226,12 +254,7 @@ export default function Stok({
         }
     };
 
-    const formatEstDaily = (est: number | string, unit: string) => {
-        if (!est && est !== 0) return "-";
-        if (typeof est === "string" && est.startsWith("~")) return est;
-        const unitLabel = unit === "Liter" ? "L" : unit;
-        return `~${est} ${unitLabel}/hari`;
-    };
+    
 
     const handleSaveStock = (data: {
         id?: number;
@@ -247,6 +270,7 @@ export default function Stok({
         const status = data.stock <= data.min_stock ? "Menipis" : "Aman";
 
         if (data.id) {
+            const previousItem = stockItems.find((item) => item.id === data.id);
             setStockItems((prev) =>
                 prev.map((item) => {
                     if (item.id === data.id) {
@@ -279,7 +303,15 @@ export default function Stok({
                 },
                 {
                     preserveScroll: true,
-                    onError: () => {},
+                    onSuccess: () => toast.success("Bahan diperbarui"),
+                    onError: (errors) => {
+                        toast.error(errors.message || "Gagal memperbarui bahan");
+                        if (previousItem) {
+                            setStockItems((prev) =>
+                                prev.map((item) => (item.id === data.id ? previousItem : item)),
+                            );
+                        }
+                    },
                 },
             );
         } else {
@@ -314,7 +346,11 @@ export default function Stok({
                 },
                 {
                     preserveScroll: true,
-                    onError: () => {},
+                    onSuccess: () => toast.success("Bahan ditambahkan"),
+                    onError: (errors) => {
+                        toast.error(errors.message || "Gagal menambahkan bahan");
+                        setStockItems((prev) => prev.filter((item) => item.id !== newId));
+                    },
                 },
             );
         }
@@ -324,10 +360,17 @@ export default function Stok({
     };
 
     const handleDelete = (id: number) => {
+        const previousItem = stockItems.find((item) => item.id === id);
         setStockItems((prev) => prev.filter((item) => item.id !== id));
         router.delete(`/stocks/${id}`, {
             preserveScroll: true,
-            onError: () => {},
+            onSuccess: () => toast.success("Bahan dihapus"),
+            onError: (errors) => {
+                toast.error(errors.message || "Gagal menghapus bahan");
+                if (previousItem) {
+                    setStockItems((prev) => [previousItem, ...prev.filter((item) => item.id !== id)]);
+                }
+            },
         });
         setSelectedItems([]);
         setActiveDialog(null);
@@ -372,7 +415,7 @@ export default function Stok({
                     </div>
                     <span className="text-sm">Total Item Bahan</span>
                     <span className="text-xl font-bold -mt-2">
-                        {stockItems.length > 0 ? 325 : 0}
+                        {stockItems.length}
                     </span>
                 </div>
                 <div className="border border-[#e5e7eb] rounded-lg p-4 flex flex-col gap-2 w-full">
@@ -432,28 +475,28 @@ export default function Stok({
                     <table className="w-full border-collapse text-left">
                         <thead>
                             <tr>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[50px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[50px]">
                                     #
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Nama Bahan
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Kategori
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Stok Saat Ini
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Min. Stok
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Est. Harian
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
                                     Status
                                 </th>
-                                <th className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[120px]">
+                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[120px]">
                                     Aksi
                                 </th>
                             </tr>
@@ -550,6 +593,7 @@ export default function Stok({
                                                         type="button"
                                                         className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
                                                         title="Edit"
+                                                        aria-label="Edit bahan"
                                                         onClick={() => {
                                                             setEditingStock(
                                                                 item,
@@ -559,12 +603,13 @@ export default function Stok({
                                                             );
                                                         }}
                                                     >
-                                                        <Pencil className="w-[18px] h-[18px]" />
+                                                        <Pencil className="w-[18px] h-[18px]" aria-hidden="true" />
                                                     </button>
                                                     <button
                                                         type="button"
                                                         className="w-9 h-9 rounded-[8px] border border-[#fee2e2] bg-[#fee2e2] cursor-pointer flex items-center justify-center text-[#ef4444] transition-all duration-200 hover:bg-[#fecaca]"
                                                         title="Hapus"
+                                                        aria-label="Hapus bahan"
                                                         onClick={() => {
                                                             setActiveDialog(
                                                                 "remove",
@@ -574,7 +619,7 @@ export default function Stok({
                                                             ]);
                                                         }}
                                                     >
-                                                        <Trash2 className="w-[18px] h-[18px]" />
+                                                        <Trash2 className="w-[18px] h-[18px]" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </td>

@@ -106,8 +106,9 @@ export default function Sidebar({
                                     : "font-normal text-[#1f2937] hover:bg-[#fef2f2] hover:text-[#e31b23]"
                             }`}
                             aria-current={isActive ? "page" : undefined}
+                            aria-label={item.name}
                         >
-                            <Icon className="w-[25px] h-[25px] shrink-0" />
+                            <Icon className="w-[25px] h-[25px] shrink-0" aria-hidden="true" />
                             <span>{item.name}</span>
                         </Link>
                     );
