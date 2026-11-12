@@ -319,6 +319,7 @@ export default function Pendapatan({
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
                                     data={activePerformanceData}
+                                    barGap={8}
                                     margin={{
                                         top: 10,
                                         right: 10,
