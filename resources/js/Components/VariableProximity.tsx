@@ -14,6 +14,9 @@ import {
   type RefObject
 } from 'react';
 
+const FONT_IMPORT =
+  "@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');";
+
 type Falloff = 'linear' | 'exponential' | 'gaussian';
 
 interface VariableProximityProps extends HTMLAttributes<HTMLSpanElement> {
@@ -407,19 +410,21 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   let letterIndex = 0;
 
   return (
-    <span
-      ref={setRoot}
-      className={className}
-      onClick={onClick}
-      style={{
-        display: 'inline',
-        fontFamily: 'var(--font-roboto-flex, var(--font-proximity, "Roboto Flex", sans-serif))',
-        ...(fontSize !== undefined ? { fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize } : {}),
-        ...(lineStarts !== null ? { whiteSpace: 'nowrap' } : {}),
-        ...style
-      }}
-      {...restProps}
-    >
+    <>
+      <style>{FONT_IMPORT}</style>
+      <span
+        ref={setRoot}
+        className={className}
+        onClick={onClick}
+        style={{
+          display: 'inline',
+          fontFamily: '"Roboto Flex", sans-serif',
+          ...(fontSize !== undefined ? { fontSize: typeof fontSize === 'number' ? `${fontSize}px` : fontSize } : {}),
+          ...(lineStarts !== null ? { whiteSpace: 'nowrap' } : {}),
+          ...style
+        }}
+        {...restProps}
+      >
         {words.map((word, wordIndex) => (
           <Fragment key={wordIndex}>
             {breakSet.has(wordIndex) && <br />}
@@ -450,6 +455,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
         ))}
         <span className="sr-only">{label}</span>
       </span>
+    </>
   );
 });
 
