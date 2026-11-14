@@ -9,13 +9,24 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\CustomerOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    // return view('welcome');
     return Inertia::render('Homepage');
+})->name('home');
+
+
+
+// Public Customer Ordering Routes (QR Table Scan)
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/order/{token}', [CustomerOrderController::class, 'show'])->name('order.show');
+    Route::get('/order/status/{order}', [CustomerOrderController::class, 'status'])->name('order.status');
 });
+Route::post('/order', [CustomerOrderController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('order.store');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

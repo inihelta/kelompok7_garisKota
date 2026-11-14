@@ -47,3 +47,19 @@ export function ChartSkeleton({ className }: { className?: string }) {
         </div>
     );
 }
+
+export function MenuCardSkeleton() {
+    return (
+        <div className="flex items-center justify-between gap-4 p-4 bg-white border-b border-gray-100">
+            <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4 rounded-md" />
+                <Skeleton className="h-3 w-5/6 rounded-md" />
+                <Skeleton className="h-4 w-1/3 rounded-md mt-2" />
+            </div>
+            <div className="flex flex-col items-end shrink-0 w-24 gap-2">
+                <Skeleton className="h-20 w-20 rounded-xl" />
+                <Skeleton className="h-6 w-16 rounded-full" />
+            </div>
+        </div>
+    );
+}
