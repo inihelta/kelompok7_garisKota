@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Search,
@@ -66,10 +66,20 @@ export default function Meja({
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
 
+    useEffect(() => {
+        if (propTables) {
+            setTables(propTables);
+        }
+    }, [propTables]);
+
     const filteredTables = tables.filter((item) => {
         const matchesSearch =
             item.table_number.toString().includes(searchQuery) ||
-            item.location.toLowerCase().includes(searchQuery.toLowerCase());
+            item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.active_order &&
+                `pesanan #${item.active_order.id}`
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()));
         return matchesSearch;
     });
 
@@ -296,10 +306,19 @@ export default function Meja({
                                                     : "Terisi"}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
-                                            <span
-                                                className={`px-3 py-1.5 rounded-full text-[12px] min-w-[5rem] font-semibold inline-block text-center`}
-                                            ></span>
+                                        <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px]">
+                                            {item.active_order ? (
+                                                <Link
+                                                    href="/dashboard/pesanan"
+                                                    className="text-[#1e293b] hover:text-[#b91c1c] transition-colors"
+                                                >
+                                                    Pesanan #{item.active_order.id} ({item.active_order.items_count} item)
+                                                </Link>
+                                            ) : (
+                                                <span className="text-[#64748b]">
+                                                    Tidak ada pesanan
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155]">
                                             <div className="flex gap-2">

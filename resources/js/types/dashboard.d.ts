@@ -15,6 +15,12 @@ export interface TableItem {
     capacity: number;
     available: boolean;
     location: "indoor" | "outdoor";
+    active_order?: {
+        id: number;
+        items_count: number;
+        order_status?: string;
+        customer_name?: string;
+    } | null;
 }
 
 export interface CategoryItem {

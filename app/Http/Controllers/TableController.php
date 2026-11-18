@@ -12,8 +12,37 @@ class TableController extends Controller
      */
     public function index()
     {
+        $tables = table::with(['orders' => function ($query) {
+            $query->whereIn('order_status', ['pending', 'processing'])
+                ->with('orderItems')
+                ->latest();
+        }])
+        ->orderBy('table_number')
+        ->get()
+        ->map(function ($t) {
+            $activeOrder = $t->orders->first();
+            $itemsCount = 0;
+            if ($activeOrder) {
+                $itemsCount = (int) ($activeOrder->orderItems->count() ?: 1);
+            }
+
+            return [
+                'id' => $t->id,
+                'table_number' => $t->table_number,
+                'capacity' => $t->capacity,
+                'available' => $activeOrder ? false : (bool) $t->available,
+                'location' => $t->location,
+                'active_order' => $activeOrder ? [
+                    'id' => $activeOrder->id,
+                    'items_count' => $itemsCount,
+                    'order_status' => $activeOrder->order_status,
+                    'customer_name' => $activeOrder->customer_name,
+                ] : null,
+            ];
+        });
+
         return inertia('Meja', [
-            'tables' => table::all()
+            'tables' => $tables,
         ]);
     }
 

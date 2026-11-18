@@ -61,7 +61,6 @@ export default function Homepage() {
                             ref={heroRef}
                             className="relative w-dvw h-dvh  bg-[#BE1A1A] text-[#fffff0] flex flex-col justify-between p-6 sm:p-10 md:p-14 overflow-hidden shadow-sm"
                         >
-                            {/* Center: VariableProximity Interactive Display */}
                             <div className="my-auto py-12 sm:py-16 text-center select-none cursor-default z-10">
                                 <div className="inline-block w-full">
                                     <VariableProximity

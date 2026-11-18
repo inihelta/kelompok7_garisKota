@@ -147,7 +147,7 @@ class DatabaseSeeder extends Seeder
             ['table_number' => 3, 'capacity' => 4, 'available' => true, 'location' => 'indoor'],
             ['table_number' => 4, 'capacity' => 6, 'available' => false, 'location' => 'indoor'],
             ['table_number' => 5, 'capacity' => 4, 'available' => true, 'location' => 'outdoor'],
-            ['table_number' => 6, 'capacity' => 2, 'available' => false, 'location' => 'outdoor'],
+            ['table_number' => 6, 'capacity' => 2, 'available' => true, 'location' => 'outdoor'],
             ['table_number' => 7, 'capacity' => 4, 'available' => true, 'location' => 'outdoor'],
             ['table_number' => 8, 'capacity' => 8, 'available' => true, 'location' => 'outdoor'],
         ];
@@ -177,12 +177,13 @@ class DatabaseSeeder extends Seeder
                     'order_status' => 'processing',
                 ],
                 [
+                    'customer_name' => 'Budi Santoso',
                     'order_type' => 'dine-in',
                     'total_price' => 48000,
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order1->id,
                     'menu_id' => $nasgor->id,
@@ -194,7 +195,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order1->id,
                     'menu_id' => $kentang->id,
@@ -225,12 +226,13 @@ class DatabaseSeeder extends Seeder
                     'order_status' => 'pending',
                 ],
                 [
+                    'customer_name' => 'Siti Rahma',
                     'order_type' => 'dine-in',
                     'total_price' => 65000,
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order2->id,
                     'menu_id' => $mixPlatter->id,
@@ -242,7 +244,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order2->id,
                     'menu_id' => $matcha->id,
@@ -273,12 +275,13 @@ class DatabaseSeeder extends Seeder
                     'order_status' => 'completed',
                 ],
                 [
+                    'customer_name' => 'Ahmad Fauzi',
                     'order_type' => 'dine-in',
                     'total_price' => 32000,
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order3->id,
                     'menu_id' => $hazelnut->id,
@@ -290,7 +293,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order3->id,
                     'menu_id' => $espresso->id,
@@ -322,11 +325,12 @@ class DatabaseSeeder extends Seeder
                     'order_status' => 'completed',
                 ],
                 [
+                    'customer_name' => 'Dewi Lestari',
                     'total_price' => 40000,
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order4->id,
                     'menu_id' => $hazelnut->id,
@@ -338,7 +342,7 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            orderItem::firstOrCreate(
+            orderItem::updateOrCreate(
                 [
                     'order_id' => $order4->id,
                     'menu_id' => $matcha->id,
@@ -375,52 +379,81 @@ class DatabaseSeeder extends Seeder
             ['days_ago' => 0, 'name' => 'Rahman', 'table' => 3, 'type' => 'dine-in', 'status' => 'completed', 'total' => 35000],
         ];
 
-        foreach ($historicalOrders as $ho) {
+        foreach ($historicalOrders as $idx => $ho) {
             $tbl = $createdTables[$ho['table']] ?? null;
             if ($tbl && $nasgor) {
-                $orderDate = \Carbon\Carbon::today()->subDays($ho['days_ago'])->setHour(12)->setMinute(rand(10, 50));
+                $orderDate = \Carbon\Carbon::today()->subDays($ho['days_ago'])->setHour(12)->setMinute(15 + $idx * 3);
+                $ref = 'HIST-' . str_pad($idx + 1, 3, '0', STR_PAD_LEFT);
 
-                $ord = order::create([
-                    'table_id' => $tbl->id,
-                    'customer_name' => $ho['name'],
-                    'order_type' => $ho['type'],
-                    'total_price' => $ho['total'],
-                    'order_status' => $ho['status'],
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate,
-                ]);
-
-                orderItem::create([
-                    'order_id' => $ord->id,
-                    'menu_id' => $nasgor->id,
-                    'quantity' => 1,
-                    'unit_price' => 18000,
-                    'notes' => null,
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate,
-                ]);
-
-                if ($matcha) {
-                    orderItem::create([
-                        'order_id' => $ord->id,
-                        'menu_id' => $matcha->id,
-                        'quantity' => 1,
-                        'unit_price' => ($ho['total'] - 18000) > 0 ? ($ho['total'] - 18000) : 20000,
-                        'notes' => null,
+                $payment = payment::where('transaction_ref', $ref)->first();
+                if ($payment && $payment->order) {
+                    $ord = $payment->order;
+                    $ord->update([
+                        'table_id' => $tbl->id,
+                        'customer_name' => $ho['name'],
+                        'order_type' => $ho['type'],
+                        'total_price' => $ho['total'],
+                        'order_status' => $ho['status'],
                         'created_at' => $orderDate,
                         'updated_at' => $orderDate,
                     ]);
-                }
+                } else {
+                    $ord = order::updateOrCreate(
+                        [
+                            'customer_name' => $ho['name'],
+                            'table_id' => $tbl->id,
+                            'total_price' => $ho['total'],
+                            'order_status' => $ho['status'],
+                        ],
+                        [
+                            'order_type' => $ho['type'],
+                            'created_at' => $orderDate,
+                            'updated_at' => $orderDate,
+                        ]
+                    );
 
-                payment::create([
-                    'order_id' => $ord->id,
-                    'payment_method' => 'qris',
-                    'payment_amount' => $ho['total'],
-                    'payment_status' => 'done',
-                    'transaction_ref' => 'HIST-' . $ord->id,
-                    'created_at' => $orderDate,
-                    'updated_at' => $orderDate,
-                ]);
+                    orderItem::updateOrCreate(
+                        [
+                            'order_id' => $ord->id,
+                            'menu_id' => $nasgor->id,
+                        ],
+                        [
+                            'quantity' => 1,
+                            'unit_price' => 18000,
+                            'notes' => null,
+                            'created_at' => $orderDate,
+                            'updated_at' => $orderDate,
+                        ]
+                    );
+
+                    if ($matcha) {
+                        orderItem::updateOrCreate(
+                            [
+                                'order_id' => $ord->id,
+                                'menu_id' => $matcha->id,
+                            ],
+                            [
+                                'quantity' => 1,
+                                'unit_price' => ($ho['total'] - 18000) > 0 ? ($ho['total'] - 18000) : 20000,
+                                'notes' => null,
+                                'created_at' => $orderDate,
+                                'updated_at' => $orderDate,
+                            ]
+                        );
+                    }
+
+                    payment::updateOrCreate(
+                        ['order_id' => $ord->id],
+                        [
+                            'payment_method' => 'qris',
+                            'payment_amount' => $ho['total'],
+                            'payment_status' => 'done',
+                            'transaction_ref' => $ref,
+                            'created_at' => $orderDate,
+                            'updated_at' => $orderDate,
+                        ]
+                    );
+                }
             }
         }
 
