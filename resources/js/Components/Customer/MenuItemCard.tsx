@@ -24,7 +24,7 @@ export default function MenuItemCard({
     const isOutOfStock = menu.stock <= 0;
 
     return (
-        <div className="relative flex items-center justify-between gap-4 p-4 bg-white border-b border-gray-100 transition-colors hover:bg-gray-50/50">
+        <div className="relative flex items-center justify-between gap-4 p-4 bg-white border-b border-gray-100 md:border md:rounded-2xl md:shadow-2xs md:hover:shadow-md md:hover:border-emerald-200 transition-all">
             {/* Left Content */}
             <div className="flex-1 min-w-0 pr-1">
                 <h3 className="font-bold text-gray-900 text-base leading-snug line-clamp-1">

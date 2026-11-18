@@ -32,12 +32,12 @@ export default function OrderStatus({ order }: OrderStatusProps) {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans antialiased py-6 px-4">
+        <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans antialiased py-6 md:py-10 px-4">
             <Head title={`Status Pesanan #${order.id} - Garis Kota`} />
 
-            <div className="mx-auto max-w-md space-y-4">
+            <div className="mx-auto max-w-md md:max-w-2xl space-y-4 md:space-y-6">
                 {/* Top Success Banner */}
-                <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100 text-center">
+                <div className="rounded-3xl bg-white p-6 md:p-8 shadow-sm border border-gray-100 text-center">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-3 shadow-xs">
                         {isCompleted ? (
                             <CheckCircle2 className="h-8 w-8 text-emerald-600" />

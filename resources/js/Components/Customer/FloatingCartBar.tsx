@@ -18,7 +18,7 @@ export default function FloatingCartBar({
     if (totalItems <= 0) return null;
 
     return (
-        <div className="fixed bottom-3 left-0 right-0 z-40 px-4 max-w-md mx-auto">
+        <div className="fixed bottom-3 left-0 right-0 z-40 px-4 max-w-lg mx-auto lg:hidden">
             <button
                 type="button"
                 onClick={onClick}

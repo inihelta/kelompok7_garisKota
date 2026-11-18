@@ -77,7 +77,7 @@ class CustomerOrderController extends Controller
     {
         $validated = $request->validate([
             'table_token' => 'required|string',
-            'customer_name' => 'required|string|trim|max:100',
+            'customer_name' => 'required|string|max:100',
             'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:menus,id',
             'items.*.quantity' => 'required|integer|min:1|max:50',
@@ -133,8 +133,8 @@ class CustomerOrderController extends Controller
                 // Buat Order
                 $order = Order::create([
                     'table_id' => $table->id,
-                    'customer_name' => $validated['customer_name'],
-                    'order_type' => 'dine_in',
+                    'customer_name' => trim($validated['customer_name']),
+                    'order_type' => 'dine-in',
                     'total_price' => $totalPrice,
                     'order_status' => 'pending',
                 ]);

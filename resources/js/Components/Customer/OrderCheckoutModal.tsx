@@ -22,6 +22,11 @@ interface OrderCheckoutModalProps {
     cart: Record<number, CartItem>;
     onUpdateQuantity: (menuId: number, delta: number) => void;
     onUpdateNotes: (menuId: number, notes: string) => void;
+    customerName?: string;
+    setCustomerName?: (name: string) => void;
+    nameError?: string;
+    isSubmitting?: boolean;
+    onSubmit?: (e: React.FormEvent) => void;
 }
 
 export default function OrderCheckoutModal({
@@ -31,10 +36,21 @@ export default function OrderCheckoutModal({
     cart,
     onUpdateQuantity,
     onUpdateNotes,
+    customerName: propCustomerName,
+    setCustomerName: propSetCustomerName,
+    nameError: propNameError,
+    isSubmitting: propIsSubmitting,
+    onSubmit: propOnSubmit,
 }: OrderCheckoutModalProps) {
-    const [customerName, setCustomerName] = useState("");
-    const [nameError, setNameError] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [localName, setLocalName] = useState("");
+    const [localNameError, setLocalNameError] = useState("");
+    const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
+
+    const customerName = propCustomerName !== undefined ? propCustomerName : localName;
+    const setCustomerName = propSetCustomerName || setLocalName;
+    const nameError = propNameError !== undefined ? propNameError : localNameError;
+    const isSubmitting = propIsSubmitting !== undefined ? propIsSubmitting : localIsSubmitting;
+
     const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
     const [tempNote, setTempNote] = useState("");
 
@@ -59,13 +75,18 @@ export default function OrderCheckoutModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!customerName.trim()) {
-            setNameError("Nama pemesan wajib diisi.");
+        if (propOnSubmit) {
+            propOnSubmit(e);
             return;
         }
 
-        setNameError("");
-        setIsSubmitting(true);
+        if (!customerName.trim()) {
+            setLocalNameError("Nama pemesan wajib diisi.");
+            return;
+        }
+
+        setLocalNameError("");
+        setLocalIsSubmitting(true);
 
         const payload = {
             table_token: table.token,
@@ -79,15 +100,15 @@ export default function OrderCheckoutModal({
 
         router.post("/order", payload, {
             onError: (errors) => {
-                setIsSubmitting(false);
+                setLocalIsSubmitting(false);
                 if (errors.customer_name) {
-                    setNameError(errors.customer_name);
+                    setLocalNameError(errors.customer_name);
                 } else if (errors.error) {
                     alert(errors.error);
                 }
             },
             onFinish: () => {
-                setIsSubmitting(false);
+                setLocalIsSubmitting(false);
             },
         });
     };
@@ -95,15 +116,15 @@ export default function OrderCheckoutModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4">
             <div
                 className="fixed inset-0"
                 onClick={!isSubmitting ? onClose : undefined}
             />
 
-            <div className="relative z-10 flex h-[92vh] w-full max-w-md flex-col rounded-t-3xl bg-[#f8fafc] shadow-2xl animate-in slide-in-from-bottom duration-200">
+            <div className="relative z-10 flex h-[92vh] sm:h-auto sm:max-h-[88vh] w-full max-w-md sm:max-w-lg flex-col rounded-t-3xl sm:rounded-3xl bg-[#f8fafc] shadow-2xl animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
                 {/* Header (Like Screenshot 2) */}
-                <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3.5 rounded-t-3xl">
+                <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3.5 rounded-t-3xl sm:rounded-t-3xl">
                     <button
                         type="button"
                         onClick={onClose}

@@ -6,12 +6,14 @@ interface CategoryJumpModalProps {
     categories: CustomerCategory[];
     menus: CustomerMenu[];
     onSelectCategory: (categoryName: string) => void;
+    hasCartItems?: boolean;
 }
 
 export default function CategoryJumpModal({
     categories,
     menus,
     onSelectCategory,
+    hasCartItems = false,
 }: CategoryJumpModalProps) {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -30,11 +32,15 @@ export default function CategoryJumpModal({
     return (
         <>
             {/* Floating Menu Button (Floating Red Pill like reference) */}
-            <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30">
+            <div
+                className={`fixed left-1/2 -translate-x-1/2 z-30 lg:hidden transition-all duration-200 ${
+                    hasCartItems ? "bottom-20" : "bottom-5"
+                }`}
+            >
                 <button
                     type="button"
                     onClick={() => setIsOpen(true)}
-                    className="flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-rose-600/30 active:scale-95 transition-all hover:bg-rose-700"
+                    className="flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-rose-600/30 active:scale-95 transition-all hover:bg-rose-700 cursor-pointer"
                 >
                     <Utensils className="h-4 w-4" />
                     <span>Menu</span>
