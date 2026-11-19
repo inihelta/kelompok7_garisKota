@@ -133,7 +133,7 @@ class IncomeController extends Controller
             ->withQueryString()
             ->through(function ($order) {
                 $relativeTime = $order->created_at
-                    ? Carbon::parse($order->created_at)->locale('id')->diffForHumans(null, true)
+                    ? Carbon::parse($order->created_at)->locale('id')->diffForHumans(null, true) . " lalu"
                     : '-';
 
                 $formattedDate = $order->created_at

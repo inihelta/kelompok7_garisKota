@@ -47,15 +47,15 @@ export default function Pagination({
                     {from && to && total ? (
                         <>
                             Menampilkan{" "}
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text--gray-900">
                                 {from}
                             </span>{" "}
                             -{" "}
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text--gray-900">
                                 {to}
                             </span>{" "}
                             dari{" "}
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text--gray-900">
                                 {total}
                             </span>{" "}
                             {itemName}
@@ -115,15 +115,15 @@ export default function Pagination({
                 {from && to && total ? (
                     <>
                         Menampilkan{" "}
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text--gray-900">
                             {from}
                         </span>{" "}
                         -{" "}
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text--gray-900">
                             {to}
                         </span>{" "}
                         dari{" "}
-                        <span className="font-semibold text-gray-900">
+                        <span className="font-semibold text--gray-900">
                             {total}
                         </span>{" "}
                         {itemName}

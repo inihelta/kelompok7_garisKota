@@ -25,7 +25,12 @@ import { Button } from "@/Components/ui/button";
 import MenuFormModal from "@/Components/MenuFormModal";
 import Pagination from "@/Components/Pagination";
 import MenuCategoryModal from "@/Components/MenuCategoryModal";
-import { formatIDR, getImageSrc, getCategoryBadgeClass, getStatusBadgeClass } from "@/lib/utils";
+import {
+    formatIDR,
+    getImageSrc,
+    getCategoryBadgeClass,
+    getStatusBadgeClass,
+} from "@/lib/utils";
 import { toast } from "sonner";
 import { ImageWithFallback } from "@/Components/ui/ImageWithFallback";
 
@@ -38,9 +43,8 @@ export default function Menu({
     menus: MenuItem[];
     categories: CategoryItem[];
 }) {
-    const [categoryList, setCategoryList] = useState<CategoryItem[]>(
-        categories,
-    );
+    const [categoryList, setCategoryList] =
+        useState<CategoryItem[]>(categories);
     const categoryName = ["Semua Menu"].concat(
         categoryList.map((cat) => cat.name),
     );
@@ -106,7 +110,8 @@ export default function Menu({
             {
                 preserveScroll: true,
                 onSuccess: () => toast.success("Kategori ditambahkan"),
-                onError: (errors) => toast.error(errors.message || "Gagal menambahkan kategori"),
+                onError: (errors) =>
+                    toast.error(errors.message || "Gagal menambahkan kategori"),
             },
         );
     };
@@ -133,7 +138,9 @@ export default function Menu({
                     toast.error(errors.message || "Gagal memperbarui kategori");
                     if (oldName) {
                         setCategoryList((prev) =>
-                            prev.map((c) => (c.id === id ? { ...c, name: oldName } : c)),
+                            prev.map((c) =>
+                                c.id === id ? { ...c, name: oldName } : c,
+                            ),
                         );
                     }
                 },
@@ -269,28 +276,52 @@ export default function Menu({
                     <table className="w-full border-collapse text-left">
                         <thead>
                             <tr>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[40px]"
+                                >
                                     #
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px] w-[80px]"
+                                >
                                     Gambar
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Nama Menu
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Kategori
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Harga
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Stok
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Status
                                 </th>
-                                <th scope="col" className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]">
+                                <th
+                                    scope="col"
+                                    className="bg-[#f7f7fa] text-[#475569] font-medium text-[14px] p-4 first:rounded-l-[8px] last:rounded-r-[8px]"
+                                >
                                     Aksi
                                 </th>
                             </tr>
@@ -316,7 +347,9 @@ export default function Menu({
                                                 src={getImageSrc(item.image)}
                                                 alt={item.name}
                                                 className="w-12 h-12 rounded-[8px] object-contain bg-[#f1f5f9] block"
-                                                fallbackIcon={<Utensils className="w-6 h-6 text-gray-300" />}
+                                                fallbackIcon={
+                                                    <Utensils className="w-6 h-6 text-gray-300" />
+                                                }
                                             />
                                         </td>
                                         <td className="px-4 py-3 border-b border-[#f1f5f9] align-middle text-[14px] text-[#334155] text-ellipsis overflow-hidden whitespace-nowrap">
@@ -374,7 +407,10 @@ export default function Menu({
                                                         setActiveDialog("edit");
                                                     }}
                                                 >
-                                                    <Pencil className="w-[18px] h-[18px]" aria-hidden="true" />
+                                                    <Pencil
+                                                        className="w-[18px] h-[18px]"
+                                                        aria-hidden="true"
+                                                    />
                                                 </button>
                                                 <button
                                                     type="button"
@@ -390,7 +426,10 @@ export default function Menu({
                                                         ]);
                                                     }}
                                                 >
-                                                    <Trash2 className="w-[18px] h-[18px]" aria-hidden="true" />
+                                                    <Trash2
+                                                        className="w-[18px] h-[18px]"
+                                                        aria-hidden="true"
+                                                    />
                                                 </button>
                                             </div>
                                         </td>

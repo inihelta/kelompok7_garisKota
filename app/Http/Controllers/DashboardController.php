@@ -6,6 +6,7 @@ use App\Models\order;
 use App\Models\menu;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -17,7 +18,6 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $yesterday = Carbon::yesterday();
 
-        // 1. Metric: Pendapatan Hari Ini
         $todayRevenue = (float) order::where('order_status', 'completed')
             ->whereDate('created_at', $today)
             ->sum('total_price');
@@ -33,7 +33,6 @@ class DashboardController extends Controller
             $revenueGrowth = 100;
         }
 
-        // 2. Metric: Pesanan Hari Ini
         $todayOrdersCount = order::whereDate('created_at', $today)->count();
         $yesterdayOrdersCount = order::whereDate('created_at', $yesterday)->count();
 

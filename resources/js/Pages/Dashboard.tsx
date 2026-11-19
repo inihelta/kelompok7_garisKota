@@ -9,6 +9,7 @@ import {
     Utensils,
     User,
     Clock,
+    LucideProps,
 } from "lucide-react";
 import {
     ResponsiveContainer,
@@ -31,6 +32,51 @@ import Pagination from "@/Components/Pagination";
 import OrderDetailModal from "@/Components/OrderDetailModal";
 import { formatIDR, getImageSrc } from "@/lib/utils";
 import { ImageWithFallback } from "@/Components/ui/ImageWithFallback";
+const TopSelling = ({
+    color = "currentColor",
+    size = 31,
+    className = "",
+    ...props
+}: LucideProps) => (
+    <svg
+        width={size}
+        height={(Number(size) * 28) / 31}
+        viewBox="0 0 34 27"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`lucide ${className}`}
+        {...props}
+    >
+        <path
+            d="M15.4327 22.7746C11.4913 22.7746 7.89352 23.3297 5.15335 24.2431M24.2435 15.4323C25.1607 15.4319 26.0651 15.2168 26.8843 14.8041C27.7034 14.3914 28.4145 13.7927 28.9607 13.0557C29.5068 12.3188 29.8727 11.4642 30.0292 10.5605C30.1857 9.65668 30.1283 8.72881 29.8618 7.85118C29.5952 6.97354 29.1268 6.17054 28.494 5.50648C27.8613 4.84242 27.0819 4.33576 26.2182 4.02709C25.3544 3.71842 24.4304 3.61631 23.5201 3.72894C22.6098 3.84157 21.7386 4.16582 20.9761 4.6757C20.5722 3.52801 19.822 2.53398 18.829 1.83081C17.8361 1.12764 16.6494 0.75 15.4327 0.75C14.216 0.75 13.0292 1.12764 12.0363 1.83081C11.0433 2.53398 10.2931 3.52801 9.88918 4.6757C9.12673 4.16582 8.25547 3.84157 7.34519 3.72894C6.4349 3.61631 5.51089 3.71842 4.64716 4.02709C3.78343 4.33576 3.00399 4.84242 2.37128 5.50648C1.73856 6.17054 1.27015 6.97354 1.00356 7.85118C0.73698 8.72881 0.679631 9.65668 0.836109 10.5605C0.992588 11.4642 1.35855 12.3188 1.90467 13.0557C2.4508 13.7927 3.16191 14.3914 3.98105 14.8041C4.80019 15.2168 5.7046 15.4319 6.62183 15.4323V23.5089M28.6489 23.5089H19.8381M28.6489 23.5089C28.6489 24.5368 25.7208 26.459 24.9777 27.18M28.6489 23.5089C28.6489 22.4809 25.7208 20.5587 24.9777 19.8377"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke={color}
+        />
+    </svg>
+);
+const PelangganIcon = ({
+    color = "currentColor",
+    size = 45,
+    className = "",
+    ...props
+}: LucideProps) => (
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 45 45"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`lucide ${className}`}
+        {...props}
+    >
+        <path
+            d="M22.5 0C10.1025 0 0 10.1025 0 22.5C0 34.8975 10.1025 45 22.5 45C34.8975 45 45 34.8975 45 22.5C45 10.1025 34.8975 0 22.5 0ZM22.5 11.25C26.3925 11.25 29.25 14.1075 29.25 18C29.25 21.8925 26.3925 24.75 22.5 24.75C18.6075 24.75 15.75 21.8925 15.75 18C15.75 14.1075 18.6075 11.25 22.5 11.25ZM22.5 40.5C17.9144 40.4995 13.5029 38.7445 10.17 35.595C11.9925 31.86 15.8175 29.25 20.25 29.25H24.75C29.1825 29.25 32.985 31.86 34.8075 35.595C31.4853 38.747 27.0795 40.5029 22.5 40.5Z"
+            fill={color}
+        />
+    </svg>
+);
 
 export default function Dashboard({
     auth,
@@ -148,7 +194,7 @@ export default function Dashboard({
                                     }}
                                 >
                                     <XAxis
-                                        dataKey="label"
+                                        dataKey="date"
                                         stroke="#94a3b8"
                                         fontSize={12}
                                         tickLine={false}
@@ -191,9 +237,16 @@ export default function Dashboard({
                                                 "Jumlah Pesanan",
                                             ];
                                         }}
-                                        labelFormatter={(label) =>
-                                            `Hari ke-${label}`
-                                        }
+                                        labelFormatter={(label) => {
+                                            const date = new Date(label);
+                                            return date.toLocaleDateString(
+                                                "id-ID",
+                                                {
+                                                    day: "2-digit",
+                                                    month: "short",
+                                                },
+                                            );
+                                        }}
                                         contentStyle={{
                                             backgroundColor: "#ffffff",
                                             borderRadius: "8px",
@@ -238,7 +291,7 @@ export default function Dashboard({
 
                     <div className="lg:col-span-5 border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col justify-between shadow-xs">
                         <div className="flex items-center gap-2 mb-3">
-                            <Utensils className="w-5 h-5 text-[#D91A20]" />
+                            <TopSelling className="w-7 h-7 text-[#D91A20]" />
                             <h3 className="font-bold text-base text-[#1e293b]">
                                 Top - Selling
                             </h3>
@@ -332,8 +385,8 @@ export default function Dashboard({
                                             {/* PELANGGAN */}
                                             <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-sm text-[#334155]">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-full bg-[#D91A20] text-white flex items-center justify-center flex-shrink-0">
-                                                        <User className="w-5 h-5 text-white" />
+                                                    <div className="w-9 h-9 rounded-full  flex items-center justify-center flex-shrink-0">
+                                                        <PelangganIcon className="text-[#D91A20]" />
                                                     </div>
                                                     <span className="font-semibold text-[#1e293b]">
                                                         {item.customer_name ||

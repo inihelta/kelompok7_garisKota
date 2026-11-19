@@ -105,7 +105,10 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                     aria-label="Notifikasi"
                 >
                     <Bell className="block w-5 h-5" aria-hidden="true" />
-                    <span className="absolute -top-[1px] right-0 w-[6px] h-[6px] rounded-full bg-[#e31b23]" aria-hidden="true" />
+                    <span
+                        className="absolute -top-[1px] right-0 w-[6px] h-[6px] rounded-full bg-[#e31b23]"
+                        aria-hidden="true"
+                    />
                 </button>
 
                 <div className="relative p-2 rounded-md" ref={dropdownRef}>
@@ -118,7 +121,10 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                         aria-haspopup="true"
                     >
                         <span className="flex items-center justify-center p-[6px] rounded-full bg-[#111827] text-white">
-                            <UserRound className="w-5 h-5 block" aria-hidden="true" />
+                            <UserRound
+                                className="w-5 h-5 block"
+                                aria-hidden="true"
+                            />
                         </span>
                         <span className="text-left leading-[1.3] mr-[14px] hidden min-[656px]:block">
                             <strong className="text-[16px] font-bold block">
@@ -128,7 +134,10 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
                                 Admin
                             </small>
                         </span>
-                        <ChevronDown className="w-5 h-5 ml-[14px] text-[#6b7280] hidden min-[656px]:block" aria-hidden="true" />
+                        <ChevronDown
+                            className="w-5 h-5 ml-[14px] text-[#6b7280] hidden min-[656px]:block"
+                            aria-hidden="true"
+                        />
                     </button>
 
                     {dropdownOpen && (

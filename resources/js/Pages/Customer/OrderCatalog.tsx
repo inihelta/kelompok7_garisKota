@@ -13,7 +13,6 @@ import FloatingCartBar from "@/Components/Customer/FloatingCartBar";
 import OrderCheckoutModal from "@/Components/Customer/OrderCheckoutModal";
 import DesktopCartSidebar from "@/Components/Customer/DesktopCartSidebar";
 import { Search, X, QrCode, AlertTriangle, Coffee } from "lucide-react";
-import { MenuCardSkeleton } from "@/Components/ui/skeleton";
 
 interface OrderCatalogProps {
     table: CustomerTable | null;
@@ -356,7 +355,7 @@ export default function OrderCatalog({
                                     ([categoryName, items]) => (
                                         <div
                                             key={categoryName}
-                                            ref={(el) =>
+                                            ref={(el: any) =>
                                                 (categoryRefs.current[
                                                     categoryName
                                                 ] = el)
@@ -388,7 +387,8 @@ export default function OrderCatalog({
                                                             menu={menu}
                                                             quantity={
                                                                 cart[menu.id]
-                                                                    ?.quantity || 0
+                                                                    ?.quantity ||
+                                                                0
                                                             }
                                                             notes={
                                                                 cart[menu.id]

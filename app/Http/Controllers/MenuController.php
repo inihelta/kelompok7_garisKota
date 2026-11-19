@@ -16,7 +16,6 @@ class MenuController extends Controller
         $categories = Category::all();
 
         return inertia('Menu', [
-            'auth' => Auth::user(),
             'menus' => $menus,
             'categories' => $categories,
         ]);
