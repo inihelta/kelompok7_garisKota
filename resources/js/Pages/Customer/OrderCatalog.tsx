@@ -247,11 +247,8 @@ export default function OrderCatalog({
                 </div>
 
                 <div className="lg:grid lg:grid-cols-12 lg:gap-6 items-start">
-                    {/* Left Column: Menu Catalog (Fluid on mobile/tablet, 8 Cols on Desktop) */}
                     <main className="lg:col-span-8 bg-white min-h-screen lg:min-h-0 shadow-none lg:shadow-xs lg:rounded-3xl lg:border lg:border-gray-200/80 flex flex-col overflow-hidden">
-                        {/* 2. Sticky Search & Filter Header (Like Screenshot 1 & 3) */}
                         <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 md:px-6 py-2.5 md:py-3.5">
-                            {/* Search Bar Input */}
                             <div className="relative flex items-center">
                                 <Search className="absolute left-3.5 h-4 w-4 text-gray-400" />
                                 <input
@@ -274,8 +271,7 @@ export default function OrderCatalog({
                                 )}
                             </div>
 
-                            {/* Horizontal Category Scroll Tabs */}
-                            <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+                            <div className="hidden lg:flex mt-2.5  items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
                                 <button
                                     type="button"
                                     onClick={() =>
@@ -418,7 +414,6 @@ export default function OrderCatalog({
                         </div>
                     </main>
 
-                    {/* Right Column: Sticky Cart Sidebar on Desktop (4 Cols on Desktop) */}
                     <div className="hidden lg:block lg:col-span-4">
                         <DesktopCartSidebar
                             table={table}
@@ -442,7 +437,7 @@ export default function OrderCatalog({
                     </div>
                 </div>
 
-                {/* Floating "Menu" Category Jump Button (Mobile only) */}
+                {/* Floating "Menu" Category Jump Button) */}
                 <CategoryJumpModal
                     categories={categories}
                     menus={menus}
@@ -450,7 +445,7 @@ export default function OrderCatalog({
                     hasCartItems={totalItems > 0}
                 />
 
-                {/* Floating Cart Bar (Mobile only) */}
+                {/* Floating Cart Bar) */}
                 <FloatingCartBar
                     totalItems={totalItems}
                     totalPrice={totalPrice}

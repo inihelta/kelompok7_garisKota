@@ -94,7 +94,8 @@ export default function DesktopCartSidebar({
                             Keranjang Masih Kosong
                         </h4>
                         <p className="mt-0.5 text-[11px] text-gray-500 leading-relaxed max-w-[210px] mx-auto">
-                            Pilih menu favoritmu di sebelah kiri untuk mulai memesan.
+                            Pilih menu favoritmu di sebelah kiri untuk mulai
+                            memesan.
                         </p>
                     </div>
                 ) : (
@@ -155,7 +156,9 @@ export default function DesktopCartSidebar({
                                         <input
                                             type="text"
                                             value={tempNote}
-                                            onChange={(e) => setTempNote(e.target.value)}
+                                            onChange={(e) =>
+                                                setTempNote(e.target.value)
+                                            }
                                             placeholder="Contoh: Tanpa gula, pedas"
                                             className="flex-1 rounded-lg border border-red-300 bg-white px-2.5 py-1 text-[11px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#D91A20]"
                                             autoFocus
@@ -168,7 +171,9 @@ export default function DesktopCartSidebar({
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => handleSaveNote(menu.id)}
+                                            onClick={() =>
+                                                handleSaveNote(menu.id)
+                                            }
                                             className="rounded-lg bg-[#D91A20] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#b91c1c]"
                                         >
                                             <Check className="h-3.5 w-3.5" />
@@ -187,11 +192,18 @@ export default function DesktopCartSidebar({
                                         </span>
                                         <button
                                             type="button"
-                                            onClick={() => handleStartEditNote(menu.id, notes || "")}
+                                            onClick={() =>
+                                                handleStartEditNote(
+                                                    menu.id,
+                                                    notes || "",
+                                                )
+                                            }
                                             className="text-[#D91A20] hover:text-[#b91c1c] font-semibold inline-flex items-center gap-1 shrink-0"
                                         >
                                             <Edit3 className="h-3 w-3" />
-                                            <span>{notes ? "Ubah" : "+ Catatan"}</span>
+                                            <span>
+                                                {notes ? "Ubah" : "+ Catatan"}
+                                            </span>
                                         </button>
                                     </div>
                                 )}
@@ -202,7 +214,10 @@ export default function DesktopCartSidebar({
             </div>
 
             {/* Bottom Form & Checkout */}
-            <form onSubmit={onSubmit} className="pt-3 border-t border-gray-100 space-y-3">
+            <form
+                onSubmit={onSubmit}
+                className="pt-3 border-t border-gray-100 space-y-3"
+            >
                 {/* Customer Name Input */}
                 <div>
                     <label
@@ -216,7 +231,7 @@ export default function DesktopCartSidebar({
                         type="text"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="Contoh: Rian / Meja 1"
+                        placeholder="Contoh: Rian"
                         className={`w-full rounded-xl border bg-gray-50/80 px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 ${
                             nameError
                                 ? "border-rose-400 focus:ring-rose-100"
@@ -235,14 +250,20 @@ export default function DesktopCartSidebar({
                 <div className="rounded-2xl bg-gray-50 p-3 space-y-1.5 border border-gray-100">
                     <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>Subtotal ({totalItems} item)</span>
-                        <span className="font-semibold">{formatIDR(totalPrice)}</span>
+                        <span className="font-semibold">
+                            {formatIDR(totalPrice)}
+                        </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>Biaya Layanan / Kasir</span>
-                        <span className="font-semibold text-[#D91A20]">Gratis</span>
+                        <span className="font-semibold text-[#D91A20]">
+                            Gratis
+                        </span>
                     </div>
                     <div className="pt-1.5 border-t border-gray-200/60 flex items-center justify-between">
-                        <span className="text-xs font-extrabold text-gray-900">Total</span>
+                        <span className="text-xs font-extrabold text-gray-900">
+                            Total
+                        </span>
                         <span className="text-base font-black text-[#D91A20]">
                             {formatIDR(totalPrice)}
                         </span>
@@ -252,7 +273,9 @@ export default function DesktopCartSidebar({
                 {/* Cashier Payment Notice */}
                 <div className="flex items-center gap-2 rounded-xl bg-amber-50/70 border border-amber-200/60 px-3 py-2 text-[11px] text-amber-800">
                     <Store className="h-4 w-4 shrink-0 text-amber-600" />
-                    <span>Pembayaran dilakukan di kasir setelah pesanan terkirim.</span>
+                    <span>
+                        Pembayaran dilakukan di kasir setelah pesanan terkirim.
+                    </span>
                 </div>
 
                 {/* Submit Button */}

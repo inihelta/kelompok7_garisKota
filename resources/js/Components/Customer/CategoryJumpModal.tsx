@@ -31,7 +31,6 @@ export default function CategoryJumpModal({
 
     return (
         <>
-            {/* Floating Menu Button (Floating Red Pill like reference) */}
             <div
                 className={`fixed left-1/2 -translate-x-1/2 z-30 lg:hidden transition-all duration-200 ${
                     hasCartItems ? "bottom-20" : "bottom-5"
@@ -95,7 +94,9 @@ export default function CategoryJumpModal({
                                 >
                                     <span>{cat.name}</span>
                                     <div className="flex items-center gap-1.5 text-xs font-normal text-gray-400">
-                                        <span>{categoryCounts[cat.name] || 0} item</span>
+                                        <span>
+                                            {categoryCounts[cat.name] || 0} item
+                                        </span>
                                         <ChevronRight className="h-4 w-4 text-gray-300" />
                                     </div>
                                 </button>
@@ -107,4 +108,3 @@ export default function CategoryJumpModal({
         </>
     );
 }
-
