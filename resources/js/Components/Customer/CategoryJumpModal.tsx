@@ -79,7 +79,7 @@ export default function CategoryJumpModal({
                             <button
                                 type="button"
                                 onClick={() => handleSelect("Semua Menu")}
-                                className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-gray-800 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                                className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-gray-800 hover:bg-red-50 hover:text-[#D91A20] transition-colors"
                             >
                                 <span>Semua Menu</span>
                                 <span className="text-xs font-normal text-gray-400">
@@ -91,7 +91,7 @@ export default function CategoryJumpModal({
                                     key={cat.id}
                                     type="button"
                                     onClick={() => handleSelect(cat.name)}
-                                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-gray-800 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-gray-800 hover:bg-red-50 hover:text-[#D91A20] transition-colors"
                                 >
                                     <span>{cat.name}</span>
                                     <div className="flex items-center gap-1.5 text-xs font-normal text-gray-400">

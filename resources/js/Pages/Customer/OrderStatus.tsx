@@ -38,19 +38,19 @@ export default function OrderStatus({ order }: OrderStatusProps) {
             <div className="mx-auto max-w-md md:max-w-2xl space-y-4 md:space-y-6">
                 {/* Top Success Banner */}
                 <div className="rounded-3xl bg-white p-6 md:p-8 shadow-sm border border-gray-100 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 mb-3 shadow-xs">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-[#D91A20] border border-red-100 mb-3 shadow-xs">
                         {isCompleted ? (
-                            <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+                            <CheckCircle2 className="h-8 w-8 text-[#D91A20]" />
                         ) : isCancelled ? (
                             <AlertCircle className="h-8 w-8 text-rose-500" />
                         ) : isProcessing ? (
                             <CookingPot className="h-8 w-8 text-amber-500 animate-bounce" />
                         ) : (
-                            <Sparkles className="h-8 w-8 text-emerald-600 animate-pulse" />
+                            <Sparkles className="h-8 w-8 text-[#D91A20] animate-pulse" />
                         )}
                     </div>
 
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#D91A20] bg-red-50 px-2.5 py-0.5 rounded-full border border-red-100">
                         Pesanan Terkirim
                     </span>
                     <h1 className="mt-2 text-xl font-black text-gray-900">
@@ -92,7 +92,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                 <div
                                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                                         isPending || isProcessing || isCompleted
-                                            ? "bg-emerald-600 text-white"
+                                            ? "bg-[#D91A20] text-white"
                                             : "bg-gray-100 text-gray-400"
                                     }`}
                                 >
@@ -109,14 +109,14 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             </div>
 
                             {/* Connecting Line */}
-                            <div className="ml-4 h-4 w-0.5 bg-emerald-200" />
+                            <div className="ml-4 h-4 w-0.5 bg-red-200" />
 
                             {/* Step 2: Dibuat oleh Barista/Koki */}
                             <div className="flex items-start gap-3">
                                 <div
                                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                                         isProcessing || isCompleted
-                                            ? "bg-emerald-600 text-white"
+                                            ? "bg-[#D91A20] text-white"
                                             : "bg-gray-100 text-gray-400"
                                     }`}
                                 >
@@ -135,7 +135,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             {/* Connecting Line */}
                             <div
                                 className={`ml-4 h-4 w-0.5 ${
-                                    isCompleted ? "bg-emerald-200" : "bg-gray-200"
+                                    isCompleted ? "bg-red-200" : "bg-gray-200"
                                 }`}
                             />
 
@@ -144,7 +144,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                 <div
                                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                                         isCompleted
-                                            ? "bg-emerald-600 text-white"
+                                            ? "bg-[#D91A20] text-white"
                                             : "bg-gray-100 text-gray-400"
                                     }`}
                                 >
@@ -184,7 +184,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                         <p className="mt-1 font-bold text-gray-900 text-sm truncate">
                             {order.customer_name}
                         </p>
-                        <p className="text-[11px] text-emerald-600 font-medium">
+                        <p className="text-[11px] text-[#D91A20] font-medium">
                             Dine-In
                         </p>
                     </div>
@@ -204,7 +204,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                         {item.quantity}x {item.name}
                                     </h4>
                                     {item.notes && (
-                                        <p className="text-[11px] text-emerald-700 italic">
+                                        <p className="text-[11px] text-[#D91A20] italic">
                                             Catatan: {item.notes}
                                         </p>
                                     )}
@@ -220,7 +220,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                     <div className="mt-4 border-t border-dashed border-gray-200 pt-3 flex items-center justify-between">
                         <div>
                             <span className="text-xs text-gray-500">Total Pembayaran</span>
-                            <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-medium">
+                            <div className="flex items-center gap-1.5 text-[11px] text-[#D91A20] font-medium">
                                 <Store className="h-3.5 w-3.5" />
                                 <span>Bayar di Kasir ({order.payment.status === "done" ? "Lunas" : "Belum Bayar"})</span>
                             </div>
@@ -236,7 +236,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                     <div className="pt-2">
                         <Link
                             href={`/order/${order.table_token}`}
-                            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3.5 px-4 text-xs font-bold text-white shadow-md shadow-emerald-700/20 hover:bg-emerald-700 active:scale-[0.98] transition-all"
+                            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#D91A20] py-3.5 px-4 text-xs font-bold text-white shadow-md shadow-red-700/20 hover:bg-[#b91c1c] active:scale-[0.98] transition-all"
                         >
                             <PlusCircle className="h-4 w-4" />
                             <span>Pesan Menu Tambahan</span>

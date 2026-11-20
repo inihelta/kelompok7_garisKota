@@ -53,7 +53,7 @@ export default function CustomerHeader({ table }: CustomerHeaderProps) {
                     {/* Operational Note */}
                     <div className="mt-3.5 border-t border-dashed border-gray-100 pt-2.5 flex items-center justify-between text-[11px] md:text-xs text-gray-500">
                         <span>Pembayaran langsung di Kasir setelah pesan</span>
-                        <span className="font-semibold text-emerald-600">
+                        <span className="font-semibold text-[#D91A20]">
                             Buka
                         </span>
                     </div>

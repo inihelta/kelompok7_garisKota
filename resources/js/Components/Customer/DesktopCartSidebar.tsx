@@ -65,7 +65,7 @@ export default function DesktopCartSidebar({
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-2xs">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-[#D91A20] border border-red-100 shadow-2xs">
                         <ShoppingBag className="h-5 w-5" />
                     </div>
                     <div>
@@ -78,7 +78,7 @@ export default function DesktopCartSidebar({
                     </div>
                 </div>
 
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 border border-emerald-200/60">
+                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-[#D91A20] border border-red-200/60">
                     {totalItems} item
                 </span>
             </div>
@@ -116,7 +116,7 @@ export default function DesktopCartSidebar({
                                     <h4 className="text-xs font-bold text-gray-900 truncate">
                                         {menu.name}
                                     </h4>
-                                    <span className="text-xs font-extrabold text-emerald-700">
+                                    <span className="text-xs font-extrabold text-[#D91A20]">
                                         {formatIDR(menu.price * quantity)}
                                     </span>
                                 </div>
@@ -126,7 +126,7 @@ export default function DesktopCartSidebar({
                                     <button
                                         type="button"
                                         onClick={() => onRemove(menu.id)}
-                                        className="flex h-5 w-5 items-center justify-center text-gray-400 hover:text-emerald-700 transition-colors"
+                                        className="flex h-5 w-5 items-center justify-center text-gray-400 hover:text-[#D91A20] transition-colors"
                                     >
                                         {quantity === 1 ? (
                                             <Trash2 className="h-3.5 w-3.5 text-rose-500" />
@@ -141,7 +141,7 @@ export default function DesktopCartSidebar({
                                         type="button"
                                         onClick={() => onAdd(menu.id)}
                                         disabled={quantity >= menu.stock}
-                                        className="flex h-5 w-5 items-center justify-center text-gray-400 hover:text-emerald-700 disabled:opacity-30 transition-colors"
+                                        className="flex h-5 w-5 items-center justify-center text-gray-400 hover:text-[#D91A20] disabled:opacity-30 transition-colors"
                                     >
                                         <Plus className="h-3 w-3" />
                                     </button>
@@ -157,7 +157,7 @@ export default function DesktopCartSidebar({
                                             value={tempNote}
                                             onChange={(e) => setTempNote(e.target.value)}
                                             placeholder="Contoh: Tanpa gula, pedas"
-                                            className="flex-1 rounded-lg border border-emerald-300 bg-white px-2.5 py-1 text-[11px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                                            className="flex-1 rounded-lg border border-red-300 bg-white px-2.5 py-1 text-[11px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-[#D91A20]"
                                             autoFocus
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter") {
@@ -169,7 +169,7 @@ export default function DesktopCartSidebar({
                                         <button
                                             type="button"
                                             onClick={() => handleSaveNote(menu.id)}
-                                            className="rounded-lg bg-emerald-600 px-2 py-1 text-[11px] font-bold text-white hover:bg-emerald-700"
+                                            className="rounded-lg bg-[#D91A20] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#b91c1c]"
                                         >
                                             <Check className="h-3.5 w-3.5" />
                                         </button>
@@ -178,7 +178,7 @@ export default function DesktopCartSidebar({
                                     <div className="flex items-center justify-between text-[11px]">
                                         <span className="text-gray-500 truncate max-w-[190px]">
                                             {notes ? (
-                                                <span className="text-emerald-700 italic">
+                                                <span className="text-[#D91A20] italic">
                                                     "{notes}"
                                                 </span>
                                             ) : (
@@ -188,7 +188,7 @@ export default function DesktopCartSidebar({
                                         <button
                                             type="button"
                                             onClick={() => handleStartEditNote(menu.id, notes || "")}
-                                            className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1 shrink-0"
+                                            className="text-[#D91A20] hover:text-[#b91c1c] font-semibold inline-flex items-center gap-1 shrink-0"
                                         >
                                             <Edit3 className="h-3 w-3" />
                                             <span>{notes ? "Ubah" : "+ Catatan"}</span>
@@ -220,7 +220,7 @@ export default function DesktopCartSidebar({
                         className={`w-full rounded-xl border bg-gray-50/80 px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 ${
                             nameError
                                 ? "border-rose-400 focus:ring-rose-100"
-                                : "border-gray-200 focus:border-emerald-500 focus:ring-emerald-100"
+                                : "border-gray-200 focus:border-[#D91A20] focus:ring-red-100"
                         }`}
                     />
                     {nameError && (
@@ -239,11 +239,11 @@ export default function DesktopCartSidebar({
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>Biaya Layanan / Kasir</span>
-                        <span className="font-semibold text-emerald-600">Gratis</span>
+                        <span className="font-semibold text-[#D91A20]">Gratis</span>
                     </div>
                     <div className="pt-1.5 border-t border-gray-200/60 flex items-center justify-between">
                         <span className="text-xs font-extrabold text-gray-900">Total</span>
-                        <span className="text-base font-black text-emerald-700">
+                        <span className="text-base font-black text-[#D91A20]">
                             {formatIDR(totalPrice)}
                         </span>
                     </div>
@@ -259,7 +259,7 @@ export default function DesktopCartSidebar({
                 <button
                     type="submit"
                     disabled={cartItems.length === 0 || isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 text-xs font-extrabold text-white shadow-lg shadow-emerald-700/20 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#D91A20] py-3 text-xs font-extrabold text-white shadow-lg shadow-red-700/20 hover:bg-[#b91c1c] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer"
                 >
                     {isSubmitting ? (
                         <>

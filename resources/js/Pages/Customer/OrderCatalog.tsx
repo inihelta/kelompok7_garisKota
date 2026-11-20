@@ -227,7 +227,7 @@ export default function OrderCatalog({
                     {error ||
                         "Silakan scan ulang QR code yang tertera pada meja Anda atau hubungi pelayan."}
                 </p>
-                <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+                <div className="mt-6 flex items-center gap-2 text-xs font-semibold text-[#D91A20] bg-red-50 px-3 py-1.5 rounded-full border border-red-200">
                     <QrCode className="h-4 w-4" />
                     <span>Garis Kota Coffee & Eatery</span>
                 </div>
@@ -261,7 +261,7 @@ export default function OrderCatalog({
                                         setSearchQuery(e.target.value)
                                     }
                                     placeholder="Cari menu favorit kamu..."
-                                    className="w-full rounded-full border border-gray-200 bg-gray-50/80 py-2 pl-9 pr-8 text-xs md:text-sm text-gray-900 placeholder:text-gray-400 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-100"
+                                    className="w-full rounded-full border border-gray-200 bg-gray-50/80 py-2 pl-9 pr-8 text-xs md:text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#D91A20] focus:bg-white focus:outline-none focus:ring-2 focus:ring-red-100"
                                 />
                                 {searchQuery && (
                                     <button
@@ -283,7 +283,7 @@ export default function OrderCatalog({
                                     }
                                     className={`shrink-0 rounded-full px-3.5 py-1 text-xs md:text-sm font-bold transition-all ${
                                         selectedCategory === "Semua Menu"
-                                            ? "bg-emerald-600 text-white shadow-xs"
+                                            ? "bg-[#D91A20] text-white shadow-xs"
                                             : "bg-gray-100 text-gray-600 hover:bg-gray-200/80"
                                     }`}
                                 >
@@ -298,7 +298,7 @@ export default function OrderCatalog({
                                         }
                                         className={`shrink-0 rounded-full px-3.5 py-1 text-xs md:text-sm font-bold transition-all ${
                                             selectedCategory === cat.name
-                                                ? "bg-emerald-600 text-white shadow-xs"
+                                                ? "bg-[#D91A20] text-white shadow-xs"
                                                 : "bg-gray-100 text-gray-600 hover:bg-gray-200/80"
                                         }`}
                                     >
@@ -345,7 +345,7 @@ export default function OrderCatalog({
                                             setSearchQuery("");
                                             setSelectedCategory("Semua Menu");
                                         }}
-                                        className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-4 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors"
+                                        className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-4 py-1.5 text-xs font-bold text-[#D91A20] hover:bg-red-100 transition-colors"
                                     >
                                         Tampilkan Semua Menu
                                     </button>
@@ -489,7 +489,7 @@ export default function OrderCatalog({
                                 onChange={(e) => setNoteText(e.target.value)}
                                 placeholder="Tulis instruksi khusus..."
                                 rows={3}
-                                className="mt-3 w-full rounded-xl border border-gray-200 p-2.5 text-xs text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:outline-none"
+                                className="mt-3 w-full rounded-xl border border-gray-200 p-2.5 text-xs text-gray-800 placeholder:text-gray-400 focus:border-[#D91A20] focus:outline-none"
                             />
                             <div className="mt-3 flex items-center justify-end gap-2">
                                 <button
@@ -502,7 +502,7 @@ export default function OrderCatalog({
                                 <button
                                     type="button"
                                     onClick={handleSaveNoteModal}
-                                    className="rounded-lg bg-emerald-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                                    className="rounded-lg bg-[#D91A20] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#b91c1c]"
                                 >
                                     Simpan Catatan
                                 </button>

@@ -154,16 +154,16 @@ export default function OrderCheckoutModal({
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
                     {/* Table Info Card */}
-                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3.5 text-xs">
+                    <div className="rounded-2xl border border-red-100 bg-red-50/60 p-3.5 text-xs">
                         <div className="flex items-center justify-between">
-                            <span className="font-bold text-emerald-900">
+                            <span className="font-bold text-[#b91c1c]">
                                 Meja #{table.table_number} (Area {table.location})
                             </span>
-                            <span className="rounded-md bg-emerald-100 px-2 py-0.5 font-semibold text-emerald-800">
+                            <span className="rounded-md bg-red-100 px-2 py-0.5 font-semibold text-[#b91c1c]">
                                 Dine-In
                             </span>
                         </div>
-                        <p className="mt-1 text-emerald-700 text-[11px]">
+                        <p className="mt-1 text-[#D91A20] text-[11px]">
                             Pesanan akan disajikan langsung ke mejamu setelah dibuat.
                         </p>
                     </div>
@@ -188,7 +188,7 @@ export default function OrderCheckoutModal({
                             className={`w-full rounded-xl border px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 ${
                                 nameError
                                     ? "border-rose-400 focus:ring-rose-200"
-                                    : "border-gray-200 focus:border-emerald-500 focus:ring-emerald-100"
+                                    : "border-gray-200 focus:border-[#D91A20] focus:ring-red-100"
                             }`}
                         />
                         {nameError && (
@@ -225,12 +225,12 @@ export default function OrderCheckoutModal({
                                                         value={tempNote}
                                                         onChange={(e) => setTempNote(e.target.value)}
                                                         placeholder="Contoh: es dipisah, less sugar..."
-                                                        className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-gray-800 focus:border-emerald-500 focus:outline-none"
+                                                        className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-gray-800 focus:border-[#D91A20] focus:outline-none"
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={() => handleSaveNote(item.menu.id)}
-                                                        className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                                                        className="rounded-lg bg-[#D91A20] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#b91c1c]"
                                                     >
                                                         Simpan
                                                     </button>
@@ -241,7 +241,7 @@ export default function OrderCheckoutModal({
                                                     onClick={() =>
                                                         handleStartEditNote(item.menu.id, item.notes)
                                                     }
-                                                    className="mt-1.5 inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-800"
+                                                    className="mt-1.5 inline-flex items-center gap-1 text-xs text-[#D91A20] hover:text-[#b91c1c]"
                                                 >
                                                     <Edit3 className="h-3 w-3" />
                                                     <span>
@@ -314,11 +314,11 @@ export default function OrderCheckoutModal({
                         </div>
                         <div className="flex items-center justify-between text-xs text-gray-600">
                             <span>Pajak & Layanan</span>
-                            <span className="font-medium text-emerald-600">Termasuk</span>
+                            <span className="font-medium text-[#D91A20]">Termasuk</span>
                         </div>
                         <div className="border-t border-gray-100 pt-2 flex items-center justify-between text-sm font-bold text-gray-900">
                             <span>Total Pembayaran</span>
-                            <span className="text-emerald-700 text-base">
+                            <span className="text-[#D91A20] text-base">
                                 {formatIDR(subtotal)}
                             </span>
                         </div>
@@ -327,7 +327,7 @@ export default function OrderCheckoutModal({
                     {/* Metode Pembayaran Card */}
                     <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between">
                         <div className="flex items-center gap-2.5">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-[#D91A20] border border-red-100">
                                 <Store className="h-4 w-4" />
                             </div>
                             <div>
@@ -339,7 +339,7 @@ export default function OrderCheckoutModal({
                                 </p>
                             </div>
                         </div>
-                        <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                        <CheckCircle2 className="h-5 w-5 text-[#D91A20]" />
                     </div>
                 </div>
 
@@ -349,7 +349,7 @@ export default function OrderCheckoutModal({
                         type="button"
                         onClick={handleSubmit}
                         disabled={isSubmitting || cartItems.length === 0}
-                        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3.5 px-4 text-sm font-bold text-white shadow-md shadow-emerald-700/25 transition-all hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#D91A20] py-3.5 px-4 text-sm font-bold text-white shadow-md shadow-red-700/20 transition-all hover:bg-[#b91c1c] active:scale-[0.98] disabled:opacity-60"
                     >
                         {isSubmitting ? (
                             <>

@@ -24,7 +24,7 @@ export default function MenuItemCard({
     const isOutOfStock = menu.stock <= 0;
 
     return (
-        <div className="relative flex items-center justify-between gap-4 p-4 bg-white border-b border-gray-100 md:border md:rounded-2xl md:shadow-2xs md:hover:shadow-md md:hover:border-emerald-200 transition-all">
+        <div className="relative flex items-center justify-between gap-4 p-4 bg-white border-b border-gray-100 md:border md:rounded-2xl md:shadow-2xs md:hover:shadow-md md:hover:border-gray-200 transition-all">
             {/* Left Content */}
             <div className="flex-1 min-w-0 pr-1">
                 <h3 className="font-bold text-gray-900 text-base leading-snug line-clamp-1">
@@ -48,7 +48,7 @@ export default function MenuItemCard({
 
                 {/* Per-item note indicator if exists */}
                 {quantity > 0 && notes && (
-                    <p className="mt-1.5 flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md italic line-clamp-1">
+                    <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#D91A20] bg-red-50 px-2 py-0.5 rounded-md italic line-clamp-1">
                         <span>Catatan:</span> {notes}
                     </p>
                 )}
@@ -82,7 +82,7 @@ export default function MenuItemCard({
                         <button
                             type="button"
                             onClick={onAdd}
-                            className="w-full max-w-[80px] rounded-full border border-emerald-600 bg-white py-1 px-3 text-xs font-bold text-emerald-600 transition-all hover:bg-emerald-50 active:scale-95 shadow-2xs"
+                            className="w-full max-w-[80px] rounded-full border border-[#D91A20] bg-white py-1 px-3 text-xs font-bold text-[#D91A20] transition-all hover:bg-red-50 active:scale-95 shadow-2xs"
                         >
                             Tambah
                         </button>
@@ -93,27 +93,27 @@ export default function MenuItemCard({
                                     type="button"
                                     onClick={onOpenNotes}
                                     title="Tambah Catatan"
-                                    className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:text-emerald-600 hover:border-emerald-300 active:scale-95 transition-all"
+                                    className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:text-[#D91A20] hover:border-red-300 active:scale-95 transition-all"
                                 >
                                     <MessageSquarePlus className="h-3.5 w-3.5" />
                                 </button>
                             )}
-                            <div className="flex items-center rounded-full border border-emerald-600 bg-white p-0.5 shadow-2xs">
+                            <div className="flex items-center rounded-full border border-[#D91A20] bg-white p-0.5 shadow-2xs">
                                 <button
                                     type="button"
                                     onClick={onRemove}
-                                    className="flex h-6 w-6 items-center justify-center rounded-full text-emerald-700 hover:bg-emerald-50 active:scale-90 transition-all"
+                                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#D91A20] hover:bg-red-50 active:scale-90 transition-all"
                                 >
                                     <Minus className="h-3.5 w-3.5" />
                                 </button>
-                                <span className="w-6 text-center text-xs font-bold text-emerald-800">
+                                <span className="w-6 text-center text-xs font-bold text-[#b91c1c]">
                                     {quantity}
                                 </span>
                                 <button
                                     type="button"
                                     onClick={onAdd}
                                     disabled={quantity >= menu.stock}
-                                    className="flex h-6 w-6 items-center justify-center rounded-full text-emerald-700 hover:bg-emerald-50 active:scale-90 disabled:opacity-40 transition-all"
+                                    className="flex h-6 w-6 items-center justify-center rounded-full text-[#D91A20] hover:bg-red-50 active:scale-90 disabled:opacity-40 transition-all"
                                 >
                                     <Plus className="h-3.5 w-3.5" />
                                 </button>
@@ -125,4 +125,3 @@ export default function MenuItemCard({
         </div>
     );
 }
-
