@@ -12,7 +12,7 @@ export default function CustomerHeader({ table }: CustomerHeaderProps) {
             {/* Top Banner Cover */}
             <div className="relative h-44 md:h-48 w-full overflow-hidden flex items-center justify-center rounded-none lg:rounded-3xl">
                 {/* Decorative background shapes */}
-                <img src="/bnr6y75trf.jpeg" alt="" />
+                <img src="/bnr6y75trf.jpeg" className="h-full " alt="" />
             </div>
 
             {/* Overlapping Table Info Card (Like Reference Header) */}

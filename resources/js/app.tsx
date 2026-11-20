@@ -6,6 +6,11 @@ import { createRoot } from "react-dom/client";
 import type { PageProps } from "@/types";
 import { Toast } from "@/Components/ui/Toast";
 import { ErrorBoundary } from "@/Components/ErrorBoundary";
+import { configureEcho } from '@laravel/echo-react';
+
+configureEcho({
+    broadcaster: 'reverb',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || "Garis Kota";
 

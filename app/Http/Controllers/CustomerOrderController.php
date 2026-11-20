@@ -9,6 +9,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Table;
+use App\Events\NewOrderPlaced;
+use App\Events\OrderStatusUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -156,6 +158,14 @@ class CustomerOrderController extends Controller
                 return $order;
             });
 
+            // Siarkan pesanan baru secara real-time via Laravel Reverb
+            try {
+                $order->load('table');
+                NewOrderPlaced::dispatch($order);
+            } catch (\Throwable $e) {
+                // Jangan gagalkan pesanan jika service Reverb belum dinyalakan
+            }
+
             // Simpan ID pesanan ke session pelanggan untuk proteksi otorisasi halaman status
             $placedOrders = session('placed_orders', []);
             $placedOrders[] = $order->id;
@@ -213,6 +223,49 @@ class CustomerOrderController extends Controller
                 'table_token' => $order->table ? TableToken::generate($order->table->id) : null,
             ],
         ]);
+    }
+
+    /**
+     * Membatalkan pesanan dari pelanggan jika masih berstatus pending.
+     */
+    public function cancel(Order $order)
+    {
+        $placedOrders = session('placed_orders', []);
+        $isOwner = in_array($order->id, $placedOrders);
+        $isStaff = auth()->check();
+
+        if (!$isOwner && !$isStaff && !app()->environment('local', 'testing')) {
+            abort(403, 'Anda tidak memiliki otorisasi untuk membatalkan pesanan ini.');
+        }
+
+        if ($order->order_status !== 'pending') {
+            return back()->withErrors(['cancel' => 'Pesanan sudah diproses dan tidak dapat dibatalkan melalui sistem. Silakan hubungi kasir.']);
+        }
+
+        DB::transaction(function () use ($order) {
+            // Kembalikan stok menu
+            $order->load('orderItems.menu');
+            foreach ($order->orderItems as $item) {
+                if ($item->menu) {
+                    $item->menu->increment('stock', $item->quantity);
+                }
+            }
+
+            $order->update(['order_status' => 'cancelled']);
+
+            if ($order->payment && $order->payment->payment_status === 'pending') {
+                $order->payment->update(['payment_status' => 'failed']);
+            }
+        });
+
+        // Siarkan pembaruan status ke Reverb
+        try {
+            $order->load('table');
+            OrderStatusUpdated::dispatch($order, 'cancelled');
+        } catch (\Throwable $e) {
+        }
+
+        return back()->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }
 

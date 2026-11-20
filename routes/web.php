@@ -23,6 +23,7 @@ Route::get('/', function () {
 Route::middleware('throttle:60,1')->group(function () {
     Route::get('/order/{token}', [CustomerOrderController::class, 'show'])->name('order.show');
     Route::get('/order/status/{order}', [CustomerOrderController::class, 'status'])->name('order.status');
+    Route::put('/order/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('order.cancel');
 });
 Route::post('/order', [CustomerOrderController::class, 'store'])
     ->middleware('throttle:10,1')
@@ -36,6 +37,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/menu', [MenuController::class, 'index'])->name('dashboard.menu');
     Route::get('/dashboard/pesanan', [OrderController::class, 'index'])->name('dashboard.pesanan');
+    Route::put('/orders/{order}/process', [OrderController::class, 'process'])->name('orders.process');
     Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/dashboard/pendapatan', [IncomeController::class, 'index'])->name('dashboard.pendapatan');

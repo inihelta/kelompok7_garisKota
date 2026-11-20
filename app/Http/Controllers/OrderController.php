@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Events\OrderStatusUpdated;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -36,12 +37,31 @@ class OrderController extends Controller
         ]);
     }
 
+    public function process(Order $order)
+    {
+        $order->update(['order_status' => 'processing']);
+
+        try {
+            $order->load('table');
+            OrderStatusUpdated::dispatch($order, 'processing');
+        } catch (\Throwable $e) {
+        }
+
+        return back()->with('success', 'Pesanan #' . $order->id . ' sedang diproses.');
+    }
+
     public function complete(Order $order)
     {
         $order->update(['order_status' => 'completed']);
 
         if ($order->payment && $order->payment->payment_status === 'pending') {
             $order->payment->update(['payment_status' => 'done']);
+        }
+
+        try {
+            $order->load('table');
+            OrderStatusUpdated::dispatch($order, 'completed');
+        } catch (\Throwable $e) {
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' telah selesai.');
@@ -53,6 +73,12 @@ class OrderController extends Controller
 
         if ($order->payment && $order->payment->payment_status === 'pending') {
             $order->payment->update(['payment_status' => 'failed']);
+        }
+
+        try {
+            $order->load('table');
+            OrderStatusUpdated::dispatch($order, 'cancelled');
+        } catch (\Throwable $e) {
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' telah dibatalkan.');

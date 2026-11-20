@@ -22,12 +22,14 @@ interface OrderDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     order: OrderItem | null;
+    onCancelOrder?: (order: OrderItem) => void;
 }
 
 export default function OrderDetailModal({
     isOpen,
     onClose,
     order,
+    onCancelOrder,
 }: OrderDetailModalProps) {
     if (!order) return null;
 
@@ -212,11 +214,29 @@ export default function OrderDetailModal({
                     </div>
                 </div>
 
-                <div className="flex-shrink-0 pt-4 border-t border-[#f1f5f9]">
+                <div className="flex-shrink-0 pt-4 border-t border-[#f1f5f9] flex items-center justify-between gap-3">
+                    {onCancelOrder &&
+                        order.order_status !== "completed" &&
+                        order.order_status !== "cancelled" ? (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                onClose();
+                                onCancelOrder(order);
+                            }}
+                            className="px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-xs font-semibold text-rose-600 transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Batalkan Pesanan</span>
+                        </button>
+                    ) : (
+                        <div />
+                    )}
+
                     <Button
                         type="button"
                         onClick={onClose}
-                        className="w-full sm:w-auto bg-[#D91A20] hover:bg-[#b91c1c] text-white px-5 rounded-lg transition-all duration-200 cursor-pointer"
+                        className="bg-gray-900 hover:bg-black text-white px-5 rounded-lg transition-all duration-200 cursor-pointer"
                     >
                         Tutup
                     </Button>

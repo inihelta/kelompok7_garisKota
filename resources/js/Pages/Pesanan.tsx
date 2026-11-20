@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Head, router } from "@inertiajs/react";
+import { echo } from "@laravel/echo-react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Check,
@@ -11,6 +12,10 @@ import {
     User,
     Clock,
     LucideProps,
+    Volume2,
+    VolumeX,
+    RotateCw,
+    Bell,
 } from "lucide-react";
 import { OrderItem, PaginatedData } from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
@@ -102,6 +107,145 @@ export default function Pesanan({
 
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
     const [orderToCancel, setOrderToCancel] = useState<OrderItem | null>(null);
+    const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+        if (typeof window !== "undefined") {
+            return localStorage.getItem("admin_order_sound") !== "false";
+        }
+        return true;
+    });
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [newOrderAlert, setNewOrderAlert] = useState<string | null>(null);
+
+    const isInitialMount = useRef(true);
+    const prevOrderIdsRef = useRef<Set<number>>(
+        new Set(activeList.map((o) => o.id)),
+    );
+
+    // Web Audio API: 3-tone harmonic cafe chime (C5 -> E5 -> G5)
+    const playOrderChime = () => {
+        try {
+            const AudioContextClass =
+                window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContextClass) return;
+            const ctx = new AudioContextClass();
+            if (ctx.state === "suspended") {
+                ctx.resume();
+            }
+
+            const now = ctx.currentTime;
+
+            // Tone 1: C5 (523.25 Hz)
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = "sine";
+            osc1.frequency.setValueAtTime(523.25, now);
+            gain1.gain.setValueAtTime(0.25, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.6);
+
+            // Tone 2: E5 (659.25 Hz)
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = "sine";
+            osc2.frequency.setValueAtTime(659.25, now + 0.12);
+            gain2.gain.setValueAtTime(0.3, now + 0.12);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.12);
+            osc2.stop(now + 0.9);
+
+            // Tone 3: G5 (783.99 Hz)
+            const osc3 = ctx.createOscillator();
+            const gain3 = ctx.createGain();
+            osc3.type = "sine";
+            osc3.frequency.setValueAtTime(783.99, now + 0.24);
+            gain3.gain.setValueAtTime(0.35, now + 0.24);
+            gain3.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+            osc3.connect(gain3);
+            gain3.connect(ctx.destination);
+            osc3.start(now + 0.24);
+            osc3.stop(now + 1.2);
+        } catch (e) {
+            console.warn("Could not play audio notification:", e);
+        }
+    };
+
+    const toggleSound = () => {
+        const next = !soundEnabled;
+        setSoundEnabled(next);
+        if (typeof window !== "undefined") {
+            localStorage.setItem("admin_order_sound", String(next));
+        }
+        if (next) {
+            playOrderChime(); // Play test chime to confirm & unlock browser audio permissions
+        }
+    };
+
+    const handleManualRefresh = () => {
+        setIsRefreshing(true);
+        router.reload({
+            only: ["activeOrders", "stats", "historyOrders"],
+            preserveScroll: true,
+            preserveState: true,
+            onFinish: () => setIsRefreshing(false),
+        });
+    };
+
+    useEffect(() => {
+        try {
+            const channel = echo().channel("orders");
+
+            channel.listen(".OrderPlaced", (e: any) => {
+                if (soundEnabled) {
+                    playOrderChime();
+                }
+                const tableStr =
+                    e.table_number && Number(e.table_number) < 10
+                        ? `0${Number(e.table_number)}`
+                        : e.table_number || "01";
+                setNewOrderAlert(
+                    `Pesanan baru #${e.id} (Meja #${tableStr} • ${e.customer_name}) masuk ke antrean!`,
+                );
+                setTimeout(() => setNewOrderAlert(null), 6000);
+
+                router.reload({
+                    only: ["activeOrders", "stats", "historyOrders"],
+                    preserveScroll: true,
+                    preserveState: true,
+                });
+            });
+
+            channel.listen(".OrderStatusUpdated", () => {
+                router.reload({
+                    only: ["activeOrders", "stats", "historyOrders"],
+                    preserveScroll: true,
+                    preserveState: true,
+                });
+            });
+
+            return () => {
+                echo().leaveChannel("orders");
+            };
+        } catch (err) {
+            console.warn("Laravel Reverb WebSocket error:", err);
+        }
+    }, [soundEnabled]);
+
+    const handleProcessOrder = (order: OrderItem) => {
+        router.put(
+            `/orders/${order.id}/process`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => router.reload(),
+                onError: () => {},
+            },
+        );
+    };
 
     const handleCompleteOrder = (order: OrderItem) => {
         router.put(
@@ -176,30 +320,105 @@ export default function Pesanan({
                     </div>
                 </div>
 
-                {/* Tab Switcher Buttons */}
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab("pesanan")}
-                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                            activeTab === "pesanan"
-                                ? "bg-[#D91A20] text-white shadow-xs"
-                                : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
-                        }`}
-                    >
-                        Pesanan
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab("riwayat")}
-                        className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                            activeTab === "riwayat"
-                                ? "bg-[#D91A20] text-white shadow-xs"
-                                : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
-                        }`}
-                    >
-                        Riwayat Pesanan
-                    </button>
+                {/* Floating/Inline New Order Alert Banner */}
+                {newOrderAlert && (
+                    <div className="flex items-center justify-between gap-3 p-4 rounded-xl bg-gradient-to-r from-red-600 to-[#D91A20] text-white shadow-lg animate-in slide-in-from-top duration-300">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-white/20">
+                                <Bell className="w-5 h-5 animate-bounce" />
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-sm">
+                                    Pesanan Baru Masuk!
+                                </h4>
+                                <p className="text-xs text-white/90">
+                                    {newOrderAlert}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setNewOrderAlert(null)}
+                            className="p-1 rounded-md text-white/70 hover:text-white hover:bg-white/10"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+                )}
+
+                {/* Tab Switcher & Live Controls */}
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab("pesanan")}
+                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                                activeTab === "pesanan"
+                                    ? "bg-[#D91A20] text-white shadow-xs"
+                                    : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
+                            }`}
+                        >
+                            Pesanan
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab("riwayat")}
+                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                                activeTab === "riwayat"
+                                    ? "bg-[#D91A20] text-white shadow-xs"
+                                    : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
+                            }`}
+                        >
+                            Riwayat Pesanan
+                        </button>
+                    </div>
+
+                    {/* Live Realtime & Audio Controls */}
+                    <div className="flex items-center gap-2">
+                        {/* Sound Toggle Button */}
+                        <button
+                            type="button"
+                            onClick={toggleSound}
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95 ${
+                                soundEnabled
+                                    ? "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                    : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100"
+                            }`}
+                            title={
+                                soundEnabled
+                                    ? "Notifikasi suara aktif. Klik untuk membisukan."
+                                    : "Notifikasi suara mati. Klik untuk mengaktifkan."
+                            }
+                        >
+                            {soundEnabled ? (
+                                <>
+                                    <Volume2 className="w-3.5 h-3.5 text-[#D91A20]" />
+                                    <span>Suara: On</span>
+                                </>
+                            ) : (
+                                <>
+                                    <VolumeX className="w-3.5 h-3.5 text-gray-400" />
+                                    <span>Suara: Off</span>
+                                </>
+                            )}
+                        </button>
+
+                        {/* Manual Refresh Button */}
+                        <button
+                            type="button"
+                            onClick={handleManualRefresh}
+                            className="p-2 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-600 active:scale-95 transition-all cursor-pointer shadow-2xs"
+                            title="Perbarui daftar pesanan sekarang"
+                        >
+                            <RotateCw
+                                className={`w-3.5 h-3.5 ${
+                                    isRefreshing
+                                        ? "animate-spin text-[#D91A20]"
+                                        : ""
+                                }`}
+                            />
+                        </button>
+                    </div>
                 </div>
 
                 {activeTab === "pesanan" && (
@@ -221,6 +440,19 @@ export default function Pesanan({
                                                 <h3 className="font-bold text-[#1e293b] text-base">
                                                     Pesanan #{order.id}
                                                 </h3>
+                                                <span
+                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                                                        order.order_status ===
+                                                        "processing"
+                                                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                                            : "bg-amber-50 text-amber-700 border border-amber-200"
+                                                    }`}
+                                                >
+                                                    {order.order_status ===
+                                                    "processing"
+                                                        ? "Sedang Diproses"
+                                                        : "Baru Masuk"}
+                                                </span>
                                             </div>
                                             <span className="text-xs text-[#94a3b8]">
                                                 {order.formatted_time ||
@@ -277,10 +509,22 @@ export default function Pesanan({
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons: ✓, ✕, Detail pesanan */}
-                                        <div className="flex items-center justify-between gap-2 pt-1">
-                                            <div className="flex items-center gap-1.5">
-                                                {/* Tombol ✓ Selesai */}
+                                        {/* Action Buttons: Detail pesanan (outline) & Terima Pesanan / Selesai */}
+                                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#f1f5f9]">
+                                            {/* Tombol Detail Pesanan (Outline) */}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setSelectedOrder(order)
+                                                }
+                                                className="px-3.5 h-9 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-[#334155] text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                                            >
+                                                Detail pesanan
+                                            </button>
+
+                                            {/* Tombol Aksi Bertahap */}
+                                            {order.order_status ===
+                                            "processing" ? (
                                                 <button
                                                     type="button"
                                                     title="Selesaikan pesanan"
@@ -289,34 +533,25 @@ export default function Pesanan({
                                                             order,
                                                         )
                                                     }
-                                                    className="w-9 h-9 rounded-lg bg-[#D91A20] hover:bg-[#b91c1c] text-white flex items-center justify-center transition-all cursor-pointer shadow-xs"
+                                                    className="px-4 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                                                 >
                                                     <Check className="w-4 h-4" />
+                                                    <span>Selesai</span>
                                                 </button>
-
-                                                {/* Tombol ✕ Batalkan */}
+                                            ) : (
                                                 <button
                                                     type="button"
-                                                    title="Batalkan pesanan"
+                                                    title="Terima dan mulai proses pesanan"
                                                     onClick={() =>
-                                                        setOrderToCancel(order)
+                                                        handleProcessOrder(
+                                                            order,
+                                                        )
                                                     }
-                                                    className="w-9 h-9 rounded-lg border border-[#d1d5db] bg-white hover:bg-gray-50 text-[#64748b] flex items-center justify-center transition-all cursor-pointer"
+                                                    className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                                                 >
-                                                    <X className="w-4 h-4" />
+                                                    <span>Terima Pesanan</span>
                                                 </button>
-                                            </div>
-
-                                            {/* Tombol Detail Pesanan */}
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    setSelectedOrder(order)
-                                                }
-                                                className="px-4 h-9 rounded-lg bg-[#D91A20] hover:bg-[#b91c1c] text-white text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                                            >
-                                                Detail pesanan
-                                            </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -456,6 +691,7 @@ export default function Pesanan({
                 isOpen={Boolean(selectedOrder)}
                 onClose={() => setSelectedOrder(null)}
                 order={selectedOrder}
+                onCancelOrder={(order) => setOrderToCancel(order)}
             />
 
             {/* Dialog Konfirmasi Pembatalan Pesanan */}
