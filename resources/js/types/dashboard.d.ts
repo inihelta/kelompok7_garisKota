@@ -174,4 +174,8 @@ export interface PendapatanPageProps {
     performance: PerformanceData;
     paymentSources: PaymentSourcesData;
     recentOrders: PaginatedData<OrderItem>;
+    currentFilter?: string;
+    dateRangeLabel?: string;
+    startDate?: string;
+    endDate?: string;
 }

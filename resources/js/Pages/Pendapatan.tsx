@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Wallet,
@@ -13,6 +13,7 @@ import {
     User,
     Clock,
     LucideProps,
+    Check,
 } from "lucide-react";
 import {
     ResponsiveContainer,
@@ -90,16 +91,26 @@ export default function Pendapatan({
     performance,
     paymentSources,
     recentOrders,
+    currentFilter = "today",
+    dateRangeLabel: propDateRangeLabel,
+    startDate: propStartDate,
+    endDate: propEndDate,
 }: PendapatanPageProps) {
     const [period, setPeriod] = useState<"7" | "30">("7");
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
 
-    // Filter tanggal dropdown di frontend
-    const [dateRangeLabel, setDateRangeLabel] = useState<string>(
-        "16 Sept 2026 - 16 Sept 2026",
-    );
+    // Filter tanggal dropdown
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+    const [showCustomInputs, setShowCustomInputs] = useState(currentFilter === "custom");
+    const [customStart, setCustomStart] = useState(propStartDate || "");
+    const [customEnd, setCustomEnd] = useState(propEndDate || "");
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (propStartDate) setCustomStart(propStartDate);
+        if (propEndDate) setCustomEnd(propEndDate);
+        if (currentFilter === "custom") setShowCustomInputs(true);
+    }, [propStartDate, propEndDate, currentFilter]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -114,6 +125,27 @@ export default function Pendapatan({
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const handleFilterSelect = (filterKey: string) => {
+        setIsDateDropdownOpen(false);
+        setShowCustomInputs(false);
+        router.get(
+            "/dashboard/pendapatan",
+            { filter: filterKey },
+            { preserveState: true, preserveScroll: true }
+        );
+    };
+
+    const handleCustomSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!customStart || !customEnd) return;
+        setIsDateDropdownOpen(false);
+        router.get(
+            "/dashboard/pendapatan",
+            { start_date: customStart, end_date: customEnd },
+            { preserveState: true, preserveScroll: true }
+        );
+    };
 
     const formatIDR = (value: number | string) =>
         new Intl.NumberFormat("id-ID", {
@@ -183,107 +215,157 @@ export default function Pendapatan({
                             className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#D91A20] text-white text-xs font-semibold shadow-xs hover:bg-[#b91c1c] transition-all cursor-pointer"
                         >
                             <Calendar className="w-4 h-4 text-white" />
-                            <span>{dateRangeLabel}</span>
-                            <ChevronDown className="w-4 h-4 ml-1 text-white/90" />
+                            <span>{propDateRangeLabel || "Hari Ini"}</span>
+                            <ChevronDown
+                                className={`w-4 h-4 ml-1 text-white/90 transition-transform ${
+                                    isDateDropdownOpen ? "rotate-180" : ""
+                                }`}
+                            />
                         </button>
 
                         {isDateDropdownOpen && (
-                            <div className="absolute left-0 mt-2 w-64 bg-white border border-[#e2e8f0] rounded-xl shadow-lg z-30 py-1.5 text-xs">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setDateRangeLabel("Hari Ini");
-                                        setIsDateDropdownOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-medium"
-                                >
-                                    Hari Ini
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setDateRangeLabel("7 Hari Terakhir");
-                                        setIsDateDropdownOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-medium"
-                                >
-                                    7 Hari Terakhir
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setDateRangeLabel("30 Hari Terakhir");
-                                        setIsDateDropdownOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-medium"
-                                >
-                                    30 Hari Terakhir
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setDateRangeLabel("Bulan Ini");
-                                        setIsDateDropdownOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-medium"
-                                >
-                                    Bulan Ini
-                                </button>
-                                <div className="border-t border-gray-100 my-1" />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setDateRangeLabel(
-                                            "16 Sept 2026 - 16 Sept 2026",
-                                        );
-                                        setIsDateDropdownOpen(false);
-                                    }}
-                                    className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 font-semibold text-[#D91A20]"
-                                >
-                                    16 Sept 2026 - 16 Sept 2026 (Default)
-                                </button>
+                            <div className="absolute left-0 mt-2 w-72 bg-white border border-[#e2e8f0] rounded-xl shadow-xl z-30 py-2 text-xs">
+                                <div className="px-4 py-1.5 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                                    Pilih Periode
+                                </div>
+                                {[
+                                    { key: "today", label: "Hari Ini" },
+                                    { key: "yesterday", label: "Kemarin" },
+                                    { key: "7days", label: "7 Hari Terakhir" },
+                                    { key: "30days", label: "30 Hari Terakhir" },
+                                    { key: "this_month", label: "Bulan Ini" },
+                                ].map((opt) => (
+                                    <button
+                                        key={opt.key}
+                                        type="button"
+                                        onClick={() => handleFilterSelect(opt.key)}
+                                        className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors cursor-pointer ${
+                                            currentFilter === opt.key
+                                                ? "bg-red-50 font-semibold text-[#D91A20]"
+                                                : "text-gray-700 hover:bg-gray-50 font-medium"
+                                        }`}
+                                    >
+                                        <span>{opt.label}</span>
+                                        {currentFilter === opt.key && (
+                                            <Check className="w-4 h-4 text-[#D91A20]" />
+                                        )}
+                                    </button>
+                                ))}
+
+                                <div className="border-t border-gray-100 my-1.5" />
+
+                                <div className="px-4 py-1.5">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCustomInputs(!showCustomInputs)}
+                                        className={`w-full text-left font-medium flex items-center justify-between py-1 cursor-pointer ${
+                                            currentFilter === "custom" || showCustomInputs
+                                                ? "text-[#D91A20] font-semibold"
+                                                : "text-gray-700 hover:text-[#D91A20]"
+                                        }`}
+                                    >
+                                        <span>Rentang Tanggal Kustom</span>
+                                        <ChevronDown
+                                            className={`w-3.5 h-3.5 transition-transform ${
+                                                showCustomInputs ? "rotate-180" : ""
+                                            }`}
+                                        />
+                                    </button>
+
+                                    {showCustomInputs && (
+                                        <form
+                                            onSubmit={handleCustomSubmit}
+                                            className="mt-2.5 space-y-2 pt-2 border-t border-gray-100"
+                                        >
+                                            <div>
+                                                <label className="block text-[11px] text-gray-500 mb-1">
+                                                    Dari Tanggal:
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={customStart}
+                                                    onChange={(e) => setCustomStart(e.target.value)}
+                                                    className="w-full text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#D91A20] text-gray-700"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[11px] text-gray-500 mb-1">
+                                                    Sampai Tanggal:
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={customEnd}
+                                                    onChange={(e) => setCustomEnd(e.target.value)}
+                                                    className="w-full text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#D91A20] text-gray-700"
+                                                    required
+                                                />
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                className="w-full py-2 bg-[#D91A20] hover:bg-[#b91c1c] text-white rounded-lg font-semibold transition-colors mt-1 cursor-pointer text-xs"
+                                            >
+                                                Terapkan Filter
+                                            </button>
+                                        </form>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Card 1: Pendapatan Hari Ini */}
+                    {/* Card 1: Pendapatan */}
                     <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
                         <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
                             <Wallet className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-medium text-[#475569]">
-                            Pendapatan Hari Ini
+                            {currentFilter === "today"
+                                ? "Pendapatan Hari Ini"
+                                : currentFilter === "yesterday"
+                                ? "Pendapatan Kemarin"
+                                : "Pendapatan Periode"}
                         </span>
                         <span className="text-xl font-bold text-[#1e293b]">
-                            {formatIDR(metrics?.today_revenue || 10650000)}
+                            {formatIDR(metrics?.today_revenue || 0)}
                         </span>
                         <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
                             <TrendingUp className="w-3.5 h-3.5" />
                             <span>
                                 {metrics?.revenue_growth >= 0 ? "+" : ""}
-                                {metrics?.revenue_growth || 15}% dari kemarin
+                                {metrics?.revenue_growth || 0}%{" "}
+                                {currentFilter === "today"
+                                    ? "dari kemarin"
+                                    : "dari periode sebelumnya"}
                             </span>
                         </div>
                     </div>
 
-                    {/* Card 2: Pesanan Hari Ini */}
+                    {/* Card 2: Pesanan */}
                     <div className="border border-[#e5e7eb] rounded-xl p-5 bg-white flex flex-col gap-2 shadow-xs">
                         <div className="w-10 h-10 rounded-lg bg-[#fee2e2] flex items-center justify-center text-[#D91A20]">
                             <ClipboardList className="w-5 h-5" />
                         </div>
                         <span className="text-xs font-medium text-[#475569]">
-                            Pesanan Hari Ini
+                            {currentFilter === "today"
+                                ? "Pesanan Hari Ini"
+                                : currentFilter === "yesterday"
+                                ? "Pesanan Kemarin"
+                                : "Pesanan Periode"}
                         </span>
                         <span className="text-xl font-bold text-[#1e293b]">
-                            {metrics?.today_orders || 150}
+                            {metrics?.today_orders || 0}
                         </span>
                         <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
                             <TrendingUp className="w-3.5 h-3.5" />
                             <span>
                                 {metrics?.orders_growth >= 0 ? "+" : ""}
-                                {metrics?.orders_growth || 8}% dari kemarin
+                                {metrics?.orders_growth || 0}%{" "}
+                                {currentFilter === "today"
+                                    ? "dari kemarin"
+                                    : "dari periode sebelumnya"}
                             </span>
                         </div>
                     </div>
