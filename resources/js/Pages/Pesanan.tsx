@@ -242,7 +242,7 @@ export default function Pesanan({
             {
                 preserveScroll: true,
                 onSuccess: () => router.reload(),
-                onError: () => {},
+                onError: () => { },
             },
         );
     };
@@ -254,7 +254,7 @@ export default function Pesanan({
             {
                 preserveScroll: true,
                 onSuccess: () => router.reload(),
-                onError: () => {},
+                onError: () => { },
             },
         );
     };
@@ -352,22 +352,20 @@ export default function Pesanan({
                         <button
                             type="button"
                             onClick={() => setActiveTab("pesanan")}
-                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                                activeTab === "pesanan"
-                                    ? "bg-[#D91A20] text-white shadow-xs"
-                                    : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
-                            }`}
+                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === "pesanan"
+                                ? "bg-[#D91A20] text-white shadow-xs"
+                                : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
+                                }`}
                         >
                             Pesanan
                         </button>
                         <button
                             type="button"
                             onClick={() => setActiveTab("riwayat")}
-                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                                activeTab === "riwayat"
-                                    ? "bg-[#D91A20] text-white shadow-xs"
-                                    : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
-                            }`}
+                            className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === "riwayat"
+                                ? "bg-[#D91A20] text-white shadow-xs"
+                                : "bg-white text-[#475569] border border-[#d1d5db] hover:bg-gray-50"
+                                }`}
                         >
                             Riwayat Pesanan
                         </button>
@@ -379,11 +377,10 @@ export default function Pesanan({
                         <button
                             type="button"
                             onClick={toggleSound}
-                            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95 ${
-                                soundEnabled
-                                    ? "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
-                                    : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100"
-                            }`}
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95 ${soundEnabled
+                                ? "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400"
+                                : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100"
+                                }`}
                             title={
                                 soundEnabled
                                     ? "Notifikasi suara aktif. Klik untuk membisukan."
@@ -411,11 +408,10 @@ export default function Pesanan({
                             title="Perbarui daftar pesanan sekarang"
                         >
                             <RotateCw
-                                className={`w-3.5 h-3.5 ${
-                                    isRefreshing
-                                        ? "animate-spin text-[#D91A20]"
-                                        : ""
-                                }`}
+                                className={`w-3.5 h-3.5 ${isRefreshing
+                                    ? "animate-spin text-[#D91A20]"
+                                    : ""
+                                    }`}
                             />
                         </button>
                     </div>
@@ -441,15 +437,14 @@ export default function Pesanan({
                                                     Pesanan #{order.id}
                                                 </h3>
                                                 <span
-                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                                                        order.order_status ===
+                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${order.order_status ===
                                                         "processing"
-                                                            ? "bg-blue-50 text-blue-700 border border-blue-200"
-                                                            : "bg-amber-50 text-amber-700 border border-amber-200"
-                                                    }`}
+                                                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                                                        }`}
                                                 >
                                                     {order.order_status ===
-                                                    "processing"
+                                                        "processing"
                                                         ? "Sedang Diproses"
                                                         : "Baru Masuk"}
                                                 </span>
@@ -467,10 +462,10 @@ export default function Pesanan({
                                                 <span>
                                                     Meja #
                                                     {order.table_number &&
-                                                    order.table_number < 10
+                                                        order.table_number < 10
                                                         ? `0${order.table_number}`
                                                         : order.table_number ||
-                                                          "01"}
+                                                        "01"}
                                                 </span>
                                             </div>
 
@@ -509,61 +504,50 @@ export default function Pesanan({
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons: Aksi Cepat [√] [X] di kiri & Detail Pesanan di kanan (Sesuai Referensi) */}
+                                        {/* Action Buttons: Detail di kiri, Aksi Operasional Utama di kanan */}
                                         <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#f1f5f9]">
-                                            {/* Tombol Aksi Cepat di Kiri: [√] Terima/Selesai & [X] Batalkan */}
-                                            <div className="flex items-center gap-2">
-                                                {order.order_status ===
-                                                "processing" ? (
-                                                    <button
-                                                        type="button"
-                                                        title="Selesaikan pesanan"
-                                                        onClick={() =>
-                                                            handleCompleteOrder(
-                                                                order,
-                                                            )
-                                                        }
-                                                        className="w-9 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs transition-all cursor-pointer active:scale-95"
-                                                    >
-                                                        <Check className="w-4 h-4" />
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        title="Terima dan mulai proses pesanan"
-                                                        onClick={() =>
-                                                            handleProcessOrder(
-                                                                order,
-                                                            )
-                                                        }
-                                                        className="w-9 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white flex items-center justify-center shadow-xs transition-all cursor-pointer active:scale-95"
-                                                    >
-                                                        <Check className="w-4 h-4" />
-                                                    </button>
-                                                )}
-
-                                                <button
-                                                    type="button"
-                                                    title="Batalkan pesanan"
-                                                    onClick={() =>
-                                                        setOrderToCancel(order)
-                                                    }
-                                                    className="w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-red-600 hover:border-red-300 hover:bg-red-50 flex items-center justify-center shadow-2xs transition-all cursor-pointer active:scale-95"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </button>
-                                            </div>
-
-                                            {/* Tombol Detail Pesanan di Kanan */}
+                                            {/* Kiri: Tombol Detail Pesanan */}
                                             <button
                                                 type="button"
                                                 onClick={() =>
                                                     setSelectedOrder(order)
                                                 }
-                                                className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                                                className="px-3.5 h-9 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-[#334155] text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-2xs active:scale-95"
                                             >
-                                                Detail pesanan
+                                                Detail
                                             </button>
+
+                                            {/* Kanan: Aksi Operasional Utama dengan teks jelas & warna status */}
+                                            {order.order_status ===
+                                            "processing" ? (
+                                                <button
+                                                    type="button"
+                                                    title="Selesaikan dan sajikan pesanan"
+                                                    onClick={() =>
+                                                        handleCompleteOrder(
+                                                            order,
+                                                        )
+                                                    }
+                                                    className="px-4 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+                                                >
+                                                    <Check className="w-4 h-4" />
+                                                    <span>Selesai</span>
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    title="Terima dan mulai proses pesanan"
+                                                    onClick={() =>
+                                                        handleProcessOrder(
+                                                            order,
+                                                        )
+                                                    }
+                                                    className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+                                                >
+                                                    <CookingPot className="w-4 h-4" />
+                                                    <span>Terima Pesanan</span>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -597,7 +581,7 @@ export default function Pesanan({
                                 </thead>
                                 <tbody>
                                     {(historyOrders?.data ?? []).length ===
-                                    0 ? (
+                                        0 ? (
                                         <tr>
                                             <td
                                                 colSpan={5}
@@ -658,7 +642,7 @@ export default function Pesanan({
                                                     {/* Kolom STATUS: Selesai / Dibatalkan */}
                                                     <td className="px-4 py-3.5 border-b border-[#f1f5f9] align-middle text-center">
                                                         {item.order_status ===
-                                                        "cancelled" ? (
+                                                            "cancelled" ? (
                                                             <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-[#fee2e2] text-[#ef4444] inline-block">
                                                                 Dibatalkan
                                                             </span>
