@@ -61,7 +61,7 @@ export default function MenuItemCard({
                     <ImageWithFallback
                         src={getImageSrc(menu.image)}
                         alt={menu.name}
-                        className="h-full w-full object-cover object-center"
+                        className="h-full w-full object-contain object-center"
                     />
                     {isOutOfStock && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[1px]">
@@ -82,7 +82,7 @@ export default function MenuItemCard({
                         <button
                             type="button"
                             onClick={onAdd}
-                            className="w-full max-w-[80px] rounded-full border border-[#D91A20] bg-white py-1 px-3 text-xs font-bold text-[#D91A20] transition-all hover:bg-red-50 active:scale-95 shadow-2xs"
+                            className="w-full max-w-[80px] h-7.5 rounded-full border border-[#D91A20] bg-white py-1 px-3 text-xs font-bold text-[#D91A20] transition-all hover:bg-red-50 active:scale-95 shadow-2xs"
                         >
                             Tambah
                         </button>

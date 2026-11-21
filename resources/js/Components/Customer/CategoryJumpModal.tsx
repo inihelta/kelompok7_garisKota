@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Utensils, X, ChevronRight } from "lucide-react";
+import { Utensils, X, ChevronRight, Bell, ConciergeBell } from "lucide-react";
 import { CustomerCategory, CustomerMenu } from "@/types/customer";
 
 interface CategoryJumpModalProps {
@@ -39,9 +39,9 @@ export default function CategoryJumpModal({
                 <button
                     type="button"
                     onClick={() => setIsOpen(true)}
-                    className="flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-rose-600/30 active:scale-95 transition-all hover:bg-rose-700 cursor-pointer"
+                    className="flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg active:scale-95 transition-all hover:bg-rose-700 cursor-pointer"
                 >
-                    <Utensils className="h-4 w-4" />
+                    <ConciergeBell className="h-4 w-4" />
                     <span>Menu</span>
                 </button>
             </div>

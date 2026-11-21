@@ -13,6 +13,7 @@ import {
     Check,
     Coffee,
     AlertCircle,
+    ShoppingBasket,
 } from "lucide-react";
 
 interface DesktopCartSidebarProps {
@@ -65,7 +66,7 @@ export default function DesktopCartSidebar({
             {/* Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-[#D91A20] border border-red-100 shadow-2xs">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-[#D91A20]">
                         <ShoppingBag className="h-5 w-5" />
                     </div>
                     <div>
@@ -77,10 +78,6 @@ export default function DesktopCartSidebar({
                         </p>
                     </div>
                 </div>
-
-                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-[#D91A20] border border-red-200/60">
-                    {totalItems} item
-                </span>
             </div>
 
             {/* Content area: Scrollable items */}
@@ -88,7 +85,7 @@ export default function DesktopCartSidebar({
                 {cartItems.length === 0 ? (
                     <div className="py-6 px-4 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200/80">
                         <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-white text-gray-400 border border-gray-200/60 mb-2 shadow-2xs">
-                            <Coffee className="h-5 w-5 text-gray-400" />
+                            <ShoppingBasket className="h-5 w-5 text-gray-400" />
                         </div>
                         <h4 className="text-xs font-bold text-gray-800">
                             Keranjang Masih Kosong
@@ -109,7 +106,7 @@ export default function DesktopCartSidebar({
                                     <ImageWithFallback
                                         src={getImageSrc(menu.image)}
                                         alt={menu.name}
-                                        className="h-full w-full object-cover"
+                                        className="h-full w-full object-contain object-center"
                                     />
                                 </div>
 
@@ -129,11 +126,7 @@ export default function DesktopCartSidebar({
                                         onClick={() => onRemove(menu.id)}
                                         className="flex h-5 w-5 items-center justify-center text-gray-400 hover:text-[#D91A20] transition-colors"
                                     >
-                                        {quantity === 1 ? (
-                                            <Trash2 className="h-3.5 w-3.5 text-rose-500" />
-                                        ) : (
-                                            <Minus className="h-3 w-3" />
-                                        )}
+                                        <Minus className="h-3 w-3" />
                                     </button>
                                     <span className="min-w-[14px] text-center text-xs font-black text-gray-800">
                                         {quantity}
@@ -256,9 +249,7 @@ export default function DesktopCartSidebar({
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-600">
                         <span>Biaya Layanan / Kasir</span>
-                        <span className="font-semibold text-[#D91A20]">
-                            Gratis
-                        </span>
+                        <span className="font-semibold ">Gratis</span>
                     </div>
                     <div className="pt-1.5 border-t border-gray-200/60 flex items-center justify-between">
                         <span className="text-xs font-extrabold text-gray-900">
@@ -272,7 +263,7 @@ export default function DesktopCartSidebar({
 
                 {/* Cashier Payment Notice */}
                 <div className="flex items-center gap-2 rounded-xl bg-amber-50/70 border border-amber-200/60 px-3 py-2 text-[11px] text-amber-800">
-                    <Store className="h-4 w-4 shrink-0 text-amber-600" />
+                    <Store className="size-7 shrink-0 text-amber-600" />
                     <span>
                         Pembayaran dilakukan di kasir setelah pesanan terkirim.
                     </span>
@@ -282,7 +273,7 @@ export default function DesktopCartSidebar({
                 <button
                     type="submit"
                     disabled={cartItems.length === 0 || isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#D91A20] py-3 text-xs font-extrabold text-white shadow-lg shadow-red-700/20 hover:bg-[#b91c1c] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#D91A20] py-3 text-xs font-extrabold text-white shadow-xs hover:bg-[#b91c1c] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all cursor-pointer"
                 >
                     {isSubmitting ? (
                         <>
