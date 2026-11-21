@@ -136,50 +136,41 @@ export default function OrderStatus({ order }: OrderStatusProps) {
             ? 50
             : 15;
 
-    // WhatsApp Message URL for Cashier Help
     const whatsappKasirUrl = `https://wa.me/?text=${encodeURIComponent(
         `Halo Garis Kota Workspace & Coffee, saya pelanggan dari Meja #${order.table_number} (ID Pesanan: ${orderRefCode}). Saya ingin menanyakan status pesanan saya.`,
     )}`;
 
     return (
         <div className="min-h-screen bg-[#F6F7F9] text-gray-900 font-sans antialiased py-4 sm:py-6 lg:py-8 px-4 sm:px-6 overflow-x-hidden">
-            <Head title={`Status Pesanan #${order.id} - Garis Kota Workspace & Coffee`} />
+            <Head
+                title={`Status Pesanan #${order.id} - Garis Kota Workspace & Coffee`}
+            />
 
-            {/* Main Constrained Container to prevent horizontal overflow */}
             <div className="max-w-6xl mx-auto w-full">
-                {/* 2-Column Grid on Desktop, Single Column on Mobile */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    
-                    {/* ================= LEFT COLUMN: HERO, STATUS, TIMELINE, DESTINATION, HELP ================= */}
                     <div className="lg:col-span-7 space-y-4">
-                        
-                        {/* 1. TOP PHOTO / BANNER AREA */}
                         <div className="relative w-full h-36 md:h-44 rounded-2xl bg-gradient-to-r from-gray-100 via-gray-200/80 to-gray-100 border border-gray-200/80 shadow-xs flex items-center justify-center overflow-hidden">
-                            {/* Floating Back Button with clear contrast */}
                             <Link
                                 href={
                                     order.table_token
                                         ? `/order/${order.table_token}`
                                         : "/"
                                 }
-                                className="absolute top-3 left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-gray-800 shadow-md backdrop-blur-xs hover:bg-white hover:text-black active:scale-95 transition-all border border-gray-200/60"
+                                className="absolute top-3 left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-gray-800 backdrop-blur-xs hover:bg-white hover:text-black active:scale-95 transition-all border border-gray-200/60"
                                 title="Kembali ke Buku Menu"
                             >
                                 <ArrowLeft className="h-4 w-4" />
                             </Link>
 
-                            {/* Banner Placeholder (Supports <img> with object-cover if provided) */}
-                            <div className="text-center text-gray-400 select-none px-4 flex flex-col items-center justify-center">
-                                <div className="h-10 w-10 rounded-xl bg-white/80 shadow-xs border border-gray-200/60 flex items-center justify-center mb-1.5 text-gray-400">
-                                    <Store className="h-5 w-5 text-gray-400" />
-                                </div>
-                                <span className="text-[11px] font-bold tracking-wider uppercase text-gray-500">
-                                    Garis Kota Workspace & Coffee
-                                </span>
+                            <div className="text-center text-gray-400 select-none flex flex-col items-center justify-center">
+                                <img
+                                    src="/bnr6y75trf.jpeg"
+                                    className="h-full w-full object-cover"
+                                    alt=""
+                                />
                             </div>
                         </div>
 
-                        {/* 2. ORDER STATUS & TABLE HEADER BANNER (#BE1A1A) */}
                         <div className="rounded-2xl bg-gradient-to-r from-[#BE1A1A] to-[#991515] p-5 text-white shadow-md flex items-center justify-between">
                             <div>
                                 <p className="text-xs font-medium text-white/80">
@@ -442,7 +433,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
 
                     {/* ================= RIGHT COLUMN: ORDER DETAILS, PAYMENT, ORDER ID, CTAs ================= */}
                     <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-6">
-                        
                         {/* 6. ORDER ID & REFERENCE CARD (With Copy Button) */}
                         <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs flex items-center justify-between">
                             <div>
@@ -754,7 +744,8 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                 <p>
                                     Jika membutuhkan sedotan, sendok, air
                                     hangat, atau ingin mengubah pesanan, silakan
-                                    panggil staf terdekat di area kafe atau hubungi WhatsApp kasir.
+                                    panggil staf terdekat di area kafe atau
+                                    hubungi WhatsApp kasir.
                                 </p>
                             </div>
                         </div>
