@@ -117,18 +117,22 @@ export default function OrderStatus({ order }: OrderStatusProps) {
     const timelineSteps = [
         {
             title: "Pesanan Diterima",
+            label: "Diterima",
             icon: ThumbsUp,
         },
         {
             title: "Sedang Diracik",
+            label: "Diracik",
             icon: Coffee,
         },
         {
             title: "Disajikan ke Meja",
+            label: "Diantar",
             icon: UtensilsCrossed,
         },
         {
             title: "Selesai",
+            label: "Selesai",
             icon: Check,
         },
     ];
@@ -148,9 +152,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
 
     return (
         <div className="min-h-screen bg-[#F6F7F9] text-gray-900 font-sans antialiased py-4 sm:py-6 lg:py-8 px-4 sm:px-6 overflow-x-hidden">
-            <Head
-                title={`Status Pesanan #${order.id} - Garis Kota Workspace & Coffee`}
-            />
+            <Head title={`Status Pesanan #${order.id}`} />
 
             <div className="max-w-6xl mx-auto w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -245,84 +247,65 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             {/* Horizontal Stepper Timeline */}
                             {!isCancelled && (
                                 <div className="pt-2 pb-1">
-                                    <div className="relative flex items-center justify-between">
-                                        {/* Background Track Line */}
-                                        <div className="absolute top-1/2 left-4 right-4 -translate-y-1/2 h-1 bg-gray-100 z-0" />
-
-                                        {/* Active Track Line */}
-                                        <div
-                                            className="absolute top-1/2 left-4 -translate-y-1/2 h-1 bg-[#BE1A1A] transition-all duration-500 z-0"
-                                            style={{
-                                                width: `calc(${progressWidth}% - 16px)`,
-                                            }}
-                                        />
-
-                                        {/* Step Dots */}
+                                    <div className="grid grid-cols-4">
                                         {timelineSteps.map((step, idx) => {
                                             const StepIcon = step.icon;
-                                            const isPastOrCurrent =
-                                                currentStepIndex >= idx;
+                                            const isPast =
+                                                currentStepIndex > idx;
                                             const isCurrent =
                                                 currentStepIndex === idx;
+                                            const isPastOrCurrent =
+                                                currentStepIndex >= idx;
+                                            const isLast =
+                                                idx ===
+                                                timelineSteps.length - 1;
 
                                             return (
                                                 <div
                                                     key={step.title}
-                                                    className="relative z-10 flex flex-col items-center"
+                                                    className="relative flex flex-col items-center text-center"
                                                     title={step.title}
                                                 >
-                                                    <div
-                                                        className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full transition-all duration-300 ${
-                                                            isPastOrCurrent
-                                                                ? "bg-[#BE1A1A] text-white shadow-sm ring-4 ring-red-100"
-                                                                : "bg-gray-100 text-gray-400 border border-gray-200"
-                                                        } ${isCurrent && !isCompleted ? "scale-105" : ""}`}
-                                                    >
-                                                        <StepIcon className="h-4 sm:h-5 w-4 sm:w-5" />
+                                                    {/* Connecting Line to next step */}
+                                                    {!isLast && (
+                                                        <div className="absolute top-5 sm:top-5.5 left-1/2 w-full h-1 -translate-y-1/2 z-0">
+                                                            <div className="w-full h-full bg-gray-100" />
+                                                            <div
+                                                                className={`absolute top-0 left-0 h-full bg-[#BE1A1A] transition-all duration-500 ${
+                                                                    isPast
+                                                                        ? "w-full"
+                                                                        : "w-0"
+                                                                }`}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Step Circle */}
+                                                    <div className="relative z-10">
+                                                        <div
+                                                            className={`flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full transition-all duration-300 ${
+                                                                isPastOrCurrent
+                                                                    ? "bg-[#BE1A1A] text-white shadow-sm ring-4 ring-red-100"
+                                                                    : "bg-gray-100 text-gray-400 border border-gray-200"
+                                                            } ${isCurrent && !isCompleted ? "scale-105" : ""}`}
+                                                        >
+                                                            <StepIcon className="h-4 sm:h-5 w-4 sm:w-5" />
+                                                        </div>
                                                     </div>
+
+                                                    {/* Step Label (Centering guaranteed directly under icon) */}
+                                                    <span
+                                                        className={`mt-2.5 text-[11px] sm:text-xs font-semibold px-0.5 leading-tight transition-colors ${
+                                                            isPastOrCurrent
+                                                                ? "text-[#BE1A1A] font-bold"
+                                                                : "text-gray-500"
+                                                        }`}
+                                                    >
+                                                        {step.label}
+                                                    </span>
                                                 </div>
                                             );
                                         })}
-                                    </div>
-
-                                    {/* Step Labels */}
-                                    <div className="mt-3 flex justify-between text-[11px] sm:text-xs font-semibold text-gray-500 px-1">
-                                        <span
-                                            className={
-                                                currentStepIndex >= 0
-                                                    ? "text-[#BE1A1A] font-bold"
-                                                    : ""
-                                            }
-                                        >
-                                            Diterima
-                                        </span>
-                                        <span
-                                            className={
-                                                currentStepIndex >= 1
-                                                    ? "text-[#BE1A1A] font-bold"
-                                                    : ""
-                                            }
-                                        >
-                                            Diracik
-                                        </span>
-                                        <span
-                                            className={
-                                                currentStepIndex >= 2
-                                                    ? "text-[#BE1A1A] font-bold"
-                                                    : ""
-                                            }
-                                        >
-                                            Diantar
-                                        </span>
-                                        <span
-                                            className={
-                                                currentStepIndex >= 3
-                                                    ? "text-[#BE1A1A] font-bold"
-                                                    : ""
-                                            }
-                                        >
-                                            Selesai
-                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -344,20 +327,8 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                         </p>
                                     </div>
                                 </div>
-
-                                {/* Active WhatsApp Help Button */}
-                                <a
-                                    href={whatsappKasirUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 active:scale-95 transition-all shrink-0 ml-2"
-                                    title="Hubungi Kasir via WhatsApp"
-                                >
-                                    <MessageSquare className="h-4 w-4" />
-                                </a>
                             </div>
 
-                            {/* "Batalkan Pembelian" Button (Only active when pending) */}
                             {isPending && (
                                 <div className="pt-1">
                                     <button
@@ -367,7 +338,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                         className="w-full flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50/70 py-2.5 px-4 text-xs font-bold text-[#BE1A1A] hover:bg-red-100/70 active:scale-[0.99] transition-all disabled:opacity-50"
                                     >
                                         <span>Batalkan pembelian</span>
-                                        {/* Loading spinner only appears when cancelling */}
                                         {isCancelling && (
                                             <Loader2 className="h-3.5 w-3.5 animate-spin text-[#BE1A1A]" />
                                         )}
@@ -377,33 +347,37 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                         </div>
 
                         {/* 4. DESTINATION & TABLE CARD */}
-                        <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs space-y-4">
-                            <div className="flex items-start gap-3.5">
-                                <div className="flex flex-col items-center">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-[#BE1A1A]">
-                                        <Store className="h-4 w-4" />
-                                    </div>
-                                    <div className="w-0.5 h-7 bg-gray-200 my-1" />
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#BE1A1A] text-white shadow-xs">
-                                        <MapPin className="h-4 w-4" />
-                                    </div>
-                                </div>
+                        <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs">
+                            <div className="relative pl-7 space-y-5">
+                                {/* Connecting vertical line */}
+                                <div className="absolute left-[13px] top-3.5 bottom-3.5 w-0.5 bg-gray-200" />
 
-                                <div className="flex-1 space-y-3 pt-0.5">
-                                    <div>
-                                        <p className="text-xs font-bold text-gray-900">
+                                <div className="relative flex items-start gap-3">
+                                    <div className="absolute -left-7 flex size-7.5 items-center justify-center rounded-full bg-red-50 text-[#BE1A1A] ring-4 ring-white shadow-2xs">
+                                        <Store className="h-3.5 w-3.5" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-xs font-bold text-gray-900 leading-tight">
                                             Garis Kota Workspace & Coffee
                                         </p>
-                                        <p className="text-[11px] text-gray-500">
+                                        <p className="text-[11px] text-gray-500 mt-0.5">
                                             Dapur & Barista Counter
                                         </p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs font-bold text-gray-900">
-                                            Meja #{order.table_number} (
-                                            {order.location.toUpperCase()})
+                                </div>
+
+                                <div className="relative flex items-start gap-3">
+                                    <div className="absolute -left-7 flex size-7.5 items-center justify-center rounded-full bg-[#BE1A1A] text-white shadow-xs ring-4 ring-white">
+                                        <MapPin className="h-3.5 w-3.5" />
+                                    </div>
+                                    <div className="ml-3">
+                                        <p className="text-xs font-bold text-gray-900 leading-tight">
+                                            Meja #{order.table_number}{" "}
+                                            <span className="font-semibold text-gray-500 uppercase text-[11px]">
+                                                ({order.location})
+                                            </span>
                                         </p>
-                                        <p className="text-[11px] text-gray-500">
+                                        <p className="text-[11px] text-gray-500 mt-0.5">
                                             Pesanan akan diantar langsung oleh
                                             staf ke mejamu
                                         </p>
@@ -412,7 +386,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             </div>
                         </div>
 
-                        {/* 5. HELP & CUSTOMER SERVICE CARD */}
                         <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs flex items-center justify-between gap-4">
                             <div className="space-y-1">
                                 <h4 className="text-sm font-bold text-gray-900">
@@ -437,9 +410,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                         </div>
                     </div>
 
-                    {/* ================= RIGHT COLUMN: ORDER DETAILS, PAYMENT, ORDER ID, CTAs ================= */}
                     <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-6">
-                        {/* 6. ORDER ID & REFERENCE CARD (With Copy Button) */}
                         <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs flex items-center justify-between">
                             <div>
                                 <span className="text-[11px] font-semibold text-gray-400 block">
@@ -477,7 +448,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             </button>
                         </div>
 
-                        {/* 7. PEMBELIAN CARD (Detailed Items matching GoFood) */}
                         <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs space-y-4">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-sm sm:text-base font-bold text-gray-900 tracking-tight">
@@ -492,7 +462,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                 </span>
                             </div>
 
-                            {/* Item List */}
                             <div className="space-y-3.5">
                                 {order.order_items.map((item) => (
                                     <div key={item.id} className="space-y-1.5">
@@ -505,7 +474,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                             </span>
                                         </div>
 
-                                        {/* Indented Options & Notes Box */}
                                         <div className="rounded-xl bg-gray-50/90 border border-gray-100 p-2.5 sm:p-3 text-[11px] text-gray-600 space-y-1 leading-relaxed">
                                             {item.notes ? (
                                                 <p className="text-gray-700">
@@ -540,17 +508,16 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                             </div>
                         </div>
 
-                        {/* 8. ALAT MAKAN / SEDOTAN MINI CARD */}
                         <div className="rounded-xl bg-white border border-gray-200/80 p-3.5 shadow-xs flex items-center gap-3">
                             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-red-50 text-[#BE1A1A]">
                                 <Utensils className="h-4 w-4" />
                             </div>
                             <span className="text-xs text-gray-600 font-medium">
-                                Peralatan makan, sedotan & tissue siap di meja
+                                Peralatan makan, sedotan & tissue akan disiapkan
+                                di meja
                             </span>
                         </div>
 
-                        {/* 9. RINGKASAN PEMBAYARAN CARD */}
                         <div className="rounded-2xl bg-white border border-gray-200/80 p-5 shadow-xs space-y-3.5">
                             <h3 className="text-sm sm:text-base font-bold text-gray-900">
                                 Ringkasan Pembayaran
