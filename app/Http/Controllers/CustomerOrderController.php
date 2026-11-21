@@ -252,10 +252,6 @@ class CustomerOrderController extends Controller
             }
 
             $order->update(['order_status' => 'cancelled']);
-
-            if ($order->payment && $order->payment->payment_status === 'pending') {
-                $order->payment->update(['payment_status' => 'failed']);
-            }
         });
 
         // Siarkan pembaruan status ke Reverb

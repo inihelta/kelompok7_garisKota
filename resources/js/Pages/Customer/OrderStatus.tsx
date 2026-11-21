@@ -633,26 +633,11 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                     <span>Pesan Menu Baru</span>
                                 </Link>
                             )}
-
-                            <button
-                                type="button"
-                                onClick={handleRefresh}
-                                className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white py-2.5 px-4 text-xs font-semibold text-gray-700 shadow-2xs hover:bg-gray-50 active:scale-[0.98] transition-all"
-                            >
-                                <RotateCw
-                                    className={`h-4 w-4 ${isRefreshing ? "animate-spin text-[#BE1A1A]" : ""}`}
-                                />
-                                <span>
-                                    Perbarui Status (
-                                    {isRefreshing ? "Memuat..." : "Cek Status"})
-                                </span>
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Cancel Confirmation Modal */}
             {showCancelModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-200">
                     <div className="w-full max-w-sm rounded-2xl bg-white p-5 sm:p-6 shadow-2xl space-y-4">
