@@ -77,6 +77,12 @@ export default function OrderStatus({ order }: OrderStatusProps) {
             `/order/${order.id}/cancel`,
             {},
             {
+                onSuccess: () => {
+                    setShowCancelModal(false);
+                },
+                onError: (errors) => {
+                    alert(errors.cancel || "Gagal membatalkan pesanan.");
+                },
                 onFinish: () => {
                     setIsCancelling(false);
                     setShowCancelModal(false);

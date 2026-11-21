@@ -509,49 +509,61 @@ export default function Pesanan({
                                             </div>
                                         </div>
 
-                                        {/* Action Buttons: Detail pesanan (outline) & Terima Pesanan / Selesai */}
+                                        {/* Action Buttons: Aksi Cepat [√] [X] di kiri & Detail Pesanan di kanan (Sesuai Referensi) */}
                                         <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#f1f5f9]">
-                                            {/* Tombol Detail Pesanan (Outline) */}
+                                            {/* Tombol Aksi Cepat di Kiri: [√] Terima/Selesai & [X] Batalkan */}
+                                            <div className="flex items-center gap-2">
+                                                {order.order_status ===
+                                                "processing" ? (
+                                                    <button
+                                                        type="button"
+                                                        title="Selesaikan pesanan"
+                                                        onClick={() =>
+                                                            handleCompleteOrder(
+                                                                order,
+                                                            )
+                                                        }
+                                                        className="w-9 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs transition-all cursor-pointer active:scale-95"
+                                                    >
+                                                        <Check className="w-4 h-4" />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        title="Terima dan mulai proses pesanan"
+                                                        onClick={() =>
+                                                            handleProcessOrder(
+                                                                order,
+                                                            )
+                                                        }
+                                                        className="w-9 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white flex items-center justify-center shadow-xs transition-all cursor-pointer active:scale-95"
+                                                    >
+                                                        <Check className="w-4 h-4" />
+                                                    </button>
+                                                )}
+
+                                                <button
+                                                    type="button"
+                                                    title="Batalkan pesanan"
+                                                    onClick={() =>
+                                                        setOrderToCancel(order)
+                                                    }
+                                                    className="w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-500 hover:text-red-600 hover:border-red-300 hover:bg-red-50 flex items-center justify-center shadow-2xs transition-all cursor-pointer active:scale-95"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+
+                                            {/* Tombol Detail Pesanan di Kanan */}
                                             <button
                                                 type="button"
                                                 onClick={() =>
                                                     setSelectedOrder(order)
                                                 }
-                                                className="px-3.5 h-9 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-[#334155] text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                                                className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-semibold flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                                             >
                                                 Detail pesanan
                                             </button>
-
-                                            {/* Tombol Aksi Bertahap */}
-                                            {order.order_status ===
-                                            "processing" ? (
-                                                <button
-                                                    type="button"
-                                                    title="Selesaikan pesanan"
-                                                    onClick={() =>
-                                                        handleCompleteOrder(
-                                                            order,
-                                                        )
-                                                    }
-                                                    className="px-4 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                                                >
-                                                    <Check className="w-4 h-4" />
-                                                    <span>Selesai</span>
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    title="Terima dan mulai proses pesanan"
-                                                    onClick={() =>
-                                                        handleProcessOrder(
-                                                            order,
-                                                        )
-                                                    }
-                                                    className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-                                                >
-                                                    <span>Terima Pesanan</span>
-                                                </button>
-                                            )}
                                         </div>
                                     </div>
                                 ))}

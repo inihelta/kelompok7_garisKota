@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Events\OrderStatusUpdated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class OrderController extends Controller
@@ -69,11 +70,21 @@ class OrderController extends Controller
 
     public function cancel(Order $order)
     {
-        $order->update(['order_status' => 'cancelled']);
+        DB::transaction(function () use ($order) {
+            // Kembalikan stok menu
+            $order->load('orderItems.menu');
+            foreach ($order->orderItems as $item) {
+                if ($item->menu) {
+                    $item->menu->increment('stock', $item->quantity);
+                }
+            }
 
-        if ($order->payment && $order->payment->payment_status === 'pending') {
-            $order->payment->update(['payment_status' => 'cancelled']);
-        }
+            $order->update(['order_status' => 'cancelled']);
+
+            if ($order->payment && $order->payment->payment_status === 'pending') {
+                $order->payment->update(['payment_status' => 'failed']);
+            }
+        });
 
         try {
             $order->load('table');

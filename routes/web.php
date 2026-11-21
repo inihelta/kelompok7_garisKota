@@ -21,9 +21,11 @@ Route::get('/', function () {
 
 // Public Customer Ordering Routes (QR Table Scan)
 Route::middleware('throttle:60,1')->group(function () {
-    Route::get('/order/{token}', [CustomerOrderController::class, 'show'])->name('order.show');
     Route::get('/order/status/{order}', [CustomerOrderController::class, 'status'])->name('order.status');
     Route::put('/order/{order}/cancel', [CustomerOrderController::class, 'cancel'])->name('order.cancel');
+    Route::get('/order/{token}', [CustomerOrderController::class, 'show'])
+        ->where('token', '[a-zA-Z0-9\-]+')
+        ->name('order.show');
 });
 Route::post('/order', [CustomerOrderController::class, 'store'])
     ->middleware('throttle:10,1')

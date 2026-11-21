@@ -254,7 +254,7 @@ class CustomerOrderController extends Controller
             $order->update(['order_status' => 'cancelled']);
 
             if ($order->payment && $order->payment->payment_status === 'pending') {
-                $order->payment->update(['payment_status' => 'cancelled']);
+                $order->payment->update(['payment_status' => 'failed']);
             }
         });
 
@@ -265,6 +265,6 @@ class CustomerOrderController extends Controller
         } catch (\Throwable $e) {
         }
 
-        return back()->with('success', 'Pesanan berhasil dibatalkan.');
+        return redirect()->route('order.status', $order->id)->with('success', 'Pesanan berhasil dibatalkan.');
     }
 }
