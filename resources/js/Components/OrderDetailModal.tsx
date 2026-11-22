@@ -18,6 +18,7 @@ import {
     CookingPot,
     User,
     Clock,
+    CreditCard,
 } from "lucide-react";
 
 interface OrderDetailModalProps {
@@ -25,6 +26,7 @@ interface OrderDetailModalProps {
     onClose: () => void;
     order: OrderItem | null;
     onCancelOrder?: (order: OrderItem) => void;
+    onConfirmPayment?: (order: OrderItem) => void;
 }
 
 export default function OrderDetailModal({
@@ -32,6 +34,7 @@ export default function OrderDetailModal({
     onClose,
     order,
     onCancelOrder,
+    onConfirmPayment,
 }: OrderDetailModalProps) {
     if (!order) return null;
 
@@ -114,14 +117,31 @@ export default function OrderDetailModal({
                                     Status
                                 </span>
                                 <span
-                                    className={`px-2.5 py-1 rounded-full text-xs font-semibold inline-block ${order.order_status === "cancelled"
-                                        ? "bg-[#fee2e2] text-[#ef4444]"
-                                        : "bg-[#dcfce7] text-[#16a34a]"
-                                        }`}
+                                    className={`px-2.5 py-1 rounded-full text-xs font-semibold inline-block ${
+                                        order.order_status === "cancelled"
+                                            ? "bg-[#fee2e2] text-[#ef4444]"
+                                            : order.order_status ===
+                                                "awaiting_payment"
+                                              ? "bg-amber-50 text-amber-700"
+                                              : order.order_status === "pending"
+                                                ? "bg-amber-50 text-amber-700"
+                                                : order.order_status ===
+                                                    "processing"
+                                                  ? "bg-blue-50 text-blue-700"
+                                                  : "bg-[#dcfce7] text-[#16a34a]"
+                                    }`}
                                 >
                                     {order.order_status === "cancelled"
                                         ? "Dibatalkan"
-                                        : "Selesai"}
+                                        : order.order_status ===
+                                            "awaiting_payment"
+                                          ? "Menunggu Bayar"
+                                          : order.order_status === "pending"
+                                            ? "Baru Masuk"
+                                            : order.order_status ===
+                                                "processing"
+                                              ? "Sedang Diproses"
+                                              : "Selesai"}
                                 </span>
                             </div>
                         </div>
@@ -162,12 +182,16 @@ export default function OrderDetailModal({
                                                 x{item.quantity}
                                             </span>
                                             <span className="text-sm text-[#64748b]">
-                                                {new Intl.NumberFormat("id-ID", {
-                                                    style: "currency",
-                                                    currency: "IDR",
-                                                    minimumFractionDigits: 0,
-                                                }).format(
-                                                    Number(item.unit_price) || 0,
+                                                {new Intl.NumberFormat(
+                                                    "id-ID",
+                                                    {
+                                                        style: "currency",
+                                                        currency: "IDR",
+                                                        minimumFractionDigits: 0,
+                                                    },
+                                                ).format(
+                                                    Number(item.unit_price) ||
+                                                        0,
                                                 )}
                                             </span>
                                         </div>
@@ -191,13 +215,16 @@ export default function OrderDetailModal({
                             {order.payment && (
                                 <div className="flex justify-between text-sm">
                                     <span className="text-[#64748b]">
-                                        Pembayaran ({order.payment.payment_method})
+                                        Pembayaran (
+                                        {order.payment.payment_method})
                                     </span>
                                     <span
-                                        className={`font-medium ${order.payment.payment_status === "done"
-                                            ? "text-[#16a34a]"
-                                            : "text-[#ef4444]"
-                                            }`}
+                                        className={`font-medium ${
+                                            order.payment.payment_status ===
+                                            "done"
+                                                ? "text-[#16a34a]"
+                                                : "text-[#ef4444]"
+                                        }`}
                                     >
                                         {order.payment.payment_status === "done"
                                             ? "Lunas"
@@ -209,24 +236,42 @@ export default function OrderDetailModal({
                     </div>
                 </ScrollArea>
 
-                <div className="flex-shrink-0 pt-4 border-t border-[#f1f5f9] flex items-center justify-between gap-3">
-                    {onCancelOrder &&
+                <div className="shrink-0 pt-4 border-t border-[#f1f5f9] flex items-center justify-between gap-3">
+                    <div className=" flex gap-3">
+                        {order.order_status === "awaiting_payment" &&
+                        onConfirmPayment ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    onClose();
+                                    onConfirmPayment!(order);
+                                }}
+                                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                            >
+                                <CreditCard className="w-3.5 h-3.5" />
+                                <span>Konfirmasi Bayar</span>
+                            </button>
+                        ) : (
+                            ""
+                        )}
+                        {onCancelOrder &&
                         order.order_status !== "completed" &&
                         order.order_status !== "cancelled" ? (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                onClose();
-                                onCancelOrder(order);
-                            }}
-                            className="px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-xs font-semibold text-rose-600 transition-all cursor-pointer flex items-center gap-1.5"
-                        >
-                            <X className="w-3.5 h-3.5" />
-                            <span>Batalkan Pesanan</span>
-                        </button>
-                    ) : (
-                        <div />
-                    )}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    onClose();
+                                    onCancelOrder(order);
+                                }}
+                                className="px-4 py-2 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-xs font-semibold text-rose-600 transition-all cursor-pointer flex items-center gap-1.5"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                                <span>Batalkan Pesanan</span>
+                            </button>
+                        ) : (
+                            <div />
+                        )}
+                    </div>
 
                     <Button
                         type="button"

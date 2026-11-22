@@ -155,7 +155,7 @@ class CustomerOrderController extends Controller
                     'customer_name' => trim($validated['customer_name']),
                     'order_type' => 'dine-in',
                     'total_price' => $totalPrice,
-                    'order_status' => 'pending',
+                    'order_status' => 'awaiting_payment',
                 ]);
 
                 // Buat Order Items
@@ -258,8 +258,8 @@ class CustomerOrderController extends Controller
             abort(403, 'Anda tidak memiliki otorisasi untuk membatalkan pesanan ini.');
         }
 
-        if ($order->order_status !== 'pending') {
-            return back()->withErrors(['cancel' => 'Pesanan sudah diproses dan tidak dapat dibatalkan melalui sistem. Silakan hubungi kasir.']);
+        if (!in_array($order->order_status, ['awaiting_payment'])) {
+            return back()->withErrors(['cancel' => 'Pesanan sudah diproses/dibayar dan tidak dapat dibatalkan melalui sistem. Silakan hubungi kasir.']);
         }
 
         DB::transaction(function () use ($order) {

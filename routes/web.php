@@ -42,6 +42,7 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/pesanan', [OrderController::class, 'index'])->name('dashboard.pesanan');
     Route::put('/orders/{order}/process', [OrderController::class, 'process'])->name('orders.process');
     Route::put('/orders/{order}/complete', [OrderController::class, 'complete'])->name('orders.complete');
+    Route::put('/orders/{order}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('orders.confirmPayment');
     Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     Route::get('/dashboard/pendapatan', [IncomeController::class, 'index'])->name('dashboard.pendapatan');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

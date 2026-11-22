@@ -105,7 +105,7 @@ export interface OrderItem {
     customer_name?: string | null;
     order_type: "dine-in" | "takeaway";
     total_price: number | string;
-    order_status: "pending" | "processing" | "completed" | "cancelled";
+    order_status: "awaiting_payment" | "pending" | "processing" | "completed" | "cancelled";
     created_at: string;
     formatted_time?: string;
     relative_time?: string;

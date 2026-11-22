@@ -39,6 +39,9 @@ export default function OrderStatus({ order }: OrderStatusProps) {
     const isCancelled = order.order_status === "cancelled";
     const isProcessing = order.order_status === "processing";
     const isPending = order.order_status === "pending";
+    const isAwaitingPayment = order.order_status === "awaiting_payment";
+
+    const canCancel = isAwaitingPayment;
 
     // Real-time updates via Laravel Reverb WebSocket (Zero Polling!)
     useEffect(() => {
@@ -111,10 +114,19 @@ export default function OrderStatus({ order }: OrderStatusProps) {
         : isCompleted
           ? 3
           : isProcessing
-            ? 1
-            : 0;
+            ? 2
+            : isPending
+              ? 1
+              : isAwaitingPayment
+                ? 0
+                : 0;
 
     const timelineSteps = [
+        {
+            title: "Menunggu Bayar",
+            label: "Bayar",
+            icon: CreditCard,
+        },
         {
             title: "Pesanan Diterima",
             label: "Diterima",
@@ -124,11 +136,6 @@ export default function OrderStatus({ order }: OrderStatusProps) {
             title: "Sedang Diracik",
             label: "Diracik",
             icon: Coffee,
-        },
-        {
-            title: "Disajikan ke Meja",
-            label: "Diantar",
-            icon: UtensilsCrossed,
         },
         {
             title: "Selesai",
@@ -143,8 +150,12 @@ export default function OrderStatus({ order }: OrderStatusProps) {
         : isCompleted
           ? 100
           : isProcessing
-            ? 50
-            : 15;
+            ? 75
+            : isPending
+              ? 35
+              : isAwaitingPayment
+                ? 10
+                : 10;
 
     const whatsappKasirUrl = `https://wa.me/?text=${encodeURIComponent(
         `Halo Garis Kota Workspace & Coffee, saya pelanggan dari Meja #${order.table_number} (ID Pesanan: ${orderRefCode}). Saya ingin menanyakan status pesanan saya.`,
@@ -191,7 +202,9 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                           ? "Pesanan Selesai"
                                           : isProcessing
                                             ? "Sedang Diracik"
-                                            : "Pesanan Diterima"}
+                                            : isAwaitingPayment
+                                              ? "Menunggu Pembayaran"
+                                              : "Pesanan Diterima"}
                                 </h2>
                                 <p className="text-[11px] text-white/80 font-medium mt-1">
                                     Dipesan: {order.formatted_time}
@@ -220,7 +233,9 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                               ? "Pesanan telah disajikan ke meja!"
                                               : isProcessing
                                                 ? "Lagi memproses pembelianmu..."
-                                                : "Pesanan masuk ke dapur & barista..."}
+                                                : isAwaitingPayment
+                                                  ? "Menunggu pembayaran di kasir..."
+                                                  : "Pesanan masuk ke dapur & barista..."}
                                     </h3>
                                     <p className="text-xs text-gray-500 mt-0.5">
                                         {isCancelled
@@ -229,7 +244,9 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                               ? "Silakan nikmati hidanganmu. Terima kasih!"
                                               : isProcessing
                                                 ? "Barista & koki sedang menyiapkan pesananmu."
-                                                : "Menunggu konfirmasi antrean barista."}
+                                                : isAwaitingPayment
+                                                  ? "Silakan bayar di kasir (Tunai/QRIS) agar pesanan diproses."
+                                                  : "Menunggu konfirmasi antrean barista."}
                                     </p>
                                 </div>
                                 <button
@@ -329,7 +346,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                 </div>
                             </div>
 
-                            {isPending && (
+                            {canCancel && (
                                 <div className="pt-1">
                                     <button
                                         type="button"
@@ -549,12 +566,16 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                                         className={`font-semibold text-[11px] px-2.5 py-0.5 rounded-full ${
                                             order.payment.status === "done"
                                                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                                                : isAwaitingPayment
+                                                  ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                                  : "bg-amber-50 text-amber-700 border border-amber-200"
                                         }`}
                                     >
                                         {order.payment.status === "done"
                                             ? "Lunas"
-                                            : "Menunggu Pembayaran di Kasir"}
+                                            : isAwaitingPayment
+                                              ? "Menunggu Pembayaran di Kasir"
+                                              : "Menunggu Pembayaran di Kasir"}
                                     </span>
                                 </div>
                             </div>
@@ -623,10 +644,7 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                         </div>
 
                         <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                            Pesanan ini masih berstatus{" "}
-                            <strong>Menunggu Antrean</strong>. Jika dibatalkan,
-                            stok menu akan dikembalikan dan pesanan tidak akan
-                            diracik oleh dapur.
+                            Pesanan ini masih berstatus <strong>Menunggu Pembayaran</strong>. Jika dibatalkan, stok menu akan dikembalikan dan pesanan tidak akan diracik oleh dapur.
                         </p>
 
                         <div className="pt-2 flex items-center gap-2">

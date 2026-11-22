@@ -13,7 +13,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $activeQuery = Order::with(['table', 'orderItems.menu', 'payment'])
-            ->whereIn('order_status', ['pending', 'processing']);
+            ->whereIn('order_status', ['awaiting_payment', 'pending', 'processing']);
         $historyQuery = Order::with(['table', 'orderItems.menu', 'payment'])
             ->whereIn('order_status', ['completed', 'cancelled']);
 
@@ -92,6 +92,37 @@ class OrderController extends Controller
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' telah dibatalkan.');
+    }
+
+    /**
+     * Admin konfirmasi pembayaran — ubah payment_status ke 'done'
+     * dan order_status dari 'awaiting_payment' ke 'pending' (masuk antrean dapur).
+     */
+    public function confirmPayment(Order $order)
+    {
+        if ($order->order_status !== 'awaiting_payment') {
+            return back()->withErrors(['payment' => 'Pesanan ini tidak menunggu pembayaran (status: ' . $order->order_status . ').']);
+        }
+
+        DB::transaction(function () use ($order) {
+            // Update payment
+            if ($order->payment) {
+                $order->payment->update(['payment_status' => 'done']);
+            }
+
+            // Update order status ke pending (siap diproses dapur)
+            $order->update(['order_status' => 'pending']);
+        });
+
+        // Notifikasi & broadcast
+        try {
+            $order->load(['table', 'orderItems.menu', 'payment']);
+            OrderStatusUpdated::dispatch($order, 'pending');
+            \App\Services\NotificationService::notifyOrderStatusChanged($order, 'pending');
+        } catch (\Throwable $e) {
+        }
+
+        return back()->with('success', 'Pembayaran untuk Pesanan #' . $order->id . ' dikonfirmasi. Pesanan masuk antrean dapur.');
     }
 
     private function mapOrder($order): array

@@ -16,6 +16,7 @@ import {
     VolumeX,
     RotateCw,
     Bell,
+    CreditCard,
 } from "lucide-react";
 import { OrderItem, PaginatedData } from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
@@ -266,6 +267,18 @@ export default function Pesanan({
         );
     };
 
+    const handleConfirmPayment = (order: OrderItem) => {
+        router.put(
+            `/orders/${order.id}/confirm-payment`,
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => router.reload(),
+                onError: () => {},
+            },
+        );
+    };
+
     const formatIDR = (value: number | string) =>
         new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -431,15 +444,17 @@ export default function Pesanan({
                                                 </h3>
                                                 <span
                                                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                                                        order.order_status ===
-                                                        "processing"
+                                                        order.order_status === "processing"
                                                             ? "bg-blue-50 text-blue-700 border border-blue-200"
+                                                            : order.order_status === "awaiting_payment"
+                                                            ? "bg-amber-50 text-amber-700 border border-amber-200"
                                                             : "bg-amber-50 text-amber-700 border border-amber-200"
                                                     }`}
                                                 >
-                                                    {order.order_status ===
-                                                    "processing"
+                                                    {order.order_status === "processing"
                                                         ? "Sedang Diproses"
+                                                        : order.order_status === "awaiting_payment"
+                                                        ? "Menunggu Bayar"
                                                         : "Baru Masuk"}
                                                 </span>
                                             </div>
@@ -512,29 +527,36 @@ export default function Pesanan({
                                             </button>
 
                                             {/* Kanan: Aksi Operasional Utama dengan teks jelas & warna status */}
-                                            {order.order_status ===
-                                            "processing" ? (
+                                            {order.order_status === "processing" ? (
                                                 <button
                                                     type="button"
                                                     title="Selesaikan dan sajikan pesanan"
                                                     onClick={() =>
-                                                        handleCompleteOrder(
-                                                            order,
-                                                        )
+                                                        handleCompleteOrder(order)
                                                     }
                                                     className="px-4 h-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
                                                 >
                                                     <Check className="w-4 h-4" />
                                                     <span>Selesai</span>
                                                 </button>
+                                            ) : order.order_status === "awaiting_payment" ? (
+                                                <button
+                                                    type="button"
+                                                    title="Konfirmasi pembayaran diterima, pesanan masuk antrean dapur"
+                                                    onClick={() =>
+                                                        handleConfirmPayment(order)
+                                                    }
+                                                    className="px-4 h-9 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+                                                >
+                                                    <CreditCard className="w-4 h-4" />
+                                                    <span>Konfirmasi Bayar</span>
+                                                </button>
                                             ) : (
                                                 <button
                                                     type="button"
                                                     title="Terima dan mulai proses pesanan"
                                                     onClick={() =>
-                                                        handleProcessOrder(
-                                                            order,
-                                                        )
+                                                        handleProcessOrder(order)
                                                     }
                                                     className="px-4 h-9 rounded-lg bg-[#BE1A1A] hover:bg-[#a51515] text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
                                                 >
@@ -682,6 +704,7 @@ export default function Pesanan({
                 onClose={() => setSelectedOrder(null)}
                 order={selectedOrder}
                 onCancelOrder={(order) => setOrderToCancel(order)}
+                onConfirmPayment={handleConfirmPayment}
             />
 
             {/* Dialog Konfirmasi Pembatalan Pesanan */}

@@ -35,7 +35,7 @@ export interface OrderStatusData {
     customer_name: string;
     table_number: number | string;
     location: string;
-    order_status: "pending" | "processing" | "completed" | "cancelled";
+    order_status: "awaiting_payment" | "pending" | "processing" | "completed" | "cancelled";
     total_price: number;
     created_at?: string;
     formatted_time: string;

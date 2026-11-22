@@ -78,7 +78,7 @@ class CustomerOrderTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'table_id' => $this->table->id,
             'customer_name' => 'Budi',
-            'order_status' => 'pending',
+            'order_status' => 'awaiting_payment',
         ]);
         $this->assertDatabaseHas('payments', [
             'payment_method' => 'cash',
