@@ -195,7 +195,7 @@ Buka browser dan akses aplikasi dengan port 8000
 
 ## 🧪 Menjalankan Test
 
-Proyek ini memiliki **77 test** dengan **273 assertions** menggunakan PHPUnit 11.
+Proyek ini memiliki **81 test** dengan **303 assertions** menggunakan PHPUnit 11.
 
 ```bash
 # Jalankan semua test
@@ -215,13 +215,13 @@ php artisan test --filter=OrderControllerTest
 | :-------- | :----- | :------------ |
 | `tests/Unit/TableTokenTest.php` | 4 | Generate/resolve token, tampered hash, numeric ID |
 | `tests/Unit/ModelTest.php` | 8 | Relasi Order↔Table, Order↔OrderItem, Order↔Payment, Menu↔Category, Table↔Orders, Stock status, StockCategory↔Stock, Category↔Menu |
-| `tests/Feature/CustomerOrderTest.php` | 6 | Catalog load, invalid token, store order, stock validation, status page, cancel restores stock |
+| `tests/Feature/CustomerOrderTest.php` | 8 | Catalog load, invalid token, store order, stock validation, status page, cancel restores stock, new order notification, customer cancel notification |
 | `tests/Feature/AuthTest.php` | 6 | Login valid/invalid, dashboard access, guest redirect, logout |
 | `tests/Feature/OrderControllerTest.php` | 5 | Pesanan page, process, complete, cancel restores stock, guest redirect |
-| `tests/Feature/StockTest.php` | 5 | Stok page, create, validation, update, delete |
+| `tests/Feature/StockTest.php` | 6 | Stok page, phantom category ID guard, create, validation, update, delete |
 | `tests/Feature/CategoryTest.php` | 7 | CRUD category, unique validation, guest redirect |
 | `tests/Feature/StockCategoryTest.php` | 7 | CRUD, unique name, icon validation, JSON endpoints |
-| `tests/Feature/MenuTest.php` | 8 | CRUD menu, validation, image upload, guest redirect |
+| `tests/Feature/MenuTest.php` | 9 | CRUD menu, validation, image upload, guest redirect |
 | `tests/Feature/DashboardTest.php` | 3 | Page load, metrics props, guest redirect |
 | `tests/Feature/IncomeTest.php` | 5 | Page load, metrics, date filter, custom range, guest redirect |
 | `tests/Feature/NotificationTest.php` | 8 | Filter tab/unread/type, mark read, mark all read, search, guest redirect |
@@ -284,7 +284,6 @@ garisKota/
 │   │   │   ├── Customer/                    # MenuItemCard, FloatingCartBar, DesktopCartSidebar, OrderCheckoutModal, CategoryJumpModal, CustomerHeader
 │   │   │   ├── ui/                          # Komponen shadcn (dialog, button, Toast, scroll-area, dll)
 │   │   │   ├── AuthGuard.tsx                # Penjaga route client-side
-│   │   │   ├── KategoriFormModal.tsx        # Modal CRUD kategori
 │   │   │   ├── MejaFormModal.tsx            # Modal CRUD meja + dialog konflik
 │   │   │   ├── MenuFormModal.tsx            # Modal CRUD menu + upload gambar
 │   │   │   ├── NotificationDropdown.tsx     # Dropdown notifikasi real-time
@@ -300,7 +299,6 @@ garisKota/
 │   │   │   │   └── OrderStatus.tsx          # Status pesanan customer
 │   │   │   ├── Dashboard.tsx                # Ringkasan metrik & performa
 │   │   │   ├── Homepage.tsx                 # Landing page
-│   │   │   ├── Kategori.tsx                 # Manajemen kategori
 │   │   │   ├── Login.tsx                    # Halaman login
 │   │   │   ├── Meja.tsx                     # Manajemen meja
 │   │   │   ├── Menu.tsx                     # Manajemen menu
@@ -315,7 +313,7 @@ garisKota/
 ├── routes/
 │   └── web.php                              # Rute web (auth, dashboard, order, API notifikasi)
 ├── tests/
-│   ├── Feature/                             # 13 file test fitur (64 test)
+│   ├── Feature/                             # 12 file test fitur (68 test)
 │   └── Unit/                                # 3 file test unit (13 test)
 ├── package.json                             # Konfigurasi dependensi JavaScript
 └── composer.json                            # Konfigurasi dependensi PHP + scripts

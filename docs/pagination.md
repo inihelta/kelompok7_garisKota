@@ -190,7 +190,6 @@ export default function Menu({ menus }) {
 | :----------------- | :-------------------------------- | :----------------------------------------------- | :-------------------- |
 | **Stok**           | `resources/js/Pages/Stok.tsx`     | **Hybrid** (Backend `paginate(8)` & Client-side) | `itemName="bahan"`    |
 | **Manajemen Menu** | `resources/js/Pages/Menu.tsx`     | Client-side (8 item/page)                        | `itemName="menu"`     |
-| **Kategori**       | `resources/js/Pages/Kategori.tsx` | Client-side (8 item/page)                        | `itemName="kategori"` |
 | **Manajemen Meja** | `resources/js/Pages/Meja.tsx`     | Client-side (8 item/page)                        | `itemName="meja"`     |
 
 ---

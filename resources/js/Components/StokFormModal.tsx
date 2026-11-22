@@ -9,6 +9,13 @@ import {
     DialogTitle,
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
 import { AlertCircle, Package } from "lucide-react";
 
 interface StokFormModalProps {
@@ -132,193 +139,195 @@ export default function StokFormModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="sm:max-w-lg bg-white p-6 rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
-                <DialogHeader className="flex-shrink-0 pb-3 border-b border-[#f1f5f9]">
-                    <div className="flex items-center gap-3">
-                        <div className="size-10 rounded-xl bg-[#fee2e2] flex items-center justify-center text-[#ef4444]">
-                            <Package className="size-5" />
-                        </div>
-                        <div>
-                            <DialogTitle className="text-lg font-bold text-[#1e293b]">
-                                {isEdit
-                                    ? "Edit Stok Bahan"
-                                    : "Tambah Bahan Baku Baru"}
-                            </DialogTitle>
-                            <DialogDescription className="text-xs text-[#64748b]">
-                                {isEdit
-                                    ? "Perbarui rincian, jumlah stok, dan batas minimum bahan."
-                                    : "Isi data formulir berikut untuk mendaftarkan bahan baku baru ke stok."}
-                            </DialogDescription>
-                        </div>
-                    </div>
+            <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col bg-white p-6 rounded-2xl shadow-xl overflow-hidden">
+                <DialogHeader className="flex-shrink-0">
+                    <DialogTitle className="text-xl font-bold text-[#1e293b]">
+                        {isEdit
+                            ? "Edit Stok Bahan"
+                            : "Tambah Bahan Baku Baru"}
+                    </DialogTitle>
+                    <DialogDescription className="text-sm text-[#64748b]">
+                        {isEdit
+                            ? "Perbarui rincian, jumlah stok, dan batas minimum bahan."
+                            : "Isi data formulir berikut untuk mendaftarkan bahan baku baru ke stok."}
+                    </DialogDescription>
                 </DialogHeader>
 
                 {error && (
-                    <div className="flex items-center gap-2 p-2.5 mt-3 bg-red-50 border border-red-200 text-[#ef4444] rounded-lg text-xs">
-                        <AlertCircle className="size-4 flex-shrink-0" />
+                    <div className="flex items-center gap-2 p-3 mt-3 bg-red-50 border border-red-200 text-[#ef4444] rounded-lg text-sm">
+                        <AlertCircle className="size-4 shrink-0" />
                         <span>{error}</span>
                     </div>
                 )}
 
                 <form
                     onSubmit={handleSubmit}
-                    className="flex flex-col flex-1 overflow-y-auto mt-3 pr-1 space-y-3.5 text-sm"
+                    className="flex flex-col flex-1 overflow-hidden min-h-0 mt-2"
                 >
-                    <div>
-                        <label className="block text-xs font-semibold text-[#334155] mb-1">
-                            Nama Bahan Baku{" "}
-                            <span className="text-[#ef4444]">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="Contoh: House Blend Beans, Fresh Milk 1L..."
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm placeholder:text-[#94a3b8] transition-all"
-                            autoFocus={!isEdit}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-4 overflow-y-auto overflow-x-hidden flex-1 pr-1 py-1">
                         <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Kode SKU{" "}
-                                <span className="text-[#ef4444]">*</span>
+                            <label className="block text-sm font-medium text-[#334155] mb-1">
+                                Nama Bahan Baku{" "}
+                                <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
-                                placeholder="Contoh: SKU-COF-01"
-                                value={sku}
-                                onChange={(e) =>
-                                    setSku(e.target.value.toUpperCase())
-                                }
-                                className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm uppercase placeholder:text-[#94a3b8] transition-all font-mono"
+                                placeholder="Contoh: House Blend Beans, Fresh Milk 1L..."
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20] text-[#1e293b]"
+                                autoFocus={!isEdit}
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Kategori Bahan{" "}
-                                <span className="text-[#ef4444]">*</span>
-                            </label>
-                            <select
-                                value={categoryId}
-                                onChange={(e) =>
-                                    setCategoryId(Number(e.target.value))
-                                }
-                                className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm transition-all bg-white"
-                            >
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Stok Saat Ini{" "}
-                                <span className="text-[#ef4444]">*</span>
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                min="0"
-                                placeholder="0"
-                                value={stock}
-                                onChange={(e) =>
-                                    setStock(parseFloat(e.target.value) || 0)
-                                }
-                                className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm font-semibold transition-all"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Satuan (Unit){" "}
-                                <span className="text-[#ef4444]">*</span>
-                            </label>
-                            <div className="flex gap-1.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Kode SKU{" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     type="text"
-                                    placeholder="kg / Liter / Botol"
-                                    value={unit}
-                                    onChange={(e) => setUnit(e.target.value)}
-                                    className="flex-1 px-3 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm"
+                                    placeholder="Contoh: SKU-COF-01"
+                                    value={sku}
+                                    onChange={(e) =>
+                                        setSku(e.target.value.toUpperCase())
+                                    }
+                                    className="w-full px-3.5 py-2 rounded-lg border text-sm uppercase transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20] font-mono text-[#1e293b]"
                                 />
-                                <select
-                                    onChange={(e) => setUnit(e.target.value)}
-                                    className="px-2 py-2 border border-[#cbd5e1] rounded-lg text-xs bg-gray-50 text-gray-700 focus:outline-none"
+                            </div>
+
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Kategori Bahan{" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Select
+                                    value={categoryId ? String(categoryId) : undefined}
+                                    onValueChange={(val) =>
+                                        setCategoryId(Number(val))
+                                    }
                                 >
-                                    <option value="">Pilih</option>
-                                    {standardUnits.map((u) => (
-                                        <option key={u} value={u}>
-                                            {u}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih Kategori" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categories.map((cat) => (
+                                            <SelectItem
+                                                key={cat.id}
+                                                value={String(cat.id)}
+                                            >
+                                                {cat.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Stok Saat Ini{" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    placeholder="0"
+                                    value={stock}
+                                    onChange={(e) =>
+                                        setStock(parseFloat(e.target.value) || 0)
+                                    }
+                                    className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20] text-[#1e293b] font-semibold"
+                                />
+                            </div>
+
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Satuan (Unit){" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Select
+                                    value={unit || undefined}
+                                    onValueChange={(val) => setUnit(val)}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih Satuan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Array.from(
+                                            new Set([
+                                                ...standardUnits,
+                                                ...(unit ? [unit] : []),
+                                            ])
+                                        ).map((u) => (
+                                            <SelectItem key={u} value={u}>
+                                                {u}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Batas Minimum Stok{" "}
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    placeholder="5"
+                                    value={minStock}
+                                    onChange={(e) =>
+                                        setMinStock(parseFloat(e.target.value) || 0)
+                                    }
+                                    className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20] text-[#1e293b]"
+                                />
+                                <span className="text-xs text-[#64748b] block mt-1">
+                                    Notifikasi restock jika di bawah angka ini.
+                                </span>
+                            </div>
+
+                            <div className="min-w-0">
+                                <label className="block text-sm font-medium text-[#334155] mb-1">
+                                    Estimasi Pemakaian/Hari
+                                </label>
+                                <input
+                                    type="number"
+                                    step="any"
+                                    min="0"
+                                    placeholder="1"
+                                    value={estDaily}
+                                    onChange={(e) =>
+                                        setEstDaily(parseFloat(e.target.value) || 0)
+                                    }
+                                    className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20] text-[#1e293b]"
+                                />
+                                <span className="text-xs text-[#64748b] block mt-1">
+                                    Pemakaian rata-rata per hari.
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Batas Minimum Stok{" "}
-                                <span className="text-[#ef4444]">*</span>
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                min="0"
-                                placeholder="5"
-                                value={minStock}
-                                onChange={(e) =>
-                                    setMinStock(parseFloat(e.target.value) || 0)
-                                }
-                                className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm transition-all"
-                            />
-                            <span className="text-[11px] text-[#64748b] block mt-0.5">
-                                Notifikasi restock jika di bawah angka ini.
-                            </span>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold text-[#334155] mb-1">
-                                Estimasi Pemakaian/Hari
-                            </label>
-                            <input
-                                type="number"
-                                step="any"
-                                min="0"
-                                placeholder="1.5"
-                                value={estDaily}
-                                onChange={(e) =>
-                                    setEstDaily(parseFloat(e.target.value) || 0)
-                                }
-                                className="w-full px-3.5 py-2 rounded-lg border border-[#cbd5e1] focus:outline-none focus:ring-2 focus:ring-[#ef4444] text-[#1e293b] text-sm transition-all"
-                            />
-                            <span className="text-[11px] text-[#64748b] block mt-0.5">
-                                Pemakaian rata-rata per hari.
-                            </span>
-                        </div>
-                    </div>
-
-                    <DialogFooter className="pt-3 border-t border-[#f1f5f9] flex gap-2 justify-end mt-4">
+                    <DialogFooter className="pt-3 mt-3 border-t border-gray-100 flex-shrink-0 gap-2">
                         <Button
                             type="button"
-                            variant="outline"
+                            variant="ghost"
                             onClick={onClose}
-                            className="border-[#cbd5e1] text-[#475569] hover:bg-[#f8fafc] text-xs"
+                            className="text-[#64748b] hover:text-[#1e293b] cursor-pointer"
                         >
                             Batal
                         </Button>
                         <Button
                             type="submit"
-                            className="bg-[#D91A20] hover:bg-[#b91c1c] text-white text-xs font-medium px-4 shadow-sm"
+                            className="bg-[#D91A20] hover:bg-[#b91c1c] text-white px-5 rounded-lg transition-all duration-200 cursor-pointer text-sm font-semibold"
                         >
                             {isEdit ? "Simpan Perubahan" : "Tambah Bahan"}
                         </Button>

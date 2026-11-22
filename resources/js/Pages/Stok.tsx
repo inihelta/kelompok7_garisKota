@@ -96,6 +96,12 @@ export default function Stok({
           : [];
 
     const [stockItems, setStockItems] = useState<StockItem[]>(initialItems);
+
+    // Sinkronkan dengan data terbaru dari server setelah CRUD,
+    // karena useState hanya membaca nilai awal saat mount.
+    useEffect(() => {
+        setStockItems(initialItems);
+    }, [propStock]);
     const [currentPage, setCurrentPage] = useState(1);
     const [activeCategory, setActiveCategory] =
         useState<string>("Semua Kategori");
@@ -330,24 +336,9 @@ export default function Stok({
                 },
             );
         } else {
-            const newId =
-                stockItems.length > 0
-                    ? Math.max(...stockItems.map((i) => i.id)) + 1
-                    : 1;
-            const newItem: StockItem = {
-                id: newId,
-                stock_category_id: data.stock_category_id,
-                name: data.name,
-                sku: data.sku,
-                category: data.category,
-                stock: data.stock,
-                unit: data.unit,
-                min_stock: data.min_stock,
-                est_daily: data.est_daily,
-                status,
-            };
-            setStockItems((prev) => [newItem, ...prev]);
-
+            // Jangan pernah bikin ID di client: ID asli hanya diketahui server.
+            // ID optimis (max+1) meleset dari auto-increment setelah ada delete,
+            // sehingga edit/hapus item berikutnya mengarah ke ID yang tidak ada → 404.
             router.post(
                 "/stocks",
                 {
@@ -361,10 +352,12 @@ export default function Stok({
                 },
                 {
                     preserveScroll: true,
-                    onSuccess: () => toast.success("Bahan ditambahkan"),
+                    onSuccess: () => {
+                        toast.success("Bahan ditambahkan");
+                        router.reload({ only: ["stockItems"] });
+                    },
                     onError: (errors) => {
                         toast.error(errors.message || "Gagal menambahkan bahan");
-                        setStockItems((prev) => prev.filter((item) => item.id !== newId));
                     },
                 },
             );
