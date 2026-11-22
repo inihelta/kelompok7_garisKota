@@ -111,7 +111,7 @@ export default function MenuCategoryModal({
                                 Kelola kategori menu.
                             </DialogTitle>
                             <DialogDescription className="text-xs text-[#64748b]">
-                                Tambah, hapus, atau Edit kategori menu restoran.
+                                Tambah, Hapus, atau Edit kategori menu restoran.
                             </DialogDescription>
                         </div>
                     </div>

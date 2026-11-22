@@ -73,6 +73,7 @@ export default function Meja({
     const [activeDialog, setActiveDialog] = useState<
         "create" | "edit" | "remove" | "qr" | null
     >(null);
+    const [qrUrl, setQrUrl] = useState<string>("");
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
@@ -128,8 +129,8 @@ export default function Meja({
     };
 
     // Generate table order URL
-    const getTableUrl = (table: TableItem) => {
-        return getTableOrderUrl(table.id);
+    const getTableUrl = async (table: TableItem) => {
+        return await getTableOrderUrl(table.id);
     };
 
     const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number; order_action?: "complete" | "cancel" }) => {
@@ -185,8 +186,10 @@ export default function Meja({
         });
     };
 
-    const openQrModal = (table: TableItem) => {
+    const openQrModal = async (table: TableItem) => {
         setSelectedTableId(table.id);
+        const url = await getTableOrderUrl(table.id);
+        setQrUrl(url);
         setActiveDialog("qr");
     };
 
@@ -207,7 +210,7 @@ export default function Meja({
             }
 
             for (const table of tables) {
-                const url = getTableOrderUrl(table.id);
+                const url = await getTableOrderUrl(table.id);
                 
                 // Generate QR code as data URL using canvas
                 const canvas = document.createElement("canvas");
@@ -594,9 +597,12 @@ export default function Meja({
                 {/* QR Code Modal */}
                 <Dialog
                     open={activeDialog === "qr"}
-                    onOpenChange={(open) =>
-                        setActiveDialog(open ? "qr" : null)
-                    }
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setQrUrl("");
+                        }
+                        setActiveDialog(open ? "qr" : null);
+                    }}
                 >
                     <DialogContent className="sm:max-w-md max-h-[90vh]">
                         <DialogHeader>
@@ -612,7 +618,7 @@ export default function Meja({
                                 <>
                                     <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
                                         <QRCodeSVG
-                                            value={getTableOrderUrl(selectedTable.id)}
+                                            value={qrUrl}
                                             size={200}
                                             level="M"
                                             includeMargin={true}
@@ -624,14 +630,12 @@ export default function Meja({
                                         </div>
                                         <div className="flex items-center justify-center gap-2">
                                             <code className="flex-1 bg-gray-50 px-3 py-2 rounded-lg text-xs font-mono text-gray-700 break-all truncate max-w-[200px]">
-                                                {getTableOrderUrl(selectedTable.id)}
+                                                {qrUrl}
                                             </code>
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    navigator.clipboard.writeText(
-                                                        getTableOrderUrl(selectedTable.id),
-                                                    );
+                                                    navigator.clipboard.writeText(qrUrl);
                                                     toast.success("Link disalin ke clipboard");
                                                 }}
                                                 className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
@@ -645,7 +649,6 @@ export default function Meja({
                                             onClick={() => {
                                                 const printWindow = window.open("", "_blank");
                                                 if (printWindow) {
-                                                    const url = getTableOrderUrl(selectedTable.id);
                                                     printWindow.document.write(`
                                                         <html>
                                                             <head>
@@ -662,8 +665,8 @@ export default function Meja({
                                                                 <div class="qr-container">
                                                                     <h2>Meja M-${selectedTable.table_number}</h2>
                                                                     <p class="info">Area ${selectedTable.location.charAt(0).toUpperCase() + selectedTable.location.slice(1)}</p>
-                                                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&format=png&margin=2" alt="QR Code" />
-                                                                    <div class="url">${url}</div>
+                                                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrUrl)}&format=png&margin=2" alt="QR Code" />
+                                                                    <div class="url">${qrUrl}</div>
                                                                 </div>
                                                             </body>
                                                         </html>

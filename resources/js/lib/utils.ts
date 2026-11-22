@@ -59,31 +59,26 @@ export const formatEstDaily = (est: number | string, unit: string): string => {
 }
 
 // TableToken helper (port dari PHP App\Helpers\TableToken)
-const TABLE_TOKEN_SALT = "7980312123789"
+// PHP: getSalt() = hash('sha256', '7980312123789') -> 64 char hex
+// PHP: generate() = substr(hash('sha256', $tableId . $salt), 0, 6) + base_convert($tableId, 10, 36)
+const TABLE_TOKEN_SALT_RAW = "7980312123789"
 
-function getSaltHash(): string {
-    // Simple hash - dalam production sebaiknya pakai crypto.subtle
-    let hash = 0
-    const str = TABLE_TOKEN_SALT
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i)
-        hash = ((hash << 5) - hash) + char
-        hash = hash & hash
-    }
-    return Math.abs(hash).toString(16)
+// Precomputed SHA-256 of the raw salt (matches PHP hash('sha256', '7980312123789'))
+const TABLE_TOKEN_SALT = "8056f8f532d758ef1a3e4d88f0889cedb73392c1970a787f6fbaac59c1e83c48"
+
+async function sha256Hex(input: string): Promise<string> {
+    const encoder = new TextEncoder()
+    const data = encoder.encode(input)
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("")
 }
 
-export function generateTableToken(tableId: number): string {
-    // Port dari PHP: substr(hash('sha256', $tableId . self::getSalt()), 0, 6)
-    // JS version: simple hash combinaton
-    const combined = `${tableId}${TABLE_TOKEN_SALT}`
-    let hash = 0
-    for (let i = 0; i < combined.length; i++) {
-        const char = combined.charCodeAt(i)
-        hash = ((hash << 5) - hash) + char
-        hash = hash & hash
-    }
-    const hashPart = Math.abs(hash).toString(16).substring(0, 6)
+export async function generateTableToken(tableId: number): Promise<string> {
+    const salt = TABLE_TOKEN_SALT
+    const combined = `${tableId}${salt}`
+    const hash = await sha256Hex(combined)
+    const hashPart = hash.substring(0, 6)
     
     // base_convert($tableId, 10, 36) in PHP
     const encodedId = tableId.toString(36)
@@ -91,8 +86,8 @@ export function generateTableToken(tableId: number): string {
     return `${encodedId}-${hashPart}`
 }
 
-export function getTableOrderUrl(tableId: number): string {
+export async function getTableOrderUrl(tableId: number): Promise<string> {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : ""
-    const token = generateTableToken(tableId)
+    const token = await generateTableToken(tableId)
     return `${baseUrl}/order/${token}`
 }
