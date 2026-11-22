@@ -131,7 +131,7 @@ export default function MejaFormModal({
 
                     <form
                         onSubmit={handleSubmit}
-                        className="flex flex-col flex-1 overflow-hidden min-h-0 mt-2"
+                        className="flex flex-col flex-1 overflow-hidden min-h-0 -mt-2"
                     >
                         <div className="space-y-4 overflow-y-auto custom-scrollbar flex-1 pr-2 py-1">
                             <div>
@@ -254,7 +254,6 @@ export default function MejaFormModal({
                 </DialogContent>
             </Dialog>
 
-            {/* Dialog Konfirmasi Tindakan Pesanan Aktif Saat Mengubah Status Meja */}
             <Dialog
                 open={showConflictDialog}
                 onOpenChange={(open) => !open && handleCancelConflict()}
