@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Set Indonesian locale for Carbon date formatting
+        setlocale(LC_TIME, 'id_ID.UTF-8', 'id_ID', 'indonesian');
     }
 }

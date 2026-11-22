@@ -38,9 +38,10 @@ import StockCategoryModal from "@/Components/StockCategoryModal";
 import Pagination from "@/Components/Pagination";
 import { formatEstDaily, getCategoryBadgeClass, getStatusBadgeClass } from "@/lib/utils";
 import { toast } from "sonner";
+import type { PageProps } from "@/types";
 
 interface StokPageProps {
-    auth: any;
+    auth: PageProps["auth"];
     stockItems?: StockItem[] | PaginatedData<StockItem>;
     categories?: string[];
     categoryList?: StockCategoryItem[];

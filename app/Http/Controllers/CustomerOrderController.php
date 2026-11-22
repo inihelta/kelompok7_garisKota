@@ -182,6 +182,10 @@ class CustomerOrderController extends Controller
                 \App\Services\NotificationService::notifyNewOrder($order);
             } catch (\Throwable $e) {
                 // Jangan gagalkan pesanan jika service Reverb belum dinyalakan
+                \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed: ' . $e->getMessage(), [
+                    'order_id' => $order->id,
+                    'exception' => get_class($e),
+                ]);
             }
 
             // Simpan ID pesanan ke cookie pelanggan (bertahan lebih lama dari session)
@@ -279,6 +283,10 @@ class CustomerOrderController extends Controller
             $order->load('table');
             OrderStatusUpdated::dispatch($order, 'cancelled');
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed (customer cancel): ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'exception' => get_class($e),
+            ]);
         }
 
         \App\Services\NotificationService::notifyOrderStatusChanged($order, 'cancelled');

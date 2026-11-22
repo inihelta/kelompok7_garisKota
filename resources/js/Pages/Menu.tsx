@@ -33,13 +33,14 @@ import {
 } from "@/lib/utils";
 import { toast } from "sonner";
 import { ImageWithFallback } from "@/Components/ui/ImageWithFallback";
+import type { PageProps } from "@/types";
 
 export default function Menu({
     auth,
     menus,
     categories,
 }: {
-    auth: any;
+    auth: PageProps["auth"];
     menus: MenuItem[];
     categories: CategoryItem[];
 }) {

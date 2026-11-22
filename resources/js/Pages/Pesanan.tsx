@@ -30,9 +30,10 @@ import {
     DialogFooter,
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
+import type { PageProps } from "@/types";
 
 interface PesananPageProps {
-    auth: any;
+    auth: PageProps["auth"];
     activeOrders?: PaginatedData<OrderItem>;
     historyOrders?: PaginatedData<OrderItem>;
     stats?: {

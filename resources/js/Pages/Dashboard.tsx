@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
@@ -12,14 +12,8 @@ import {
     LucideProps,
     TrendingDown,
 } from "lucide-react";
-import {
-    ResponsiveContainer,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-} from "recharts";
+// Dynamic import for recharts (code-split, only loaded on Dashboard)
+const Recharts = lazy(() => import("recharts"));
 import {
     OrderItem,
     PaginatedData,
@@ -195,99 +189,109 @@ export default function Dashboard({
 
                         {/* Chart Area */}
                         <div className="w-full h-64 mt-2">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart
-                                    data={activePerformanceData}
-                                    barGap={8}
-                                    margin={{
-                                        top: 10,
-                                        right: 10,
-                                        left: -15,
-                                        bottom: 0,
-                                    }}
-                                >
-                                    <XAxis
-                                        dataKey="date"
-                                        stroke="#94a3b8"
-                                        fontSize={12}
-                                        tickLine={false}
-                                    />
-                                    {/* Sumbu Y Kiri untuk Pendapatan */}
-                                    <YAxis
-                                        yAxisId="pendapatan"
-                                        stroke="#94a3b8"
-                                        fontSize={12}
-                                        tickLine={false}
-                                        domain={[0, "auto"]}
-                                        tickFormatter={(val) => {
-                                            if (val >= 1000000)
-                                                return `${(val / 1000000).toFixed(1)}M`;
-                                            if (val >= 1000)
-                                                return `${Math.round(val / 1000)}k`;
-                                            return val;
-                                        }}
-                                    />
+                            <Suspense fallback={
+                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                                    Memuat grafik...
+                                </div>
+                            }>
+                                <Recharts>
+                                    {({ ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip }) => (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart
+                                                data={activePerformanceData}
+                                                barGap={8}
+                                                margin={{
+                                                    top: 10,
+                                                    right: 10,
+                                                    left: -15,
+                                                    bottom: 0,
+                                                }}
+                                            >
+                                                <XAxis
+                                                    dataKey="date"
+                                                    stroke="#94a3b8"
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                />
+                                                {/* Sumbu Y Kiri untuk Pendapatan */}
+                                                <YAxis
+                                                    yAxisId="pendapatan"
+                                                    stroke="#94a3b8"
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    domain={[0, "auto"]}
+                                                    tickFormatter={(val) => {
+                                                        if (val >= 1000000)
+                                                            return `${(val / 1000000).toFixed(1)}M`;
+                                                        if (val >= 1000)
+                                                            return `${Math.round(val / 1000)}k`;
+                                                        return val;
+                                                    }}
+                                                />
 
-                                    <YAxis
-                                        yAxisId="pesanan"
-                                        orientation="right"
-                                        stroke="#94a3b8"
-                                        fontSize={12}
-                                        tickLine={false}
-                                        allowDecimals={false}
-                                        domain={[0, "auto"]}
-                                    />
-                                    <Tooltip
-                                        formatter={(value: any, name: any) => {
-                                            if (name === "jumlah pendapatan") {
-                                                return [
-                                                    formatIDR(value),
-                                                    "Pendapatan",
-                                                ];
-                                            }
-                                            return [
-                                                `${value} pesanan`,
-                                                "Jumlah Pesanan",
-                                            ];
-                                        }}
-                                        labelFormatter={(label) => {
-                                            const date = new Date(label);
-                                            return date.toLocaleDateString(
-                                                "id-ID",
-                                                {
-                                                    day: "2-digit",
-                                                    month: "short",
-                                                },
-                                            );
-                                        }}
-                                        contentStyle={{
-                                            backgroundColor: "#ffffff",
-                                            borderRadius: "8px",
-                                            border: "1px solid #e2e8f0",
-                                            fontSize: "12px",
-                                        }}
-                                    />
+                                                <YAxis
+                                                    yAxisId="pesanan"
+                                                    orientation="right"
+                                                    stroke="#94a3b8"
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    allowDecimals={false}
+                                                    domain={[0, "auto"]}
+                                                />
+                                                <Tooltip
+                                                    formatter={(value: any, name: any) => {
+                                                        if (name === "jumlah pendapatan") {
+                                                            return [
+                                                                formatIDR(value),
+                                                                "Pendapatan",
+                                                            ];
+                                                        }
+                                                        return [
+                                                            `${value} pesanan`,
+                                                            "Jumlah Pesanan",
+                                                        ];
+                                                    }}
+                                                    labelFormatter={(label) => {
+                                                        const date = new Date(label);
+                                                        return date.toLocaleDateString(
+                                                            "id-ID",
+                                                            {
+                                                                day: "2-digit",
+                                                                month: "short",
+                                                            },
+                                                        );
+                                                    }}
+                                                    contentStyle={{
+                                                        backgroundColor: "#ffffff",
+                                                        borderRadius: "8px",
+                                                        border: "1px solid #e2e8f0",
+                                                        fontSize: "12px",
+                                                    }}
+                                                />
 
-                                    <Bar
-                                        yAxisId="pendapatan"
-                                        dataKey="pendapatan"
-                                        name="jumlah pendapatan"
-                                        fill="#D91A20"
-                                        radius={[2, 2, 0, 0]}
-                                        barSize={24}
-                                        minPointSize={4}
-                                    />
-                                    <Bar
-                                        yAxisId="pesanan"
-                                        dataKey="pesanan"
-                                        name="jumlah pesanan"
-                                        fill="#1e293b"
-                                        radius={[2, 2, 0, 0]}
-                                        barSize={24}
-                                        minPointSize={4}
-                                    />
-                                </BarChart>
-                            </ResponsiveContainer>
+                                                <Bar
+                                                    yAxisId="pendapatan"
+                                                    dataKey="pendapatan"
+                                                    name="jumlah pendapatan"
+                                                    fill="#D91A20"
+                                                    radius={[2, 2, 0, 0]}
+                                                    barSize={24}
+                                                    minPointSize={4}
+                                                />
+                                                <Bar
+                                                    yAxisId="pesanan"
+                                                    dataKey="pesanan"
+                                                    name="jumlah pesanan"
+                                                    fill="#1e293b"
+                                                    radius={[2, 2, 0, 0]}
+                                                    barSize={24}
+                                                    minPointSize={4}
+                                                />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    )}
+                                </Recharts>
+                            </Suspense>
                         </div>
 
                         <div className="flex items-center justify-center gap-6 mt-4 pt-3 border-t border-[#f1f5f9] text-xs text-[#475569]">

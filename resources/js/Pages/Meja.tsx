@@ -61,7 +61,7 @@ export default function Meja({
     auth,
     tables: propTables,
 }: {
-    auth?: any;
+    auth?: PageProps["auth"];
     tables?: TableItem[];
 }) {
     const [tables, setTables] = useState<TableItem[]>(

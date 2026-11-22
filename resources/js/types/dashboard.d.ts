@@ -161,8 +161,10 @@ export interface PaymentSourcesData {
     total: number;
 }
 
+import type { PageProps } from "@/types";
+
 export interface DashboardPageProps {
-    auth: any;
+    auth: PageProps["auth"];
     metrics: DashboardMetrics;
     performance: PerformanceData;
     topSelling: TopSellingItem[];
@@ -170,7 +172,7 @@ export interface DashboardPageProps {
 }
 
 export interface PendapatanPageProps {
-    auth: any;
+    auth: PageProps["auth"];
     metrics: PendapatanMetrics;
     performance: PerformanceData;
     paymentSources: PaymentSourcesData;

@@ -8,6 +8,7 @@ use App\Services\PerformanceChart;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -45,9 +46,17 @@ class DashboardController extends Controller
             $ordersGrowth = 100;
         }
 
-        // 3. Performa Penjualan (7 Hari Terakhir & 30 Hari Terakhir)
-        $performance7Days = PerformanceChart::build(7);
-        $performance30Days = PerformanceChart::build(30);
+        // 3. Performa Penjualan (7 Hari Terakhir & 30 Hari Terakhir) - use cached data
+        $performance7Days = Cache::get('performance.days7');
+        $performance30Days = Cache::get('performance.days30');
+
+        if ($performance7Days === null || $performance30Days === null) {
+            // Fallback: build on-demand (e.g., first load before cron runs)
+            $performance7Days = PerformanceChart::build(7);
+            $performance30Days = PerformanceChart::build(30);
+            Cache::forever('performance.days7', $performance7Days);
+            Cache::forever('performance.days30', $performance30Days);
+        }
 
         // 4. Top - Selling Menu (6 Menu terlaris dari order_items)
         $topSelling = Menu::select('menus.id', 'menus.name', 'menus.image', 'menus.price')

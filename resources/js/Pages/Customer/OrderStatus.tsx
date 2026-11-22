@@ -3,6 +3,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { echo } from "@laravel/echo-react";
 import { OrderStatusData } from "@/types/customer";
 import { formatIDR } from "@/lib/utils";
+import { ErrorBoundary } from "@/Components/ErrorBoundary";
 import {
     ArrowLeft,
     ThumbsUp,
@@ -28,7 +29,7 @@ interface OrderStatusProps {
     order: OrderStatusData;
 }
 
-export default function OrderStatus({ order }: OrderStatusProps) {
+function OrderStatusContent({ order }: OrderStatusProps) {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [showHelpModal, setShowHelpModal] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -739,5 +740,13 @@ export default function OrderStatus({ order }: OrderStatusProps) {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function OrderStatus(props: OrderStatusProps) {
+    return (
+        <ErrorBoundary>
+            <OrderStatusContent {...props} />
+        </ErrorBoundary>
     );
 }

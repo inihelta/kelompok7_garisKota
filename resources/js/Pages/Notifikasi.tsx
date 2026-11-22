@@ -20,9 +20,10 @@ import {
 import { NotificationItem, NotificationCounts, PaginatedData } from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
 import { toast } from "sonner";
+import type { PageProps } from "@/types";
 
 interface NotifikasiPageProps {
-    auth: any;
+    auth: PageProps["auth"];
     notifications: PaginatedData<NotificationItem>;
     currentTab?: string;
     searchQuery?: string;

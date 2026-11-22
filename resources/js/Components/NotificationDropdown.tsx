@@ -39,7 +39,9 @@ export default function NotificationDropdown({
         changes: 0,
     });
     const [loading, setLoading] = useState(false);
+    const [echoConnected, setEchoConnected] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
     // Fetch notifications from API
     const fetchNotifications = async (selectedTab = tab) => {
@@ -60,6 +62,27 @@ export default function NotificationDropdown({
             setLoading(false);
         }
     };
+
+    // Start polling fallback (every 30s) when Echo is not connected
+    useEffect(() => {
+        if (!echoConnected) {
+            // Initial fetch
+            fetchNotifications(tab);
+            
+            // Poll every 30 seconds
+            pollIntervalRef.current = setInterval(() => {
+                fetchNotifications(tab);
+            }, 30000);
+        }
+        
+        return () => {
+            if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+            }
+        };
+    }, [echoConnected, tab]);
+
+    // Close on click outside
 
     // Close on click outside
     useEffect(() => {
@@ -89,6 +112,8 @@ export default function NotificationDropdown({
         let channel: any = null;
         try {
             channel = echo().channel("notifications");
+            
+            // Mark Echo as connected when we successfully subscribe
             channel.listen(".NotificationCreated", (newNotif: NotificationItem) => {
                 setNotifications((prev) => [newNotif, ...prev]);
                 const isChange = [
@@ -113,17 +138,23 @@ export default function NotificationDropdown({
                     onUnreadCountChange((counts.unread || 0) + 1);
                 }
             });
+            
+            // Set connected state after a short delay to allow subscription
+            const connectTimer = setTimeout(() => setEchoConnected(true), 1000);
+            
+            return () => {
+                clearTimeout(connectTimer);
+                if (channel) {
+                    try {
+                        echo().leaveChannel("notifications");
+                    } catch (e) {}
+                    setEchoConnected(false);
+                }
+            };
         } catch (e) {
             console.warn("Echo notifications channel not available:", e);
+            setEchoConnected(false);
         }
-
-        return () => {
-            if (channel) {
-                try {
-                    echo().leaveChannel("notifications");
-                } catch (e) {}
-            }
-        };
     }, []);
 
     // Mark single notification as read

@@ -37,7 +37,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+Route::middleware(['auth', 'prevent-back-history', 'throttle:60,1'])->group(function () {
     Route::get('/dashboard/menu', [MenuController::class, 'index'])->name('dashboard.menu');
     Route::get('/dashboard/pesanan', [OrderController::class, 'index'])->name('dashboard.pesanan');
     Route::put('/orders/{order}/process', [OrderController::class, 'process'])->name('orders.process');

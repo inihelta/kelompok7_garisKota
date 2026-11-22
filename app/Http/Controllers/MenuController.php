@@ -31,7 +31,7 @@ class MenuController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'status' => 'required|in:tersedia,draft,nonaktif',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|mimetypes:image/jpeg,image/png,image/webp|max:2048|dimensions:max_width=4000,max_height=4000',
         ]);
 
         if ($request->hasFile('image')) {
@@ -52,7 +52,7 @@ class MenuController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'status' => 'required|in:tersedia,draft,nonaktif',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|mimetypes:image/jpeg,image/png,image/webp|max:2048|dimensions:max_width=4000,max_height=4000',
             'remove_image' => 'nullable|boolean',
         ]);
 

@@ -52,6 +52,10 @@ class OrderController extends Controller
             OrderStatusUpdated::dispatch($order, 'processing');
             \App\Services\NotificationService::notifyOrderStatusChanged($order, 'processing');
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed (process): ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'exception' => get_class($e),
+            ]);
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' sedang diproses.');
@@ -70,6 +74,10 @@ class OrderController extends Controller
             OrderStatusUpdated::dispatch($order, 'completed');
             \App\Services\NotificationService::notifyOrderStatusChanged($order, 'completed');
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed (complete): ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'exception' => get_class($e),
+            ]);
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' telah selesai.');
@@ -94,6 +102,10 @@ class OrderController extends Controller
             OrderStatusUpdated::dispatch($order, 'cancelled');
             \App\Services\NotificationService::notifyOrderStatusChanged($order, 'cancelled');
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed (cancel): ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'exception' => get_class($e),
+            ]);
         }
 
         return back()->with('success', 'Pesanan #' . $order->id . ' telah dibatalkan.');
@@ -125,6 +137,10 @@ class OrderController extends Controller
             OrderStatusUpdated::dispatch($order, 'pending');
             \App\Services\NotificationService::notifyOrderStatusChanged($order, 'pending');
         } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Reverb broadcast failed (confirmPayment): ' . $e->getMessage(), [
+                'order_id' => $order->id,
+                'exception' => get_class($e),
+            ]);
         }
 
         return back()->with('success', 'Pembayaran untuk Pesanan #' . $order->id . ' dikonfirmasi. Pesanan masuk antrean dapur.');

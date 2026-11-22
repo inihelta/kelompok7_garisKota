@@ -12,6 +12,7 @@ import CategoryJumpModal from "@/Components/Customer/CategoryJumpModal";
 import FloatingCartBar from "@/Components/Customer/FloatingCartBar";
 import OrderCheckoutModal from "@/Components/Customer/OrderCheckoutModal";
 import DesktopCartSidebar from "@/Components/Customer/DesktopCartSidebar";
+import { ErrorBoundary } from "@/Components/ErrorBoundary";
 import {
     Search,
     X,
@@ -35,7 +36,7 @@ interface OrderCatalogProps {
     } | null;
 }
 
-export default function OrderCatalog({
+function OrderCatalogContent({
     table,
     categories,
     menus,
@@ -552,5 +553,13 @@ export default function OrderCatalog({
                 )}
             </div>
         </div>
+    );
+}
+
+export default function OrderCatalog(props: OrderCatalogProps) {
+    return (
+        <ErrorBoundary>
+            <OrderCatalogContent {...props} />
+        </ErrorBoundary>
     );
 }
