@@ -211,23 +211,23 @@ php artisan test --filter=OrderControllerTest
 
 ### Rincian Test:
 
-| File Test | Jumlah | Coverage Area |
-| :-------- | :----- | :------------ |
-| `tests/Unit/TableTokenTest.php` | 4 | Generate/resolve token, tampered hash, numeric ID |
-| `tests/Unit/ModelTest.php` | 8 | Relasi Order↔Table, Order↔OrderItem, Order↔Payment, Menu↔Category, Table↔Orders, Stock status, StockCategory↔Stock, Category↔Menu |
-| `tests/Feature/CustomerOrderTest.php` | 8 | Catalog load, invalid token, store order, stock validation, status page, cancel restores stock, new order notification, customer cancel notification |
-| `tests/Feature/AuthTest.php` | 6 | Login valid/invalid, dashboard access, guest redirect, logout |
-| `tests/Feature/OrderControllerTest.php` | 5 | Pesanan page, process, complete, cancel restores stock, guest redirect |
-| `tests/Feature/StockTest.php` | 6 | Stok page, phantom category ID guard, create, validation, update, delete |
-| `tests/Feature/CategoryTest.php` | 7 | CRUD category, unique validation, guest redirect |
-| `tests/Feature/StockCategoryTest.php` | 7 | CRUD, unique name, icon validation, JSON endpoints |
-| `tests/Feature/MenuTest.php` | 9 | CRUD menu, validation, image upload, guest redirect |
-| `tests/Feature/DashboardTest.php` | 3 | Page load, metrics props, guest redirect |
-| `tests/Feature/IncomeTest.php` | 5 | Page load, metrics, date filter, custom range, guest redirect |
-| `tests/Feature/NotificationTest.php` | 8 | Filter tab/unread/type, mark read, mark all read, search, guest redirect |
-| `tests/Feature/TableTest.php` | 3 | Page load, tables prop, guest redirect |
-| `tests/Feature/ExampleTest.php` | 1 | Halaman utama memberi respon sukses |
-| `tests/Unit/ExampleTest.php` | 1 | Sanity test bawaan Laravel |
+| File Test                               | Jumlah | Coverage Area                                                                                                                                        |
+| :-------------------------------------- | :----- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tests/Unit/TableTokenTest.php`         | 4      | Generate/resolve token, tampered hash, numeric ID                                                                                                    |
+| `tests/Unit/ModelTest.php`              | 8      | Relasi Order↔Table, Order↔OrderItem, Order↔Payment, Menu↔Category, Table↔Orders, Stock status, StockCategory↔Stock, Category↔Menu                    |
+| `tests/Feature/CustomerOrderTest.php`   | 8      | Catalog load, invalid token, store order, stock validation, status page, cancel restores stock, new order notification, customer cancel notification |
+| `tests/Feature/AuthTest.php`            | 6      | Login valid/invalid, dashboard access, guest redirect, logout                                                                                        |
+| `tests/Feature/OrderControllerTest.php` | 5      | Pesanan page, process, complete, cancel restores stock, guest redirect                                                                               |
+| `tests/Feature/StockTest.php`           | 6      | Stok page, phantom category ID guard, create, validation, update, delete                                                                             |
+| `tests/Feature/CategoryTest.php`        | 7      | CRUD category, unique validation, guest redirect                                                                                                     |
+| `tests/Feature/StockCategoryTest.php`   | 7      | CRUD, unique name, icon validation, JSON endpoints                                                                                                   |
+| `tests/Feature/MenuTest.php`            | 9      | CRUD menu, validation, image upload, guest redirect                                                                                                  |
+| `tests/Feature/DashboardTest.php`       | 3      | Page load, metrics props, guest redirect                                                                                                             |
+| `tests/Feature/IncomeTest.php`          | 5      | Page load, metrics, date filter, custom range, guest redirect                                                                                        |
+| `tests/Feature/NotificationTest.php`    | 8      | Filter tab/unread/type, mark read, mark all read, search, guest redirect                                                                             |
+| `tests/Feature/TableTest.php`           | 3      | Page load, tables prop, guest redirect                                                                                                               |
+| `tests/Feature/ExampleTest.php`         | 1      | Halaman utama memberi respon sukses                                                                                                                  |
+| `tests/Unit/ExampleTest.php`            | 1      | Sanity test bawaan Laravel                                                                                                                           |
 
 ---
 
@@ -243,11 +243,11 @@ php artisan optimize           # Cache config, route & view (wajib di produksi)
 
 Konfigurasi `.env` yang disarankan:
 
-| Kunci | Development | Produksi |
-| :---- | :---------- | :------- |
-| `APP_DEBUG` | `true` | **`false`** (debug aktif bikin tiap error merender halaman debug berat) |
-| `CACHE_STORE` | `database` | `file` atau `redis` |
-| `MENU_DISK` | `public` | `public` atau `s3` (lihat `docs/hybrid_storage_s3.md`) |
+| Kunci         | Development | Produksi                                                                |
+| :------------ | :---------- | :---------------------------------------------------------------------- |
+| `APP_DEBUG`   | `true`      | **`false`** (debug aktif bikin tiap error merender halaman debug berat) |
+| `CACHE_STORE` | `database`  | `file` atau `redis`                                                     |
+| `MENU_DISK`   | `public`    | `public` atau `s3` (lihat `docs/hybrid_storage_s3.md`)                  |
 
 Yang sudah otomatis di kode:
 - **Upload gambar dikonversi ke WebP** (maks 1024px, kualitas 80) — `images:optimize` hanya untuk file lama.
@@ -350,52 +350,53 @@ garisKota/
 ## 🔌 Rute Utama
 
 ### Public (Customer — Scan QR)
-| Method | URI | Fungsi |
-| :----- | :-- | :----- |
-| GET | `/order/{token}` | Buka katalog menu berdasarkan token meja |
-| POST | `/order` | Simpan pesanan baru |
-| GET | `/order/status/{order}` | Halaman status pesanan |
-| PUT | `/order/{order}/cancel` | Batalkan pesanan (stok dikembalikan) |
+| Method | URI                     | Fungsi                                   |
+| :----- | :---------------------- | :--------------------------------------- |
+| GET    | `/order/{token}`        | Buka katalog menu berdasarkan token meja |
+| POST   | `/order`                | Simpan pesanan baru                      |
+| GET    | `/order/status/{order}` | Halaman status pesanan                   |
+| PUT    | `/order/{order}/cancel` | Batalkan pesanan (stok dikembalikan)     |
 
 ### Auth
-| Method | URI | Fungsi |
-| :----- | :-- | :----- |
-| GET | `/login` | Halaman login |
-| POST | `/login` | Proses login |
-| GET | `/logout` | Logout |
+| Method | URI       | Fungsi        |
+| :----- | :-------- | :------------ |
+| GET    | `/login`  | Halaman login |
+| POST   | `/login`  | Proses login  |
+| GET    | `/logout` | Logout        |
 
 ### Dashboard (Auth Required)
-| Method | URI | Fungsi |
-| :----- | :-- | :----- |
-| GET | `/dashboard` | Dashboard utama |
-| GET | `/dashboard/menu` | Manajemen menu |
-| GET | `/dashboard/pesanan` | Antrean pesanan |
-| GET | `/dashboard/pendapatan` | Halaman pendapatan |
-| GET | `/dashboard/meja` | Manajemen meja |
-| GET | `/dashboard/stok` | Manajemen stok |
-| GET | `/dashboard/notifikasi` | Halaman notifikasi |
-| GET | `/api/notifications` | API notifikasi (JSON) |
-| PUT | `/api/notifications/{id}/read` | Tandai notifikasi dibaca |
-| PUT | `/api/notifications/mark-all-read` | Tandai semua dibaca |
-| PUT | `/orders/{order}/process` | Proses pesanan → processing |
-| PUT | `/orders/{order}/complete` | Selesaikan pesanan → completed |
-| PUT | `/orders/{order}/cancel` | Batalkan pesanan (stok dikembalikan) |
-| POST/PUT/DELETE | `/menus`, `/tables`, `/stocks`, `/categories`, `/stock-categories` | CRUD resources |
+| Method          | URI                                                                | Fungsi                               |
+| :-------------- | :----------------------------------------------------------------- | :----------------------------------- |
+| GET             | `/dashboard`                                                       | Dashboard utama                      |
+| GET             | `/dashboard/menu`                                                  | Manajemen menu                       |
+| GET             | `/dashboard/pesanan`                                               | Antrean pesanan                      |
+| GET             | `/dashboard/pendapatan`                                            | Halaman pendapatan                   |
+| GET             | `/dashboard/meja`                                                  | Manajemen meja                       |
+| GET             | `/dashboard/stok`                                                  | Manajemen stok                       |
+| GET             | `/dashboard/notifikasi`                                            | Halaman notifikasi                   |
+| GET             | `/api/notifications`                                               | API notifikasi (JSON)                |
+| PUT             | `/api/notifications/{id}/read`                                     | Tandai notifikasi dibaca             |
+| PUT             | `/api/notifications/mark-all-read`                                 | Tandai semua dibaca                  |
+| PUT             | `/orders/{order}/process`                                          | Proses pesanan → processing          |
+| PUT             | `/orders/{order}/complete`                                         | Selesaikan pesanan → completed       |
+| PUT             | `/orders/{order}/cancel`                                           | Batalkan pesanan (stok dikembalikan) |
+| POST/PUT/DELETE | `/menus`, `/tables`, `/stocks`, `/categories`, `/stock-categories` | CRUD resources                       |
 
 ---
 
 ## ❓ Troubleshooting
 
-| Masalah | Solusi |
-| :------ | :----- |
-| Gambar menu tidak muncul | Jalankan `php artisan storage:link` |
-| Notifikasi tidak real-time | Pastikan `php artisan reverb:start` berjalan dan `BROADCAST_CONNECTION=reverb` |
-| Gambar tidak terhapus saat edit | Pastikan `public/storage` adalah symlink yang valid |
-| Test gagal karena DB | Pastikan `phpunit.xml` mengonfigurasi SQLite `:memory:` |
-| Back-button masih menampilkan dashboard setelah logout | Pastikan middleware `prevent-back-history` terdaftar di `bootstrap/app.php` |
+| Masalah                                                | Solusi                                                                         |
+| :----------------------------------------------------- | :----------------------------------------------------------------------------- |
+| Gambar menu tidak muncul                               | Jalankan `php artisan storage:link`                                            |
+| Notifikasi tidak real-time                             | Pastikan `php artisan reverb:start` berjalan dan `BROADCAST_CONNECTION=reverb` |
+| Gambar tidak terhapus saat edit                        | Pastikan `public/storage` adalah symlink yang valid                            |
+| Test gagal karena DB                                   | Pastikan `phpunit.xml` mengonfigurasi SQLite `:memory:`                        |
+| Back-button masih menampilkan dashboard setelah logout | Pastikan middleware `prevent-back-history` terdaftar di `bootstrap/app.php`    |
 
 ---
 
 <p align="center">
   Dibuat karna ujian blok 2 oleh <strong>Kelompok 7</strong>
 </p>
+_hwahwa_
