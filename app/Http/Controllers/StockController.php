@@ -128,7 +128,7 @@ class StockController extends Controller
         ]);
 
         $stock->update($validated);
-        \App\Services\NotificationService::notifyStockAlert($stock->fresh());
+        \App\Services\NotificationService::notifyStockUpdated($stock->fresh());
 
         return redirect()->back()->with('success', 'Stok bahan berhasil diperbarui.');
     }

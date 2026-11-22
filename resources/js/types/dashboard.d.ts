@@ -21,6 +21,7 @@ export interface TableItem {
         order_status?: string;
         customer_name?: string;
     } | null;
+    order_action?: "complete" | "cancel";
 }
 
 export interface CategoryItem {
@@ -182,8 +183,19 @@ export interface PendapatanPageProps {
 
 export interface NotificationItem {
     id: number;
-    type: "order" | "stock";
-    category: "new_order" | "order_ready" | "stock_low" | "stock_empty" | string;
+    type: "order" | "stock" | "change" | string;
+    category:
+        | "new_order"
+        | "order_ready"
+        | "order_processing"
+        | "order_cancelled"
+        | "order_change"
+        | "stock_low"
+        | "stock_empty"
+        | "stock_update"
+        | "table_update"
+        | "menu_update"
+        | string;
     title: string;
     message: string;
     tag?: string | null;
@@ -199,4 +211,5 @@ export interface NotificationCounts {
     unread: number;
     order: number;
     stock: number;
+    changes?: number;
 }

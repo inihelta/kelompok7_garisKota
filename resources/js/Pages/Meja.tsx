@@ -117,12 +117,13 @@ export default function Meja({
         }
     };
 
-    const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number }) => {
+    const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number; order_action?: "complete" | "cancel" }) => {
         const payload = {
             table_number: Number(data.table_number),
             capacity: Number(data.capacity),
             available: Boolean(data.available),
             location: data.location,
+            ...(data.order_action ? { order_action: data.order_action } : {}),
         };
 
         if (data.id) {
@@ -334,7 +335,13 @@ export default function Meja({
                                                     href="/dashboard/pesanan"
                                                     className="text-[#1e293b] hover:text-[#b91c1c] transition-colors"
                                                 >
-                                                    Pesanan #{item.active_order.id} ({item.active_order.items_count} item)
+                                                    Pesanan #
+                                                    {item.active_order.id} (
+                                                    {
+                                                        item.active_order
+                                                            .items_count
+                                                    }{" "}
+                                                    item)
                                                 </Link>
                                             ) : (
                                                 <span className="text-[#64748b]">
@@ -419,7 +426,8 @@ export default function Meja({
                             </DialogTitle>
                             <DialogDescription>
                                 Tindakan ini tidak dapat dibatalkan. Ini akan
-                                menghapus data meja M-{selectedTable?.table_number}
+                                menghapus data meja M-
+                                {selectedTable?.table_number}
                                 selamanya.
                             </DialogDescription>
                         </DialogHeader>

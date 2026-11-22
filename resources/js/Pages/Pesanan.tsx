@@ -186,8 +186,6 @@ export default function Pesanan({
         setIsRefreshing(true);
         router.reload({
             only: ["activeOrders", "stats", "historyOrders"],
-            preserveScroll: true,
-            preserveState: true,
             onFinish: () => setIsRefreshing(false),
         });
     };
@@ -211,16 +209,12 @@ export default function Pesanan({
 
                 router.reload({
                     only: ["activeOrders", "stats", "historyOrders"],
-                    preserveScroll: true,
-                    preserveState: true,
                 });
             });
 
             channel.listen(".OrderStatusUpdated", () => {
                 router.reload({
                     only: ["activeOrders", "stats", "historyOrders"],
-                    preserveScroll: true,
-                    preserveState: true,
                 });
             });
 

@@ -182,7 +182,9 @@ export default function MenuCategoryModal({
                                                     <button
                                                         type="button"
                                                         onClick={() =>
-                                                            handleSaveEdit(cat.id)
+                                                            handleSaveEdit(
+                                                                cat.id,
+                                                            )
                                                         }
                                                         className="p-1.5 bg-[#d2ffe2] border border-[#aafcc7] text-[#16a34a] hover:bg-[#bbf7d0] rounded-md transition"
                                                         title="Simpan"
@@ -191,7 +193,9 @@ export default function MenuCategoryModal({
                                                     </button>
                                                     <button
                                                         type="button"
-                                                        onClick={handleCancelEdit}
+                                                        onClick={
+                                                            handleCancelEdit
+                                                        }
                                                         className="p-1.5 bg-gray-200 border border-gray-200 text-gray-600 hover:bg-gray-300 rounded-md transition"
                                                         title="Batal"
                                                     >
@@ -202,7 +206,6 @@ export default function MenuCategoryModal({
                                         ) : (
                                             <div className="flex items-center justify-between gap-3">
                                                 <div className="flex items-center gap-2.5 min-w-0">
-                                                    <div className="size-8 rounded-lg bg-[#fee2e2] flex items-center justify-center flex-shrink-0"></div>
                                                     <div className="flex flex-col min-w-0">
                                                         <span className="font-semibold text-sm text-[#1e293b] truncate">
                                                             {cat.name}
@@ -224,7 +227,9 @@ export default function MenuCategoryModal({
                                                     <button
                                                         type="button"
                                                         onClick={() =>
-                                                            onDeleteCategory(cat.id)
+                                                            onDeleteCategory(
+                                                                cat.id,
+                                                            )
                                                         }
                                                         className="w-8 h-8 rounded-md border border-[#fee2e2] bg-[#fee2e2] flex items-center justify-center text-[#ef4444] hover:bg-[#fecaca] transition"
                                                         title="Hapus kategori"

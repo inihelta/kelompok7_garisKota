@@ -37,6 +37,17 @@ class CustomerOrderController extends Controller
 
         $categories = Category::select('id', 'name')->orderBy('id')->get();
 
+        // Cek apakah ada pesanan aktif untuk meja ini (milik customer ini)
+        $placedOrders = json_decode(request()->cookie('placed_orders', '[]'), true) ?: [];
+        $activeOrder = null;
+        if (!empty($placedOrders)) {
+            $activeOrder = Order::where('table_id', $table->id)
+                ->whereIn('id', $placedOrders)
+                ->whereIn('order_status', ['pending', 'processing'])
+                ->latest()
+                ->first();
+        }
+
         $menus = Menu::with('category:id,name')
             ->where('status', 'tersedia')
             ->orderBy('category_id')
@@ -69,6 +80,11 @@ class CustomerOrderController extends Controller
             'menus' => $menus,
             'isInvalidTable' => false,
             'error' => null,
+            'activeOrder' => $activeOrder ? [
+                'id' => $activeOrder->id,
+                'order_status' => $activeOrder->order_status,
+                'total_price' => (float) $activeOrder->total_price,
+            ] : null,
         ]);
     }
 
@@ -167,10 +183,12 @@ class CustomerOrderController extends Controller
                 // Jangan gagalkan pesanan jika service Reverb belum dinyalakan
             }
 
-            // Simpan ID pesanan ke session pelanggan untuk proteksi otorisasi halaman status
-            $placedOrders = session('placed_orders', []);
+            // Simpan ID pesanan ke cookie pelanggan (bertahan lebih lama dari session)
+            // agar pelanggan tetap bisa akses status pesanan meski scan QR ulang
+            $placedOrders = json_decode(request()->cookie('placed_orders', '[]'), true) ?: [];
             $placedOrders[] = $order->id;
-            session(['placed_orders' => array_unique($placedOrders)]);
+            $placedOrders = array_values(array_unique($placedOrders));
+            cookie()->queue('placed_orders', json_encode($placedOrders), 60 * 24 * 7); // 7 hari
 
             return redirect()->route('order.status', $order->id);
         } catch (\Exception $e) {
@@ -185,7 +203,7 @@ class CustomerOrderController extends Controller
     {
         // Proteksi: Pelanggan hanya bisa melihat pesanannya sendiri di browsernya,
         // kecuali staf yang sedang login atau sedang dalam mode local/dev testing.
-        $placedOrders = session('placed_orders', []);
+        $placedOrders = json_decode(request()->cookie('placed_orders', '[]'), true) ?: [];
         $isOwner = in_array($order->id, $placedOrders);
         $isStaff = auth()->check();
 
@@ -231,7 +249,7 @@ class CustomerOrderController extends Controller
      */
     public function cancel(Order $order)
     {
-        $placedOrders = session('placed_orders', []);
+        $placedOrders = json_decode(request()->cookie('placed_orders', '[]'), true) ?: [];
         $isOwner = in_array($order->id, $placedOrders);
         $isStaff = auth()->check();
 

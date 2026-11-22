@@ -42,9 +42,8 @@ router.on("httpException", (event) => {
 });
 
 // Replace history state on logout so back button skips authenticated pages
-router.on("finish", (event) => {
-    const page = event.detail.page;
-    if (page.url === "/login" && document.referrer.includes("/dashboard")) {
+router.on("finish", () => {
+    if (window.location.pathname === "/login" && document.referrer.includes("/dashboard")) {
         history.replaceState(null, "", "/login");
     }
 });

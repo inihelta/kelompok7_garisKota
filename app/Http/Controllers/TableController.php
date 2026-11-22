@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Table;
+use App\Events\OrderStatusUpdated;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TableController extends Controller
 {
@@ -83,6 +86,7 @@ class TableController extends Controller
             'capacity' => 'required|integer|min:1|max:50',
             'available' => 'required|boolean',
             'location' => 'required|in:indoor,outdoor',
+            'order_action' => 'nullable|in:complete,cancel',
         ], [
             'table_number.required' => 'Nomor meja wajib diisi.',
             'table_number.unique' => 'Nomor meja sudah terdaftar.',
@@ -93,9 +97,63 @@ class TableController extends Controller
             'location.in' => 'Lokasi harus indoor atau outdoor.',
         ]);
 
-        $tableModel->update($validated);
+        $orderAction = $request->input('order_action');
 
-        return redirect()->route('dashboard.meja')->with('success', 'Data meja berhasil diperbarui.');
+        // Check if table has active orders
+        $activeOrders = $tableModel->orders()
+            ->whereIn('order_status', ['pending', 'processing'])
+            ->with(['orderItems.menu', 'payment'])
+            ->get();
+
+        if ($activeOrders->isNotEmpty()) {
+            if ($orderAction === 'complete') {
+                foreach ($activeOrders as $order) {
+                    $order->update(['order_status' => 'completed']);
+                    if ($order->payment && $order->payment->payment_status === 'pending') {
+                        $order->payment->update(['payment_status' => 'done']);
+                    }
+                    try {
+                        $order->load(['table', 'orderItems.menu']);
+                        OrderStatusUpdated::dispatch($order, 'completed');
+                        NotificationService::notifyOrderStatusChanged($order, 'completed');
+                    } catch (\Throwable $e) {}
+                }
+            } elseif ($orderAction === 'cancel') {
+                foreach ($activeOrders as $order) {
+                    DB::transaction(function () use ($order) {
+                        $order->load('orderItems.menu');
+                        foreach ($order->orderItems as $item) {
+                            if ($item->menu) {
+                                $item->menu->increment('stock', $item->quantity);
+                            }
+                        }
+                        $order->update(['order_status' => 'cancelled']);
+                    });
+                    try {
+                        $order->load('table');
+                        OrderStatusUpdated::dispatch($order, 'cancelled');
+                        NotificationService::notifyOrderStatusChanged($order, 'cancelled');
+                    } catch (\Throwable $e) {}
+                }
+            }
+        }
+
+        $tableModel->update([
+            'table_number' => $validated['table_number'],
+            'capacity' => $validated['capacity'],
+            'available' => $validated['available'],
+            'location' => $validated['location'],
+        ]);
+        NotificationService::notifyTableUpdated($tableModel->fresh());
+
+        $msg = 'Data meja berhasil diperbarui.';
+        if ($activeOrders->isNotEmpty() && $orderAction === 'complete') {
+            $msg = "Data meja M-{$tableModel->table_number} diperbarui & {$activeOrders->count()} pesanan aktif diselesaikan.";
+        } elseif ($activeOrders->isNotEmpty() && $orderAction === 'cancel') {
+            $msg = "Data meja M-{$tableModel->table_number} diperbarui & {$activeOrders->count()} pesanan aktif dibatalkan.";
+        }
+
+        return redirect()->route('dashboard.meja')->with('success', $msg);
     }
 
     /**

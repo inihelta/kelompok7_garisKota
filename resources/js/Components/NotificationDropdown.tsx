@@ -9,6 +9,11 @@ import {
     Bell,
     Check,
     Loader2,
+    CookingPot,
+    XCircle,
+    LayoutGrid,
+    Utensils,
+    RefreshCw,
 } from "lucide-react";
 import { NotificationItem, NotificationCounts } from "@/types/dashboard";
 import { echo } from "@laravel/echo-react";
@@ -24,13 +29,14 @@ export default function NotificationDropdown({
     onClose,
     onUnreadCountChange,
 }: NotificationDropdownProps) {
-    const [tab, setTab] = useState<"all" | "unread" | "order" | "stock">("all");
+    const [tab, setTab] = useState<"all" | "unread" | "order" | "stock" | "changes">("all");
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [counts, setCounts] = useState<NotificationCounts>({
         all: 0,
         unread: 0,
         order: 0,
         stock: 0,
+        changes: 0,
     });
     const [loading, setLoading] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -85,12 +91,23 @@ export default function NotificationDropdown({
             channel = echo().channel("notifications");
             channel.listen(".NotificationCreated", (newNotif: NotificationItem) => {
                 setNotifications((prev) => [newNotif, ...prev]);
+                const isChange = [
+                    "order_processing",
+                    "order_ready",
+                    "order_cancelled",
+                    "order_change",
+                    "stock_update",
+                    "table_update",
+                    "menu_update",
+                ].includes(newNotif.category);
+
                 setCounts((prev) => ({
                     ...prev,
                     all: prev.all + 1,
                     unread: prev.unread + 1,
                     order: newNotif.type === "order" ? prev.order + 1 : prev.order,
                     stock: newNotif.type === "stock" ? prev.stock + 1 : prev.stock,
+                    changes: isChange ? (prev.changes || 0) + 1 : prev.changes,
                 }));
                 if (onUnreadCountChange) {
                     onUnreadCountChange((counts.unread || 0) + 1);
@@ -123,12 +140,12 @@ export default function NotificationDropdown({
                     onUnreadCountChange(nextUnread);
                 }
 
-                // API call with CSRF header
+                // API call
                 const csrfToken =
                     (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
                         ?.content || "";
                 await fetch(`/api/notifications/${notif.id}/read`, {
-                    method: "PUT",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": csrfToken,
@@ -149,6 +166,7 @@ export default function NotificationDropdown({
     // Mark all as read
     const handleMarkAllRead = async () => {
         try {
+            // Optimistic update
             setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
             setCounts((prev) => ({ ...prev, unread: 0 }));
             if (onUnreadCountChange) {
@@ -158,14 +176,22 @@ export default function NotificationDropdown({
             const csrfToken =
                 (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
                     ?.content || "";
-            await fetch(`/api/notifications/mark-all-read`, {
-                method: "PUT",
+            const res = await fetch(`/api/notifications/mark-all-read`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": csrfToken,
                     Accept: "application/json",
                 },
             });
+
+            if (res.ok) {
+                if (tab === "unread") {
+                    setNotifications([]);
+                }
+            } else {
+                console.error("Failed to mark all as read: HTTP", res.status);
+            }
         } catch (err) {
             console.error("Failed to mark all as read:", err);
         }
@@ -182,10 +208,22 @@ export default function NotificationDropdown({
                         <ShoppingBag className="w-4 h-4" />
                     </div>
                 );
+            case "order_processing":
+                return (
+                    <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center flex-shrink-0">
+                        <CookingPot className="w-4 h-4" />
+                    </div>
+                );
             case "order_ready":
                 return (
                     <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0">
                         <Coffee className="w-4 h-4" />
+                    </div>
+                );
+            case "order_cancelled":
+                return (
+                    <div className="w-9 h-9 rounded-full bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center flex-shrink-0">
+                        <XCircle className="w-4 h-4" />
                     </div>
                 );
             case "stock_empty":
@@ -195,10 +233,33 @@ export default function NotificationDropdown({
                     </div>
                 );
             case "stock_low":
-            default:
                 return (
                     <div className="w-9 h-9 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center flex-shrink-0">
                         <Package className="w-4 h-4" />
+                    </div>
+                );
+            case "stock_update":
+                return (
+                    <div className="w-9 h-9 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center flex-shrink-0">
+                        <RefreshCw className="w-4 h-4" />
+                    </div>
+                );
+            case "table_update":
+                return (
+                    <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center flex-shrink-0">
+                        <LayoutGrid className="w-4 h-4" />
+                    </div>
+                );
+            case "menu_update":
+                return (
+                    <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center flex-shrink-0">
+                        <Utensils className="w-4 h-4" />
+                    </div>
+                );
+            default:
+                return (
+                    <div className="w-9 h-9 rounded-full bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                        <Bell className="w-4 h-4" />
                     </div>
                 );
         }
@@ -207,7 +268,7 @@ export default function NotificationDropdown({
     return (
         <div
             ref={dropdownRef}
-            className="absolute right-0 top-10 mt-2 w-[340px] sm:w-[380px] bg-white border border-[#e5e7eb] rounded-2xl shadow-xl z-50 overflow-hidden text-[#1e293b] animate-in fade-in zoom-in-95 duration-150"
+            className="absolute right-0 top-10 mt-2 w-[340px] sm:w-[420px] bg-white border border-[#e5e7eb] rounded-2xl shadow-xl z-50 overflow-hidden text-[#1e293b] animate-in fade-in zoom-in-95 duration-150"
         >
             {/* Header */}
             <div className="px-4 pt-3.5 pb-2.5 flex items-center justify-between border-b border-[#f1f5f9]">
@@ -224,11 +285,11 @@ export default function NotificationDropdown({
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-4 px-4 pt-2.5 pb-2 border-b border-[#f1f5f9] text-xs font-semibold text-[#64748b]">
+            <div className="flex items-center gap-3.5 px-4 pt-2.5 pb-2 border-b border-[#f1f5f9] text-xs font-semibold text-[#64748b] overflow-x-auto no-scrollbar">
                 <button
                     type="button"
                     onClick={() => setTab("all")}
-                    className={`pb-1 transition-colors relative cursor-pointer ${
+                    className={`pb-1 transition-colors relative cursor-pointer shrink-0 ${
                         tab === "all"
                             ? "text-[#D91A20] font-bold border-b-2 border-[#D91A20] -mb-[9px]"
                             : "hover:text-[#1e293b]"
@@ -240,7 +301,7 @@ export default function NotificationDropdown({
                 <button
                     type="button"
                     onClick={() => setTab("unread")}
-                    className={`pb-1 flex items-center gap-1.5 transition-colors relative cursor-pointer ${
+                    className={`pb-1 flex items-center gap-1.5 transition-colors relative cursor-pointer shrink-0 ${
                         tab === "unread"
                             ? "text-[#D91A20] font-bold border-b-2 border-[#D91A20] -mb-[9px]"
                             : "hover:text-[#1e293b]"
@@ -257,7 +318,7 @@ export default function NotificationDropdown({
                 <button
                     type="button"
                     onClick={() => setTab("order")}
-                    className={`pb-1 transition-colors relative cursor-pointer ${
+                    className={`pb-1 transition-colors relative cursor-pointer shrink-0 ${
                         tab === "order"
                             ? "text-[#D91A20] font-bold border-b-2 border-[#D91A20] -mb-[9px]"
                             : "hover:text-[#1e293b]"
@@ -269,13 +330,25 @@ export default function NotificationDropdown({
                 <button
                     type="button"
                     onClick={() => setTab("stock")}
-                    className={`pb-1 transition-colors relative cursor-pointer ${
+                    className={`pb-1 transition-colors relative cursor-pointer shrink-0 ${
                         tab === "stock"
                             ? "text-[#D91A20] font-bold border-b-2 border-[#D91A20] -mb-[9px]"
                             : "hover:text-[#1e293b]"
                     }`}
                 >
                     Stok
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setTab("changes")}
+                    className={`pb-1 transition-colors relative cursor-pointer shrink-0 ${
+                        tab === "changes"
+                            ? "text-[#D91A20] font-bold border-b-2 border-[#D91A20] -mb-[9px]"
+                            : "hover:text-[#1e293b]"
+                    }`}
+                >
+                    Perubahan
                 </button>
             </div>
 

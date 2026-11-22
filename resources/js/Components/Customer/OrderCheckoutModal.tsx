@@ -181,7 +181,7 @@ export default function OrderCheckoutModal({
                             value={customerName}
                             onChange={(e) => {
                                 setCustomerName(e.target.value);
-                                if (nameError) setNameError("");
+                                if (nameError) setLocalNameError("");
                             }}
                             placeholder="Contoh: Budi / Kak Sarah"
                             maxLength={50}

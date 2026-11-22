@@ -24,6 +24,16 @@ class NotificationController extends Controller
             $query->ofType('order');
         } elseif ($tab === 'stock') {
             $query->ofType('stock');
+        } elseif ($tab === 'changes') {
+            $query->whereIn('category', [
+                'order_processing',
+                'order_ready',
+                'order_cancelled',
+                'order_change',
+                'stock_update',
+                'table_update',
+                'menu_update',
+            ]);
         }
 
         $notifications = $query->take($limit)->get()->map(function ($n) {
@@ -47,6 +57,15 @@ class NotificationController extends Controller
         $unreadCount = AppNotification::unread()->count();
         $orderCount = AppNotification::ofType('order')->count();
         $stockCount = AppNotification::ofType('stock')->count();
+        $changesCount = AppNotification::whereIn('category', [
+            'order_processing',
+            'order_ready',
+            'order_cancelled',
+            'order_change',
+            'stock_update',
+            'table_update',
+            'menu_update',
+        ])->count();
         $allCount = AppNotification::count();
 
         return response()->json([
@@ -57,6 +76,7 @@ class NotificationController extends Controller
                 'unread' => $unreadCount,
                 'order' => $orderCount,
                 'stock' => $stockCount,
+                'changes' => $changesCount,
             ],
         ]);
     }
@@ -71,7 +91,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'unread_count' => AppNotification::unread()->count(),
+            'unread_count' => AppNotification::where('is_read', false)->count(),
         ]);
     }
 
@@ -80,7 +100,7 @@ class NotificationController extends Controller
      */
     public function markAllAsRead()
     {
-        AppNotification::unread()->update(['is_read' => true]);
+        AppNotification::where('is_read', false)->update(['is_read' => true]);
 
         return response()->json([
             'success' => true,
@@ -104,6 +124,16 @@ class NotificationController extends Controller
             $query->ofType('order');
         } elseif ($tab === 'stock') {
             $query->ofType('stock');
+        } elseif ($tab === 'changes') {
+            $query->whereIn('category', [
+                'order_processing',
+                'order_ready',
+                'order_cancelled',
+                'order_change',
+                'stock_update',
+                'table_update',
+                'menu_update',
+            ]);
         }
 
         if (!empty($search)) {
@@ -133,6 +163,15 @@ class NotificationController extends Controller
         });
 
         $unreadCount = AppNotification::unread()->count();
+        $changesCount = AppNotification::whereIn('category', [
+            'order_processing',
+            'order_ready',
+            'order_cancelled',
+            'order_change',
+            'stock_update',
+            'table_update',
+            'menu_update',
+        ])->count();
 
         return inertia('Notifikasi', [
             'notifications' => $notifications,
@@ -144,6 +183,7 @@ class NotificationController extends Controller
                 'unread' => $unreadCount,
                 'order' => AppNotification::ofType('order')->count(),
                 'stock' => AppNotification::ofType('stock')->count(),
+                'changes' => $changesCount,
             ],
         ]);
     }

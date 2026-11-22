@@ -11,6 +11,11 @@ import {
     Check,
     CheckCheck,
     Clock,
+    CookingPot,
+    XCircle,
+    LayoutGrid,
+    Utensils,
+    RefreshCw,
 } from "lucide-react";
 import { NotificationItem, NotificationCounts, PaginatedData } from "@/types/dashboard";
 import Pagination from "@/Components/Pagination";
@@ -58,7 +63,7 @@ export default function Notifikasi({
                 (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
                     ?.content || "";
             const res = await fetch("/api/notifications/mark-all-read", {
-                method: "PUT",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": csrfToken,
@@ -67,7 +72,7 @@ export default function Notifikasi({
             });
             if (res.ok) {
                 toast.success("Semua notifikasi ditandai sebagai dibaca");
-                router.reload({ preserveScroll: true });
+                router.reload();
             }
         } catch (e) {
             toast.error("Gagal menandai semua dibaca");
@@ -81,7 +86,7 @@ export default function Notifikasi({
                     (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
                         ?.content || "";
                 await fetch(`/api/notifications/${item.id}/read`, {
-                    method: "PUT",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": csrfToken,
@@ -104,10 +109,22 @@ export default function Notifikasi({
                         <ShoppingBag className="w-5 h-5" />
                     </div>
                 );
+            case "order_processing":
+                return (
+                    <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center flex-shrink-0">
+                        <CookingPot className="w-5 h-5" />
+                    </div>
+                );
             case "order_ready":
                 return (
                     <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center flex-shrink-0">
                         <Coffee className="w-5 h-5" />
+                    </div>
+                );
+            case "order_cancelled":
+                return (
+                    <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center flex-shrink-0">
+                        <XCircle className="w-5 h-5" />
                     </div>
                 );
             case "stock_empty":
@@ -117,10 +134,33 @@ export default function Notifikasi({
                     </div>
                 );
             case "stock_low":
-            default:
                 return (
                     <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center flex-shrink-0">
                         <Package className="w-5 h-5" />
+                    </div>
+                );
+            case "stock_update":
+                return (
+                    <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center flex-shrink-0">
+                        <RefreshCw className="w-5 h-5" />
+                    </div>
+                );
+            case "table_update":
+                return (
+                    <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center flex-shrink-0">
+                        <LayoutGrid className="w-5 h-5" />
+                    </div>
+                );
+            case "menu_update":
+                return (
+                    <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center flex-shrink-0">
+                        <Utensils className="w-5 h-5" />
+                    </div>
+                );
+            default:
+                return (
+                    <div className="w-10 h-10 rounded-full bg-gray-50 text-gray-600 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                        <Bell className="w-5 h-5" />
                     </div>
                 );
         }
@@ -169,6 +209,7 @@ export default function Notifikasi({
                                 { key: "unread", label: "Belum Dibaca", count: counts.unread },
                                 { key: "order", label: "Pesanan", count: counts.order },
                                 { key: "stock", label: "Stok", count: counts.stock },
+                                { key: "changes", label: "Perubahan", count: counts.changes || 0 },
                             ].map((tabItem) => (
                                 <button
                                     key={tabItem.key}

@@ -52,8 +52,8 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');
     Route::get('/dashboard/notifikasi', [NotificationController::class, 'viewAll'])->name('dashboard.notifikasi');
     Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::put('/api/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::put('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::match(['put', 'post'], '/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::match(['put', 'post'], '/api/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
     Route::match(['put', 'post'], '/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');

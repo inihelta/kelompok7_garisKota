@@ -45,6 +45,7 @@ class OrderController extends Controller
         try {
             $order->load('table');
             OrderStatusUpdated::dispatch($order, 'processing');
+            \App\Services\NotificationService::notifyOrderStatusChanged($order, 'processing');
         } catch (\Throwable $e) {
         }
 
@@ -62,7 +63,7 @@ class OrderController extends Controller
         try {
             $order->load(['table', 'orderItems.menu']);
             OrderStatusUpdated::dispatch($order, 'completed');
-            \App\Services\NotificationService::notifyOrderReady($order);
+            \App\Services\NotificationService::notifyOrderStatusChanged($order, 'completed');
         } catch (\Throwable $e) {
         }
 
@@ -86,6 +87,7 @@ class OrderController extends Controller
         try {
             $order->load('table');
             OrderStatusUpdated::dispatch($order, 'cancelled');
+            \App\Services\NotificationService::notifyOrderStatusChanged($order, 'cancelled');
         } catch (\Throwable $e) {
         }
 

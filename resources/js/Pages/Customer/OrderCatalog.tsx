@@ -12,7 +12,8 @@ import CategoryJumpModal from "@/Components/Customer/CategoryJumpModal";
 import FloatingCartBar from "@/Components/Customer/FloatingCartBar";
 import OrderCheckoutModal from "@/Components/Customer/OrderCheckoutModal";
 import DesktopCartSidebar from "@/Components/Customer/DesktopCartSidebar";
-import { Search, X, QrCode, AlertTriangle, Coffee } from "lucide-react";
+import { Search, X, QrCode, AlertTriangle, Coffee, ShoppingBag } from "lucide-react";
+import { formatIDR } from "@/lib/utils";
 
 interface OrderCatalogProps {
     table: CustomerTable | null;
@@ -20,6 +21,7 @@ interface OrderCatalogProps {
     menus: CustomerMenu[];
     isInvalidTable?: boolean;
     error?: string | null;
+    activeOrder?: { id: number; order_status: string; total_price: number } | null;
 }
 
 export default function OrderCatalog({
@@ -28,6 +30,7 @@ export default function OrderCatalog({
     menus,
     isInvalidTable,
     error,
+    activeOrder,
 }: OrderCatalogProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] =
@@ -245,6 +248,30 @@ export default function OrderCatalog({
                 <div className="mb-0 lg:mb-6">
                     <CustomerHeader table={table} />
                 </div>
+
+                {activeOrder && (
+                    <div className="mb-4 lg:mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                                <ShoppingBag className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold text-amber-900">
+                                    Pesanan #{activeOrder.id} sedang {activeOrder.order_status === "pending" ? "menunggu antrean" : "diproses"}
+                                </p>
+                                <p className="text-xs text-amber-700">
+                                    Total: {formatIDR(activeOrder.total_price)}
+                                </p>
+                            </div>
+                        </div>
+                        <a
+                            href={`/order/status/${activeOrder.id}`}
+                            className="shrink-0 rounded-full bg-amber-600 px-4 py-2 text-xs font-bold text-white hover:bg-amber-700 transition-colors"
+                        >
+                            Lihat Status
+                        </a>
+                    </div>
+                )}
 
                 <div className="lg:grid lg:grid-cols-12 lg:gap-6 items-start">
                     <main className="lg:col-span-8 bg-white min-h-screen lg:min-h-0 shadow-none lg:shadow-xs lg:rounded-3xl lg:border lg:border-gray-200/80 flex flex-col overflow-hidden">

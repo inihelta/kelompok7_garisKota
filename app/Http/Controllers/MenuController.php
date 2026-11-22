@@ -72,6 +72,7 @@ class MenuController extends Controller
         unset($validated['remove_image']);
 
         $menu->update($validated);
+        \App\Services\NotificationService::notifyMenuUpdated($menu->fresh());
 
         return redirect()->route('dashboard.menu')->with('success', 'Menu berhasil diperbarui.');
     }
