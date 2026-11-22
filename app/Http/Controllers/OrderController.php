@@ -20,7 +20,12 @@ class OrderController extends Controller
         $pesananDiprosesCount = $activeQuery->count();
         $pesananSelesaiCount = Order::where('order_status', 'completed')->count();
 
-        $activeOrders = $activeQuery->latest()->get()->map(fn($order) => $this->mapOrder($order));
+        // Pagination untuk active orders (sama seperti history)
+        $activeOrders = $activeQuery
+            ->latest()
+            ->paginate(10)
+            ->withQueryString()
+            ->through(fn($order) => $this->mapOrder($order));
 
         $historyOrders = $historyQuery
             ->latest()

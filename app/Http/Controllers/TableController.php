@@ -15,10 +15,13 @@ class TableController extends Controller
      */
     public function index()
     {
+        // Hanya ambil pesanan aktif (awaiting_payment, pending, processing) per meja
+        // Hindari load semua orderItems untuk meja yang tidak punya pesanan aktif
         $tables = Table::with(['orders' => function ($query) {
-            $query->whereIn('order_status', ['pending', 'processing'])
+            $query->whereIn('order_status', ['awaiting_payment', 'pending', 'processing'])
                 ->with('orderItems')
-                ->latest();
+                ->latest()
+                ->limit(1); // Cuma butuh pesanan aktif teratas
         }])
         ->orderBy('table_number')
         ->get()

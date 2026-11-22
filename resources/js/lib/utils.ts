@@ -57,3 +57,42 @@ export const formatEstDaily = (est: number | string, unit: string): string => {
     const unitLabel = unit === "Liter" ? "L" : unit
     return `~${est} ${unitLabel}/hari`
 }
+
+// TableToken helper (port dari PHP App\Helpers\TableToken)
+const TABLE_TOKEN_SALT = "7980312123789"
+
+function getSaltHash(): string {
+    // Simple hash - dalam production sebaiknya pakai crypto.subtle
+    let hash = 0
+    const str = TABLE_TOKEN_SALT
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
+    }
+    return Math.abs(hash).toString(16)
+}
+
+export function generateTableToken(tableId: number): string {
+    // Port dari PHP: substr(hash('sha256', $tableId . self::getSalt()), 0, 6)
+    // JS version: simple hash combinaton
+    const combined = `${tableId}${TABLE_TOKEN_SALT}`
+    let hash = 0
+    for (let i = 0; i < combined.length; i++) {
+        const char = combined.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
+    }
+    const hashPart = Math.abs(hash).toString(16).substring(0, 6)
+    
+    // base_convert($tableId, 10, 36) in PHP
+    const encodedId = tableId.toString(36)
+    
+    return `${encodedId}-${hashPart}`
+}
+
+export function getTableOrderUrl(tableId: number): string {
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : ""
+    const token = generateTableToken(tableId)
+    return `${baseUrl}/order/${token}`
+}

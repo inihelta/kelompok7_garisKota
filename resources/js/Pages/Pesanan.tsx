@@ -33,7 +33,7 @@ import { Button } from "@/Components/ui/button";
 
 interface PesananPageProps {
     auth: any;
-    activeOrders?: OrderItem[];
+    activeOrders?: PaginatedData<OrderItem>;
     historyOrders?: PaginatedData<OrderItem>;
     stats?: {
         processing_count: number;
@@ -100,7 +100,7 @@ export default function Pesanan({
         "pesanan",
     );
 
-    const activeList = activeOrders ?? [];
+    const activeList = activeOrders?.data ?? [];
     const historyList = historyOrders?.data ?? [];
 
     const [selectedOrder, setSelectedOrder] = useState<OrderItem | null>(null);
@@ -571,6 +571,27 @@ export default function Pesanan({
                         )}
                     </div>
                 )}
+
+                    {/* Pagination for Active Orders */}
+                    {activeTab === "pesanan" && activeOrders && activeOrders.last_page > 1 && (
+                        <Pagination
+                            links={activeOrders.links}
+                            currentPage={activeOrders.current_page}
+                            totalPages={activeOrders.last_page}
+                            from={activeOrders.from ?? 0}
+                            to={activeOrders.to ?? 0}
+                            total={activeOrders.total ?? 0}
+                            itemName="pesanan"
+                            onPageChange={(page) =>
+                                router.get(
+                                    "/dashboard/pesanan?page=" + page + "&tab=pesanan",
+                                    {
+                                        preserveScroll: true,
+                                    },
+                                )
+                            }
+                        />
+                    )}
 
                 {activeTab === "riwayat" && (
                     <div className="border border-[#e5e7eb] rounded-xl p-4 bg-white flex flex-col gap-3 shadow-xs">

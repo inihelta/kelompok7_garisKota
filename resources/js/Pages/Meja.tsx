@@ -11,6 +11,12 @@ import {
     CheckCircle2,
     Clock,
     LucideProps,
+    QrCode,
+    Download,
+    Eye,
+    Printer,
+    Copy,
+    Check,
 } from "lucide-react";
 import { TableItem } from "@/types/dashboard";
 import {
@@ -24,6 +30,10 @@ import {
 import { Button } from "@/Components/ui/button";
 import MejaFormModal from "@/Components/MejaFormModal";
 import Pagination from "@/Components/Pagination";
+import { QRCodeSVG } from "qrcode.react";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+import { generateTableToken, getTableOrderUrl } from "@/lib/utils";
 
 const TableIcon = ({
     color = "currentColor",
@@ -61,7 +71,7 @@ export default function Meja({
     const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
     const [editingMeja, setEditingMeja] = useState<TableItem | null>(null);
     const [activeDialog, setActiveDialog] = useState<
-        "create" | "edit" | "remove" | null
+        "create" | "edit" | "remove" | "qr" | null
     >(null);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -117,6 +127,11 @@ export default function Meja({
         }
     };
 
+    // Generate table order URL
+    const getTableUrl = (table: TableItem) => {
+        return getTableOrderUrl(table.id);
+    };
+
     const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number; order_action?: "complete" | "cancel" }) => {
         const payload = {
             table_number: Number(data.table_number),
@@ -170,6 +185,108 @@ export default function Meja({
         });
     };
 
+    const openQrModal = (table: TableItem) => {
+        setSelectedTableId(table.id);
+        setActiveDialog("qr");
+    };
+
+    // Export all QR codes as ZIP
+    const handleExportAllQr = async () => {
+        if (tables.length === 0) {
+            toast.error("Tidak ada meja untuk diekspor");
+            return;
+        }
+
+        try {
+            const zip = new JSZip();
+            const qrFolder = zip.folder("qr-codes-meja");
+
+            if (!qrFolder) {
+                toast.error("Gagal membuat folder ZIP");
+                return;
+            }
+
+            for (const table of tables) {
+                const url = getTableOrderUrl(table.id);
+                
+                // Generate QR code as data URL using canvas
+                const canvas = document.createElement("canvas");
+                const qrSize = 300;
+                canvas.width = qrSize;
+                canvas.height = qrSize;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) continue;
+
+                // Use QRCode.react to render to canvas
+                // We'll use a simpler approach - generate via API or use the QRCode library
+                const qrDataUrl = await generateQrDataUrl(url, qrSize);
+                if (qrDataUrl) {
+                    const base64Data = qrDataUrl.split(",")[1];
+                    qrFolder.file(`Meja-${table.table_number}.png`, base64Data, { base64: true });
+                }
+            }
+
+            const content = await zip.generateAsync({ type: "blob" });
+            saveAs(content, `qr-codes-meja-${new Date().toISOString().split("T")[0]}.zip`);
+            toast.success(`${tables.length} QR code meja berhasil diekspor`);
+        } catch (error) {
+            console.error("Export QR error:", error);
+            toast.error("Gagal mengekspor QR code");
+        }
+    };
+
+    // Helper to generate QR data URL
+    const generateQrDataUrl = (text: string, size: number): Promise<string | null> => {
+        return new Promise((resolve) => {
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+                resolve(null);
+                return;
+            }
+
+            // Simple QR code generation using a lightweight approach
+            // We'll use the QRCode library via a temporary div
+            const container = document.createElement("div");
+            container.style.position = "absolute";
+            container.style.left = "-9999px";
+            document.body.appendChild(container);
+
+            try {
+                // Use QRCode.react's internal logic or a simple QR generator
+                // For now, use a simple approach with an API
+                const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(text)}&format=png&margin=2`;
+                
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, size, size);
+                    const dataUrl = canvas.toDataURL("image/png");
+                    document.body.removeChild(container);
+                    resolve(dataUrl);
+                };
+                img.onerror = () => {
+                    // Fallback: draw a placeholder
+                    ctx.fillStyle = "#f0f0f0";
+                    ctx.fillRect(0, 0, size, size);
+                    ctx.fillStyle = "#999";
+                    ctx.font = "14px sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("QR Code", size/2, size/2);
+                    const dataUrl = canvas.toDataURL("image/png");
+                    document.body.removeChild(container);
+                    resolve(dataUrl);
+                };
+                img.src = apiUrl;
+            } catch {
+                document.body.removeChild(container);
+                resolve(null);
+            }
+        });
+    };
+
     const selectedTable = tables.find((t) => t.id === selectedTableId);
 
     return (
@@ -189,17 +306,28 @@ export default function Meja({
                         </span>
                     </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => {
-                        setEditingMeja(null);
-                        setActiveDialog("create");
-                    }}
-                    className="bg-[#D91A20] hover:bg-[#b91c1c] cursor-pointer flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white transition-all duration-200"
-                >
-                    <Plus className="size-6 max-md:size-8" />
-                    Tambah Meja
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        type="button"
+                        onClick={handleExportAllQr}
+                        className="border border-[#e5e7eb] rounded-lg px-4 py-2 text-white bg-[#475569] hover:bg-[#334155] cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-200 text-sm font-medium"
+                        title="Ekspor semua QR Code meja (ZIP)"
+                    >
+                        <Download className="size-4" />
+                        <span>Ekspor QR</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setEditingMeja(null);
+                            setActiveDialog("create");
+                        }}
+                        className="bg-[#D91A20] hover:bg-[#b91c1c] cursor-pointer flex items-center justify-center gap-1 rounded-lg max-md:w-full h-[95%] px-4 py-2 text-white transition-all duration-200"
+                    >
+                        <Plus className="size-6 max-md:size-8" />
+                        Tambah Meja
+                    </button>
+                </div>
             </div>
 
             <div className="flex justify-between pb-3 gap-3 items-center">
@@ -354,6 +482,14 @@ export default function Meja({
                                                 <button
                                                     type="button"
                                                     className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
+                                                    title="QR Code"
+                                                    onClick={() => openQrModal(item)}
+                                                >
+                                                    <QrCode className="w-[18px] h-[18px]" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="w-9 h-9 rounded-[8px] border border-[#e2e8f0] bg-white cursor-pointer flex items-center justify-center text-[#475569] transition-all duration-200 hover:bg-[#f1f5f9]"
                                                     title="Edit"
                                                     onClick={() => {
                                                         setEditingMeja(item);
@@ -450,6 +586,107 @@ export default function Meja({
                                 }}
                             >
                                 Ya, Hapus meja ini
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* QR Code Modal */}
+                <Dialog
+                    open={activeDialog === "qr"}
+                    onOpenChange={(open) =>
+                        setActiveDialog(open ? "qr" : null)
+                    }
+                >
+                    <DialogContent className="sm:max-w-md max-h-[90vh]">
+                        <DialogHeader>
+                            <DialogTitle>
+                                QR Code Meja M-{selectedTable?.table_number}
+                            </DialogTitle>
+                            <DialogDescription>
+                                Scan untuk memesan di Meja M-{selectedTable?.table_number} • Area {selectedTable?.location}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="flex flex-col items-center gap-4 py-4">
+                            {selectedTable && (
+                                <>
+                                    <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                                        <QRCodeSVG
+                                            value={getTableOrderUrl(selectedTable.id)}
+                                            size={200}
+                                            level="M"
+                                            includeMargin={true}
+                                        />
+                                    </div>
+                                    <div className="w-full space-y-2 text-center">
+                                        <div className="text-sm font-medium text-gray-900">
+                                            Link Pesanan:
+                                        </div>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <code className="flex-1 bg-gray-50 px-3 py-2 rounded-lg text-xs font-mono text-gray-700 break-all truncate max-w-[200px]">
+                                                {getTableOrderUrl(selectedTable.id)}
+                                            </code>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        getTableOrderUrl(selectedTable.id),
+                                                    );
+                                                    toast.success("Link disalin ke clipboard");
+                                                }}
+                                                className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+                                                title="Salin link"
+                                            >
+                                                <Copy className="w-4 h-4 text-gray-600" />
+                                            </button>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const printWindow = window.open("", "_blank");
+                                                if (printWindow) {
+                                                    const url = getTableOrderUrl(selectedTable.id);
+                                                    printWindow.document.write(`
+                                                        <html>
+                                                            <head>
+                                                                <title>QR Code Meja M-${selectedTable.table_number}</title>
+                                                                <style>
+                                                                    body { font-family: sans-serif; text-align: center; padding: 20px; }
+                                                                    .qr-container { display: inline-block; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+                                                                    h2 { color: #1e293b; margin-bottom: 10px; }
+                                                                    .info { margin-top: 15px; color: #475569; font-size: 14px; }
+                                                                    .url { font-family: monospace; background: #f1f5f9; padding: 8px 12px; border-radius: 8px; display: inline-block; margin-top: 10px; word-break: break-all; }
+                                                                </style>
+                                                            </head>
+                                                            <body onload="window.print(); window.onafterprint = () => window.close();">
+                                                                <div class="qr-container">
+                                                                    <h2>Meja M-${selectedTable.table_number}</h2>
+                                                                    <p class="info">Area ${selectedTable.location.charAt(0).toUpperCase() + selectedTable.location.slice(1)}</p>
+                                                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&format=png&margin=2" alt="QR Code" />
+                                                                    <div class="url">${url}</div>
+                                                                </div>
+                                                            </body>
+                                                        </html>
+                                                    `);
+                                                    printWindow.document.close();
+                                                }
+                                            }}
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors"
+                                        >
+                                            <Printer className="w-4 h-4" />
+                                            <span>Cetak QR Code</span>
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setActiveDialog(null)}
+                            >
+                                Tutup
                             </Button>
                         </DialogFooter>
                     </DialogContent>
