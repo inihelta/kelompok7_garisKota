@@ -45,6 +45,11 @@ export default function Menu({
 }) {
     const [categoryList, setCategoryList] =
         useState<CategoryItem[]>(categories);
+
+    useEffect(() => {
+        setCategoryList(categories);
+    }, [categories]);
+
     const categoryName = ["Semua Menu"].concat(
         categoryList.map((cat) => cat.name),
     );
@@ -97,13 +102,6 @@ export default function Menu({
     };
 
     const handleAddCategory = (name: string) => {
-        const newId =
-            categoryList.length > 0
-                ? Math.max(...categoryList.map((c) => c.id)) + 1
-                : 1;
-        const newCat: CategoryItem = { id: newId, name };
-        setCategoryList((prev) => [...prev, newCat]);
-
         router.post(
             "/categories",
             { name },
@@ -120,29 +118,19 @@ export default function Menu({
         const oldCat = categoryList.find((c) => c.id === id);
         const oldName = oldCat?.name;
 
-        setCategoryList((prev) =>
-            prev.map((c) => (c.id === id ? { ...c, name } : c)),
-        );
-
-        if (oldName && activeCategory === oldName) {
-            setActiveCategory(name);
-        }
-
         router.put(
             `/categories/${id}`,
             { name },
             {
                 preserveScroll: true,
-                onSuccess: () => toast.success("Kategori diperbarui"),
+                onSuccess: () => {
+                    toast.success("Kategori diperbarui");
+                    if (oldName && activeCategory === oldName) {
+                        setActiveCategory(name);
+                    }
+                },
                 onError: (errors) => {
                     toast.error(errors.message || "Gagal memperbarui kategori");
-                    if (oldName) {
-                        setCategoryList((prev) =>
-                            prev.map((c) =>
-                                c.id === id ? { ...c, name: oldName } : c,
-                            ),
-                        );
-                    }
                 },
             },
         );
@@ -152,19 +140,16 @@ export default function Menu({
         const cat = categoryList.find((c) => c.id === id);
         const catName = cat?.name;
 
-        setCategoryList((prev) => prev.filter((c) => c.id !== id));
-        if (catName && activeCategory === catName) {
-            setActiveCategory("Semua Menu");
-        }
-
         router.delete(`/categories/${id}`, {
             preserveScroll: true,
-            onSuccess: () => toast.success("Kategori dihapus"),
+            onSuccess: () => {
+                toast.success("Kategori dihapus");
+                if (catName && activeCategory === catName) {
+                    setActiveCategory("Semua Menu");
+                }
+            },
             onError: (errors) => {
                 toast.error(errors.message || "Gagal menghapus kategori");
-                if (catName) {
-                    setCategoryList((prev) => [...prev, { id, name: catName }]);
-                }
             },
         });
     };

@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\CustomerOrderController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -45,7 +46,14 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
     Route::get('/dashboard/pendapatan', [IncomeController::class, 'index'])->name('dashboard.pendapatan');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/meja', [TableController::class, 'index'])->name('dashboard.meja');
+    Route::post('/tables', [TableController::class, 'store'])->name('tables.store');
+    Route::match(['put', 'post'], '/tables/{table}', [TableController::class, 'update'])->name('tables.update');
+    Route::delete('/tables/{table}', [TableController::class, 'destroy'])->name('tables.destroy');
     Route::get('/dashboard/stok', [StockController::class, 'index'])->name('dashboard.stok');
+    Route::get('/dashboard/notifikasi', [NotificationController::class, 'viewAll'])->name('dashboard.notifikasi');
+    Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::put('/api/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
 
     Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
     Route::match(['put', 'post'], '/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');
@@ -53,7 +61,10 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
 
     Route::resource('stocks', StockController::class)->except(['create', 'edit']);
     Route::resource('stock-categories', StockCategoryController::class)->except(['create', 'edit']);
-    Route::resource('categories', CategoryController::class)->except(['create', 'edit', 'show']);
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::match(['put', 'post'], '/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 });

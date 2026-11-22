@@ -60,8 +60,9 @@ class OrderController extends Controller
         }
 
         try {
-            $order->load('table');
+            $order->load(['table', 'orderItems.menu']);
             OrderStatusUpdated::dispatch($order, 'completed');
+            \App\Services\NotificationService::notifyOrderReady($order);
         } catch (\Throwable $e) {
         }
 

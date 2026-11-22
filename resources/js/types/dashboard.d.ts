@@ -179,3 +179,24 @@ export interface PendapatanPageProps {
     startDate?: string;
     endDate?: string;
 }
+
+export interface NotificationItem {
+    id: number;
+    type: "order" | "stock";
+    category: "new_order" | "order_ready" | "stock_low" | "stock_empty" | string;
+    title: string;
+    message: string;
+    tag?: string | null;
+    action_url?: string | null;
+    reference_id?: number | null;
+    is_read: boolean;
+    created_at?: string;
+    time_ago?: string;
+}
+
+export interface NotificationCounts {
+    all: number;
+    unread: number;
+    order: number;
+    stock: number;
+}

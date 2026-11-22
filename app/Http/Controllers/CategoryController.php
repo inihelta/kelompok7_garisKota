@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    public function index()
+    {
+        return redirect()->route('dashboard.menu');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -18,20 +23,24 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori menu berhasil ditambahkan.');
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $category)
     {
+        $cat = $category instanceof Category ? $category : Category::findOrFail($category);
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => 'required|string|max:255|unique:categories,name,' . $cat->id,
         ]);
 
-        $category->update($validated);
+        $cat->update($validated);
 
         return redirect()->back()->with('success', 'Kategori menu berhasil diperbarui.');
     }
 
-    public function destroy(Category $category)
+    public function destroy(Request $request, $category)
     {
-        $category->delete();
+        $cat = $category instanceof Category ? $category : Category::findOrFail($category);
+
+        $cat->delete();
 
         return redirect()->back()->with('success', 'Kategori menu berhasil dihapus.');
     }

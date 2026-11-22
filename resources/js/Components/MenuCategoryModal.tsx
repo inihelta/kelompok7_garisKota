@@ -8,6 +8,7 @@ import {
     DialogTitle,
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 import {
     Plus,
     Pencil,
@@ -145,98 +146,100 @@ export default function MenuCategoryModal({
                     </div>
                 </form>
 
-                <div className="flex-1 overflow-y-auto mt-4 space-y-2 pr-1 min-h-[160px]">
-                    <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider block mb-2">
-                        Daftar Kategori ({categories.length})
-                    </span>
+                <ScrollArea className="flex-1 mt-4 -mr-2 pr-3 min-h-[160px]">
+                    <div className="space-y-2">
+                        <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider block mb-2">
+                            Daftar Kategori ({categories.length})
+                        </span>
 
-                    {categories.length === 0 ? (
-                        <div className="text-center py-8 text-xs text-gray-400">
-                            Belum ada kategori yang dibuat.
-                        </div>
-                    ) : (
-                        categories.map((cat, index) => {
-                            const isEditing = editingId === cat.id;
+                        {categories.length === 0 ? (
+                            <div className="text-center py-8 text-xs text-gray-400">
+                                Belum ada kategori yang dibuat.
+                            </div>
+                        ) : (
+                            categories.map((cat, index) => {
+                                const isEditing = editingId === cat.id;
 
-                            return (
-                                <div
-                                    key={cat.id || index}
-                                    className="flex flex-col p-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] hover:bg-white transition-colors gap-2"
-                                >
-                                    {isEditing ? (
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={editingName}
-                                                    onChange={(e) =>
-                                                        setEditingName(
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    autoFocus
-                                                    className="w-full px-2.5 py-1.5 rounded-md border border-[#cbd5e1] text-sm text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#ef4444]"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleSaveEdit(cat.id)
-                                                    }
-                                                    className="p-1.5 bg-[#d2ffe2] border border-[#aafcc7] text-[#16a34a] hover:bg-[#bbf7d0] rounded-md transition"
-                                                    title="Simpan"
-                                                >
-                                                    <Check className="size-4" />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleCancelEdit}
-                                                    className="p-1.5 bg-gray-200 border border-gray-200 text-gray-600 hover:bg-gray-300 rounded-md transition"
-                                                    title="Batal"
-                                                >
-                                                    <X className="size-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="flex items-center gap-2.5 min-w-0">
-                                                <div className="size-8 rounded-lg bg-[#fee2e2] flex items-center justify-center flex-shrink-0"></div>
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className="font-semibold text-sm text-[#1e293b] truncate">
-                                                        {cat.name}
-                                                    </span>
+                                return (
+                                    <div
+                                        key={cat.id || index}
+                                        className="flex flex-col p-3 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] hover:bg-white transition-colors gap-2"
+                                    >
+                                        {isEditing ? (
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editingName}
+                                                        onChange={(e) =>
+                                                            setEditingName(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        autoFocus
+                                                        className="w-full px-2.5 py-1.5 rounded-md border border-[#cbd5e1] text-sm text-[#1e293b] focus:outline-none focus:ring-2 focus:ring-[#ef4444]"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleSaveEdit(cat.id)
+                                                        }
+                                                        className="p-1.5 bg-[#d2ffe2] border border-[#aafcc7] text-[#16a34a] hover:bg-[#bbf7d0] rounded-md transition"
+                                                        title="Simpan"
+                                                    >
+                                                        <Check className="size-4" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleCancelEdit}
+                                                        className="p-1.5 bg-gray-200 border border-gray-200 text-gray-600 hover:bg-gray-300 rounded-md transition"
+                                                        title="Batal"
+                                                    >
+                                                        <X className="size-4" />
+                                                    </button>
                                                 </div>
                                             </div>
+                                        ) : (
+                                            <div className="flex items-center justify-between gap-3">
+                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                    <div className="size-8 rounded-lg bg-[#fee2e2] flex items-center justify-center flex-shrink-0"></div>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="font-semibold text-sm text-[#1e293b] truncate">
+                                                            {cat.name}
+                                                        </span>
+                                                    </div>
+                                                </div>
 
-                                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleStartEdit(cat)
-                                                    }
-                                                    className="w-8 h-8 rounded-md border border-[#e2e8f0] bg-white flex items-center justify-center text-[#475569] hover:bg-gray-100 transition"
-                                                    title="Ubah kategori & ikon"
-                                                >
-                                                    <Pencil className="size-3.5" />
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        onDeleteCategory(cat.id)
-                                                    }
-                                                    className="w-8 h-8 rounded-md border border-[#fee2e2] bg-[#fee2e2] flex items-center justify-center text-[#ef4444] hover:bg-[#fecaca] transition"
-                                                    title="Hapus kategori"
-                                                >
-                                                    <Trash2 className="size-3.5" />
-                                                </button>
+                                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleStartEdit(cat)
+                                                        }
+                                                        className="w-8 h-8 rounded-md border border-[#e2e8f0] bg-white flex items-center justify-center text-[#475569] hover:bg-gray-100 transition"
+                                                        title="Ubah kategori & ikon"
+                                                    >
+                                                        <Pencil className="size-3.5" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            onDeleteCategory(cat.id)
+                                                        }
+                                                        className="w-8 h-8 rounded-md border border-[#fee2e2] bg-[#fee2e2] flex items-center justify-center text-[#ef4444] hover:bg-[#fecaca] transition"
+                                                        title="Hapus kategori"
+                                                    >
+                                                        <Trash2 className="size-3.5" />
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
+                                        )}
+                                    </div>
+                                );
+                            })
+                        )}
+                    </div>
+                </ScrollArea>
 
                 <div className="pt-3 border-t border-[#f1f5f9] mt-3 flex justify-end">
                     <Button

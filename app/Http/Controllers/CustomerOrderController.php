@@ -158,10 +158,11 @@ class CustomerOrderController extends Controller
                 return $order;
             });
 
-            // Siarkan pesanan baru secara real-time via Laravel Reverb
+            // Siarkan pesanan baru secara real-time via Laravel Reverb & buat notifikasi
             try {
-                $order->load('table');
+                $order->load(['table', 'orderItems.menu']);
                 NewOrderPlaced::dispatch($order);
+                \App\Services\NotificationService::notifyNewOrder($order);
             } catch (\Throwable $e) {
                 // Jangan gagalkan pesanan jika service Reverb belum dinyalakan
             }

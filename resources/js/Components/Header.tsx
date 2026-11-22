@@ -17,6 +17,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
+import NotificationDropdown from "@/Components/NotificationDropdown";
 interface HeaderProps {
     onToggleSidebar: () => void;
     user?: { name?: string; email?: string } | null;
@@ -24,12 +25,31 @@ interface HeaderProps {
 
 export default function Header({ onToggleSidebar, user }: HeaderProps) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const notifContainerRef = useRef<HTMLDivElement>(null);
     const { url } = usePage();
     const paths = url
         .split("?")[0]
         .split("/")
         .filter((path) => path && path.toLowerCase() !== "dashboard");
+
+    // Fetch initial unread count
+    useEffect(() => {
+        async function fetchUnreadCount() {
+            try {
+                const res = await fetch("/api/notifications?limit=1");
+                if (res.ok) {
+                    const data = await res.json();
+                    setUnreadCount(data.unread_count || 0);
+                }
+            } catch (e) {
+                // Ignore silent fetch error
+            }
+        }
+        fetchUnreadCount();
+    }, []);
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (
@@ -99,17 +119,29 @@ export default function Header({ onToggleSidebar, user }: HeaderProps) {
             </div>
 
             <div className="flex items-center gap-[18px] lg:gap-[30px] ml-auto">
-                <button
-                    className="relative text-[#1f2937] bg-transparent border-0 p-0 cursor-pointer"
-                    type="button"
-                    aria-label="Notifikasi"
-                >
-                    <Bell className="block w-5 h-5" aria-hidden="true" />
-                    <span
-                        className="absolute -top-[1px] right-0 w-[6px] h-[6px] rounded-full bg-[#e31b23]"
-                        aria-hidden="true"
+                {/* Notification Dropdown Container */}
+                <div className="relative" ref={notifContainerRef}>
+                    <button
+                        className="relative text-[#1f2937] hover:text-[#D91A20] transition-colors bg-transparent border-0 p-1 cursor-pointer"
+                        type="button"
+                        aria-label="Notifikasi"
+                        onClick={() => setNotifOpen(!notifOpen)}
+                    >
+                        <Bell className="block w-5 h-5" aria-hidden="true" />
+                        {unreadCount > 0 && (
+                            <span
+                                className="absolute top-0 right-0 w-[8px] h-[8px] rounded-full bg-[#e31b23] ring-2 ring-white"
+                                aria-hidden="true"
+                            />
+                        )}
+                    </button>
+
+                    <NotificationDropdown
+                        isOpen={notifOpen}
+                        onClose={() => setNotifOpen(false)}
+                        onUnreadCountChange={setUnreadCount}
                     />
-                </button>
+                </div>
 
                 <div className="relative p-2 rounded-md" ref={dropdownRef}>
                     <button

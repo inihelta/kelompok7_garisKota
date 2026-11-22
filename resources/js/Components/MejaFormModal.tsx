@@ -26,11 +26,9 @@ export default function MejaFormModal({
     const isEdit = Boolean(meja);
 
     const [nomorMeja, setNomorMeja] = useState("");
-    const [area, setArea] = useState<"Indoor" | "Outdoor">("Indoor");
+    const [area, setArea] = useState<"indoor" | "outdoor">("indoor");
     const [kapasitas, setKapasitas] = useState<number>(4);
-    const [status, setStatus] = useState<"tersedia" | "terisi" | "reservasi">(
-        "tersedia",
-    );
+    const [status, setStatus] = useState<"tersedia" | "terisi">("tersedia");
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -38,12 +36,12 @@ export default function MejaFormModal({
             setError(null);
             if (meja) {
                 setNomorMeja(meja.table_number?.toString() || "");
-                setArea(meja.location === "outdoor" ? "Outdoor" : "Indoor");
+                setArea(meja.location === "outdoor" ? "outdoor" : "indoor");
                 setKapasitas(meja.capacity || 4);
                 setStatus(meja.available ? "tersedia" : "terisi");
             } else {
                 setNomorMeja("");
-                setArea("Indoor");
+                setArea("indoor");
                 setKapasitas(4);
                 setStatus("tersedia");
             }
@@ -53,25 +51,25 @@ export default function MejaFormModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!nomorMeja.trim()) {
-            setError("Nomor meja wajib diisi");
+        const num = parseInt(nomorMeja, 10);
+        if (!nomorMeja.toString().trim() || isNaN(num) || num <= 0) {
+            setError("Nomor meja wajib diisi dengan angka bulat positif");
             return;
         }
 
-        if (kapasitas <= 0) {
+        const cap = Number(kapasitas);
+        if (isNaN(cap) || cap <= 0) {
             setError("Kapasitas kursi minimal 1 orang");
             return;
         }
 
         onSave({
             ...(meja ? { id: meja.id } : {}),
-            table_number: Number(nomorMeja.trim()),
-            capacity: Number(kapasitas),
+            table_number: num,
+            capacity: cap,
             available: status === "tersedia",
-            location: area.toLowerCase() as "indoor" | "outdoor",
+            location: area,
         });
-
-        onClose();
     };
 
     return (
@@ -95,17 +93,17 @@ export default function MejaFormModal({
                     <div className="space-y-4 overflow-y-auto flex-1 pr-2 py-1">
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Nomor Meja{" "}
-                                <span className="text-red-500">*</span>
+                                Nomor Meja <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="text"
+                                type="number"
+                                min="1"
                                 value={nomorMeja}
                                 onChange={(e) => {
                                     setNomorMeja(e.target.value);
                                     if (error) setError(null);
                                 }}
-                                placeholder="Contoh: Meja 01"
+                                placeholder="1"
                                 className={`w-full px-3.5 py-2 rounded-lg border text-sm outline-none transition-colors duration-200 ${
                                     error
                                         ? "border-red-500 focus:border-red-600"
@@ -122,58 +120,45 @@ export default function MejaFormModal({
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Area / Lokasi{" "}
-                                    <span className="text-red-500">*</span>
+                                    Area / Lokasi <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={area}
                                     onChange={(e) =>
-                                        setArea(
-                                            e.target.value as
-                                                | "Indoor"
-                                                | "Outdoor",
-                                        )
+                                        setArea(e.target.value as "indoor" | "outdoor")
                                     }
                                     className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
                                 >
-                                    <option value="Indoor">Indoor</option>
-                                    <option value="Outdoor">Outdoor</option>
+                                    <option value="indoor">Indoor</option>
+                                    <option value="outdoor">Outdoor</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-[#334155] mb-1">
-                                    Status{" "}
-                                    <span className="text-red-500">*</span>
+                                    Status <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     value={status}
                                     onChange={(e) =>
-                                        setStatus(
-                                            e.target.value as
-                                                | "tersedia"
-                                                | "terisi"
-                                                | "reservasi",
-                                        )
+                                        setStatus(e.target.value as "tersedia" | "terisi")
                                     }
                                     className="w-full px-3.5 py-2 rounded-lg border text-sm outline-none bg-white transition-colors duration-200 border-[#d1d5db] focus:border-[#D91A20]"
                                 >
                                     <option value="tersedia">Tersedia</option>
                                     <option value="terisi">Terisi</option>
-                                    <option value="reservasi">Reservasi</option>
                                 </select>
                             </div>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-[#334155] mb-1">
-                                Kapasitas Kursi (Orang){" "}
-                                <span className="text-red-500">*</span>
+                                Kapasitas Kursi (Orang) <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="number"
                                 min="1"
-                                max="20"
+                                max="50"
                                 value={kapasitas}
                                 onChange={(e) =>
                                     setKapasitas(Number(e.target.value))

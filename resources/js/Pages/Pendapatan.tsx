@@ -14,6 +14,7 @@ import {
     Clock,
     LucideProps,
     Check,
+    TrendingDown,
 } from "lucide-react";
 import {
     ResponsiveContainer,
@@ -101,7 +102,9 @@ export default function Pendapatan({
 
     // Filter tanggal dropdown
     const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
-    const [showCustomInputs, setShowCustomInputs] = useState(currentFilter === "custom");
+    const [showCustomInputs, setShowCustomInputs] = useState(
+        currentFilter === "custom",
+    );
     const [customStart, setCustomStart] = useState(propStartDate || "");
     const [customEnd, setCustomEnd] = useState(propEndDate || "");
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -132,7 +135,7 @@ export default function Pendapatan({
         router.get(
             "/dashboard/pendapatan",
             { filter: filterKey },
-            { preserveState: true, preserveScroll: true }
+            { preserveState: true, preserveScroll: true },
         );
     };
 
@@ -143,7 +146,7 @@ export default function Pendapatan({
         router.get(
             "/dashboard/pendapatan",
             { start_date: customStart, end_date: customEnd },
-            { preserveState: true, preserveScroll: true }
+            { preserveState: true, preserveScroll: true },
         );
     };
 
@@ -232,13 +235,18 @@ export default function Pendapatan({
                                     { key: "today", label: "Hari Ini" },
                                     { key: "yesterday", label: "Kemarin" },
                                     { key: "7days", label: "7 Hari Terakhir" },
-                                    { key: "30days", label: "30 Hari Terakhir" },
+                                    {
+                                        key: "30days",
+                                        label: "30 Hari Terakhir",
+                                    },
                                     { key: "this_month", label: "Bulan Ini" },
                                 ].map((opt) => (
                                     <button
                                         key={opt.key}
                                         type="button"
-                                        onClick={() => handleFilterSelect(opt.key)}
+                                        onClick={() =>
+                                            handleFilterSelect(opt.key)
+                                        }
                                         className={`w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors cursor-pointer ${
                                             currentFilter === opt.key
                                                 ? "bg-red-50 font-semibold text-[#D91A20]"
@@ -257,9 +265,14 @@ export default function Pendapatan({
                                 <div className="px-4 py-1.5">
                                     <button
                                         type="button"
-                                        onClick={() => setShowCustomInputs(!showCustomInputs)}
+                                        onClick={() =>
+                                            setShowCustomInputs(
+                                                !showCustomInputs,
+                                            )
+                                        }
                                         className={`w-full text-left font-medium flex items-center justify-between py-1 cursor-pointer ${
-                                            currentFilter === "custom" || showCustomInputs
+                                            currentFilter === "custom" ||
+                                            showCustomInputs
                                                 ? "text-[#D91A20] font-semibold"
                                                 : "text-gray-700 hover:text-[#D91A20]"
                                         }`}
@@ -267,7 +280,9 @@ export default function Pendapatan({
                                         <span>Rentang Tanggal Kustom</span>
                                         <ChevronDown
                                             className={`w-3.5 h-3.5 transition-transform ${
-                                                showCustomInputs ? "rotate-180" : ""
+                                                showCustomInputs
+                                                    ? "rotate-180"
+                                                    : ""
                                             }`}
                                         />
                                     </button>
@@ -284,7 +299,11 @@ export default function Pendapatan({
                                                 <input
                                                     type="date"
                                                     value={customStart}
-                                                    onChange={(e) => setCustomStart(e.target.value)}
+                                                    onChange={(e) =>
+                                                        setCustomStart(
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     className="w-full text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#D91A20] text-gray-700"
                                                     required
                                                 />
@@ -296,7 +315,11 @@ export default function Pendapatan({
                                                 <input
                                                     type="date"
                                                     value={customEnd}
-                                                    onChange={(e) => setCustomEnd(e.target.value)}
+                                                    onChange={(e) =>
+                                                        setCustomEnd(
+                                                            e.target.value,
+                                                        )
+                                                    }
                                                     className="w-full text-xs px-2.5 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#D91A20] text-gray-700"
                                                     required
                                                 />
@@ -325,14 +348,20 @@ export default function Pendapatan({
                             {currentFilter === "today"
                                 ? "Pendapatan Hari Ini"
                                 : currentFilter === "yesterday"
-                                ? "Pendapatan Kemarin"
-                                : "Pendapatan Periode"}
+                                  ? "Pendapatan Kemarin"
+                                  : "Pendapatan Periode"}
                         </span>
                         <span className="text-xl font-bold text-[#1e293b]">
                             {formatIDR(metrics?.today_revenue || 0)}
                         </span>
-                        <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
-                            <TrendingUp className="w-3.5 h-3.5" />
+                        <div
+                            className={`flex items-center gap-1 text-xs font-semibold  ${metrics?.revenue_growth >= 0 ? "text-[#16a34a]" : "text-[#D91A20]"}`}
+                        >
+                            {metrics?.revenue_growth >= 0 ? (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                            ) : (
+                                <TrendingDown className="w-3.5 h-3.5" />
+                            )}
                             <span>
                                 {metrics?.revenue_growth >= 0 ? "+" : ""}
                                 {metrics?.revenue_growth || 0}%{" "}
@@ -352,14 +381,20 @@ export default function Pendapatan({
                             {currentFilter === "today"
                                 ? "Pesanan Hari Ini"
                                 : currentFilter === "yesterday"
-                                ? "Pesanan Kemarin"
-                                : "Pesanan Periode"}
+                                  ? "Pesanan Kemarin"
+                                  : "Pesanan Periode"}
                         </span>
                         <span className="text-xl font-bold text-[#1e293b]">
                             {metrics?.today_orders || 0}
                         </span>
-                        <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
-                            <TrendingUp className="w-3.5 h-3.5" />
+                        <div
+                            className={`flex items-center gap-1 text-xs font-semibold ${metrics?.revenue_growth >= 0 ? "text-[#16a34a]" : "text-[#D91A20]"}`}
+                        >
+                            {metrics?.revenue_growth >= 0 ? (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                            ) : (
+                                <TrendingDown className="w-3.5 h-3.5" />
+                            )}
                             <span>
                                 {metrics?.orders_growth >= 0 ? "+" : ""}
                                 {metrics?.orders_growth || 0}%{" "}

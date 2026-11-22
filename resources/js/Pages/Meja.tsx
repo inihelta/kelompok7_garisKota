@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { toast } from "sonner";
 import {
     Search,
     Pencil,
@@ -117,34 +118,55 @@ export default function Meja({
     };
 
     const handleSaveMeja = (data: Omit<TableItem, "id"> & { id?: number }) => {
+        const payload = {
+            table_number: Number(data.table_number),
+            capacity: Number(data.capacity),
+            available: Boolean(data.available),
+            location: data.location,
+        };
+
         if (data.id) {
-            setTables((prev) =>
-                prev.map((t) =>
-                    t.id === data.id ? ({ ...t, ...data } as TableItem) : t,
-                ),
-            );
+            router.put(`/tables/${data.id}`, payload, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success("Data meja berhasil diperbarui");
+                    setActiveDialog(null);
+                    setEditingMeja(null);
+                },
+                onError: (errors) => {
+                    const firstError = Object.values(errors)[0] as string;
+                    toast.error(firstError || "Gagal memperbarui meja");
+                },
+            });
         } else {
-            const newId =
-                tables.length > 0
-                    ? Math.max(...tables.map((t) => t.id)) + 1
-                    : 1;
-            const newTable: TableItem = {
-                id: newId,
-                table_number: data.table_number,
-                capacity: data.capacity,
-                available: data.available,
-                location: data.location,
-            };
-            setTables((prev) => [newTable, ...prev]);
+            router.post("/tables", payload, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success("Meja baru berhasil ditambahkan");
+                    setActiveDialog(null);
+                    setEditingMeja(null);
+                },
+                onError: (errors) => {
+                    const firstError = Object.values(errors)[0] as string;
+                    toast.error(firstError || "Gagal menambahkan meja");
+                },
+            });
         }
-        setActiveDialog(null);
-        setEditingMeja(null);
     };
 
     const handleDelete = (id: number) => {
-        setTables((prev) => prev.filter((item) => item.id !== id));
-        setSelectedTableId(null);
-        setActiveDialog(null);
+        router.delete(`/tables/${id}`, {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success("Meja berhasil dihapus");
+                setSelectedTableId(null);
+                setActiveDialog(null);
+            },
+            onError: (errors) => {
+                const firstError = Object.values(errors)[0] as string;
+                toast.error(firstError || "Gagal menghapus meja");
+            },
+        });
     };
 
     const selectedTable = tables.find((t) => t.id === selectedTableId);
@@ -393,11 +415,11 @@ export default function Meja({
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>
-                                Hapus {selectedTable?.table_number}?
+                                Hapus Meja M-{selectedTable?.table_number}?
                             </DialogTitle>
                             <DialogDescription>
                                 Tindakan ini tidak dapat dibatalkan. Ini akan
-                                menghapus data "{selectedTable?.table_number}"
+                                menghapus data meja M-{selectedTable?.table_number}
                                 selamanya.
                             </DialogDescription>
                         </DialogHeader>

@@ -90,7 +90,8 @@ class StockController extends Controller
             'est_daily' => 'nullable|numeric|min:0',
         ]);
 
-        Stock::create($validated);
+        $createdStock = Stock::create($validated);
+        \App\Services\NotificationService::notifyStockAlert($createdStock);
 
         return redirect()->route('dashboard.stok')->with('success', 'Bahan berhasil ditambahkan.');
     }
@@ -127,6 +128,7 @@ class StockController extends Controller
         ]);
 
         $stock->update($validated);
+        \App\Services\NotificationService::notifyStockAlert($stock->fresh());
 
         return redirect()->back()->with('success', 'Stok bahan berhasil diperbarui.');
     }
