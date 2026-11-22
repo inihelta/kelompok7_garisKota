@@ -27,6 +27,29 @@ class StockTest extends TestCase
         $response->assertInertia(fn ($page) => $page->component('Stok'));
     }
 
+    public function test_stok_page_never_sends_phantom_category_ids(): void
+    {
+        // Tanpa kategori di DB, frontend boleh kosong — tapi tidak boleh
+        // dikasih ID palsu (dulu hardcoded 1-5) yang bikin CRUD 404.
+        $response = $this->actingAs($this->user)->get('/dashboard/stok');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->where('categoryList', [])
+            ->where('categories', ['Semua Kategori'])
+        );
+
+        StockCategory::create(['name' => 'Biji Kopi & Bubuk', 'icon' => 'coffee']);
+        $realId = StockCategory::first()->id;
+
+        $response = $this->actingAs($this->user)->get('/dashboard/stok');
+
+        $response->assertInertia(fn ($page) => $page
+            ->where('categoryList.0.id', $realId)
+            ->where('categoryList.0.name', 'Biji Kopi & Bubuk')
+        );
+    }
+
     public function test_create_stock_item(): void
     {
         $category = StockCategory::create(['name' => 'Bahan', 'icon' => 'food']);

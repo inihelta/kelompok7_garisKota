@@ -12,10 +12,13 @@ export const formatIDR = (value: number | string): string =>
         minimumFractionDigits: 0,
     }).format(Number(value) || 0)
 
+// Base URL mengikuti MENU_DISK di backend: "/storage" untuk local, URL bucket untuk s3
+const STORAGE_BASE = (import.meta.env.VITE_STORAGE_URL as string | undefined) ?? "/storage"
+
 export const getImageSrc = (imagePath?: string): string => {
     if (!imagePath) return ""
     if (imagePath.startsWith("http") || imagePath.startsWith("/")) return imagePath
-    return `/storage/${imagePath}`
+    return `${STORAGE_BASE.replace(/\/+$/, "")}/${imagePath}`
 }
 
 export const getCategoryBadgeClass = (categoryId: number): string => {

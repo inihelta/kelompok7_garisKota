@@ -11,6 +11,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { getImageSrc } from "@/lib/utils";
 
 interface Category {
     id: number;
@@ -61,12 +62,7 @@ export default function MenuFormModal({
                     remove_image: false,
                 });
                 if (menu.image) {
-                    const fullImageUrl =
-                        menu.image.startsWith("http") ||
-                        menu.image.startsWith("/")
-                            ? menu.image
-                            : `/storage/${menu.image}`;
-                    setImagePreview(fullImageUrl);
+                    setImagePreview(getImageSrc(menu.image));
                 } else {
                     setImagePreview(null);
                 }

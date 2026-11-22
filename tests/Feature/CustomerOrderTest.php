@@ -143,4 +143,58 @@ class CustomerOrderTest extends TestCase
         $this->assertEquals('cancelled', $order->fresh()->order_status);
         $this->assertEquals(10, $this->menu->fresh()->stock); // stock restored
     }
+
+    public function test_new_order_creates_notification_for_cashier(): void
+    {
+        $token = \App\Helpers\TableToken::generate($this->table->id);
+
+        $this->post('/order', [
+            'table_token' => $token,
+            'customer_name' => 'Budi',
+            'items' => [
+                ['menu_id' => $this->menu->id, 'quantity' => 2, 'notes' => null],
+            ],
+        ]);
+
+        $order = \App\Models\Order::first();
+        $this->assertNotNull($order, 'Pesanan harus terbuat lebih dulu');
+
+        $this->assertDatabaseHas('app_notifications', [
+            'type' => 'order',
+            'category' => 'new_order',
+            'reference_id' => $order->id,
+            'action_url' => '/dashboard/pesanan',
+            'is_read' => false,
+        ]);
+
+        // Pastikan isinya memuat info meja & item, bukan template kosong
+        $notification = \App\Models\AppNotification::where('reference_id', $order->id)->first();
+        $this->assertStringContainsString('Meja 5', $notification->message);
+        $this->assertStringContainsString('Kopi Susu', $notification->message);
+    }
+
+    public function test_customer_cancel_creates_notification_for_cashier(): void
+    {
+        $token = \App\Helpers\TableToken::generate($this->table->id);
+
+        $this->post('/order', [
+            'table_token' => $token,
+            'customer_name' => 'Budi',
+            'items' => [
+                ['menu_id' => $this->menu->id, 'quantity' => 1, 'notes' => null],
+            ],
+        ]);
+
+        $order = \App\Models\Order::first();
+
+        $this->withCookie('placed_orders', json_encode([$order->id]))
+            ->put("/order/{$order->id}/cancel")
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('app_notifications', [
+            'type' => 'order',
+            'category' => 'order_cancelled',
+            'reference_id' => $order->id,
+        ]);
+    }
 }

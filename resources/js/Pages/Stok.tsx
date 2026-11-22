@@ -66,6 +66,19 @@ export default function Stok({
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
+    // Sinkronkan state lokal dengan data terbaru dari server.
+    // router.reload() setelah CRUD hanya berguna kalau state ikut diperbarui,
+    // karena useState hanya memakai nilai awal saat mount.
+    useEffect(() => {
+        if (propCategoryList) setCategoryList(propCategoryList);
+    }, [propCategoryList]);
+
+    useEffect(() => {
+        if (propCategories && propCategories.length > 0) {
+            setCategories(propCategories);
+        }
+    }, [propCategories]);
+
     const isPaginated = Boolean(
         propStock &&
         typeof propStock === "object" &&
@@ -97,24 +110,20 @@ export default function Stok({
         name: string,
         icon: StockCategoryIcon = "package",
     ) => {
-        const newId =
-            categoryList.length > 0
-                ? Math.max(...categoryList.map((c) => c.id)) + 1
-                : 1;
-        const newCat: StockCategoryItem = { id: newId, name, icon };
-        setCategoryList((prev) => [...prev, newCat]);
-        setCategories((prev) => (prev.includes(name) ? prev : [...prev, name]));
-
+        // Jangan pernah bikin ID di client: ID asli hanya diketahui server.
+        // ID optimis (max+1) meleset dari auto-increment setelah ada delete,
+        // sehingga PUT/DELETE berikutnya mengarah ke ID yang tidak ada → 404.
         router.post(
             "/stock-categories",
             { name, icon },
             {
                 preserveScroll: true,
-                onSuccess: () => toast.success("Kategori ditambahkan"),
+                onSuccess: () => {
+                    toast.success("Kategori ditambahkan");
+                    router.reload({ only: ["categoryList", "categories"] });
+                },
                 onError: (errors) => {
                     toast.error(errors.message || "Gagal menambahkan kategori");
-                    setCategoryList((prev) => prev.filter((c) => c.id !== newId));
-                    setCategories((prev) => prev.filter((c) => c !== name));
                 },
             },
         );
@@ -153,7 +162,10 @@ export default function Stok({
                 { name, icon },
                 {
                     preserveScroll: true,
-                    onSuccess: () => toast.success("Kategori diperbarui"),
+                    onSuccess: () => {
+                        toast.success("Kategori diperbarui");
+                        router.reload({ only: ["categoryList", "categories"] });
+                    },
                     onError: (errors) => {
                         toast.error(errors.message || "Gagal memperbarui kategori");
                         if (oldName) {
@@ -186,7 +198,10 @@ export default function Stok({
 
         router.delete(`/stock-categories/${id}`, {
             preserveScroll: true,
-            onSuccess: () => toast.success("Kategori dihapus"),
+            onSuccess: () => {
+                toast.success("Kategori dihapus");
+                router.reload({ only: ["categoryList", "categories"] });
+            },
             onError: (errors) => {
                 toast.error(errors.message || "Gagal menghapus kategori");
                 if (catName) {

@@ -10,6 +10,7 @@ import {
     User,
     Clock,
     LucideProps,
+    TrendingDown,
 } from "lucide-react";
 import {
     ResponsiveContainer,
@@ -107,8 +108,14 @@ export default function Dashboard({
                         <span className="text-2xl font-bold text-[#1e293b]">
                             {formatIDR(metrics?.today_revenue || 0)}
                         </span>
-                        <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
-                            <TrendingUp className="w-3.5 h-3.5" />
+                        <div
+                            className={`flex items-center gap-1 text-xs font-semibold  ${metrics?.revenue_growth >= 0 ? "text-[#16a34a]" : "text-[#D91A20]"}`}
+                        >
+                            {metrics?.revenue_growth >= 0 ? (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                            ) : (
+                                <TrendingDown className="w-3.5 h-3.5" />
+                            )}
                             <span>
                                 {metrics?.revenue_growth >= 0 ? "+" : ""}
                                 {metrics?.revenue_growth || 0}% dari kemarin
@@ -126,8 +133,14 @@ export default function Dashboard({
                         <span className="text-2xl font-bold text-[#1e293b]">
                             {metrics?.today_orders || 0}
                         </span>
-                        <div className="flex items-center gap-1 text-xs font-semibold text-[#16a34a]">
-                            <TrendingUp className="w-3.5 h-3.5" />
+                        <div
+                            className={`flex items-center gap-1 text-xs font-semibold  ${metrics?.revenue_growth >= 0 ? "text-[#16a34a]" : "text-[#D91A20]"}`}
+                        >
+                            {metrics?.revenue_growth >= 0 ? (
+                                <TrendingUp className="w-3.5 h-3.5" />
+                            ) : (
+                                <TrendingDown className="w-3.5 h-3.5" />
+                            )}
                             <span>
                                 {metrics?.orders_growth >= 0 ? "+" : ""}
                                 {metrics?.orders_growth || 0}% dari kemarin

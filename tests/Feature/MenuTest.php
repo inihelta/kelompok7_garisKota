@@ -133,4 +133,28 @@ class MenuTest extends TestCase
         $response = $this->get('/dashboard/menu');
         $response->assertRedirect('/login');
     }
+
+    public function test_image_upload_uses_configured_disk(): void
+    {
+        // MENU_DISK bisa dipindah antara public (dev) dan s3 (prod) tanpa ubah kode
+        config(['filesystems.menu' => 'local']);
+
+        $response = $this->actingAs($this->user)->post('/menus', [
+            'name' => 'Kopi Susu',
+            'category_id' => $this->category->id,
+            'price' => 25000,
+            'stock' => 10,
+            'status' => 'tersedia',
+            'image' => UploadedFile::fake()->image('menu.jpg', 500, 500),
+        ]);
+
+        $response->assertRedirect();
+
+        $path = Menu::first()->image;
+        $this->assertNotNull($path);
+        $this->assertTrue(
+            \Illuminate\Support\Facades\Storage::disk('local')->exists($path),
+            "File harus tersimpan di disk yang dikonfigurasi (local), bukan hardcode 'public'"
+        );
+    }
 }

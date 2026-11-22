@@ -34,7 +34,7 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('menus', 'public');
+            $validated['image'] = $request->file('image')->store('menus', config('filesystems.menu'));
         }
 
         Menu::create($validated);
@@ -56,13 +56,13 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($menu->image && Storage::disk('public')->exists($menu->image)) {
-                Storage::disk('public')->delete($menu->image);
+            if ($menu->image && Storage::disk(config('filesystems.menu'))->exists($menu->image)) {
+                Storage::disk(config('filesystems.menu'))->delete($menu->image);
             }
-            $validated['image'] = $request->file('image')->store('menus', 'public');
+            $validated['image'] = $request->file('image')->store('menus', config('filesystems.menu'));
         } elseif ($request->boolean('remove_image')) {
-            if ($menu->image && Storage::disk('public')->exists($menu->image)) {
-                Storage::disk('public')->delete($menu->image);
+            if ($menu->image && Storage::disk(config('filesystems.menu'))->exists($menu->image)) {
+                Storage::disk(config('filesystems.menu'))->delete($menu->image);
             }
             $validated['image'] = null;
         } else {
@@ -79,8 +79,8 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
-        if ($menu->image && Storage::disk('public')->exists($menu->image)) {
-            Storage::disk('public')->delete($menu->image);
+        if ($menu->image && Storage::disk(config('filesystems.menu'))->exists($menu->image)) {
+            Storage::disk(config('filesystems.menu'))->delete($menu->image);
         }
 
         $menu->delete();

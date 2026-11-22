@@ -273,12 +273,14 @@ class CustomerOrderController extends Controller
             $order->update(['order_status' => 'cancelled']);
         });
 
-        // Siarkan pembaruan status ke Reverb
+        // Siarkan pembaruan status ke Reverb & catat ke notifikasi kasir
         try {
             $order->load('table');
             OrderStatusUpdated::dispatch($order, 'cancelled');
         } catch (\Throwable $e) {
         }
+
+        \App\Services\NotificationService::notifyOrderStatusChanged($order, 'cancelled');
 
         return redirect()->route('order.status', $order->id)->with('success', 'Pesanan berhasil dibatalkan.');
     }

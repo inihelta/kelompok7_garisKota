@@ -35,21 +35,10 @@ class StockController extends Controller
 
         $dbCategories = StockCategory::withCount('stocks')->get();
         if ($dbCategories->isEmpty()) {
-            $categoriesData = [
-                ['id' => 1, 'name' => 'Biji Kopi & Bubuk', 'icon' => 'coffee', 'stocks_count' => 1],
-                ['id' => 2, 'name' => 'Susu & Dairy', 'icon' => 'milk', 'stocks_count' => 2],
-                ['id' => 3, 'name' => 'Sirup & Topping', 'icon' => 'droplet', 'stocks_count' => 3],
-                ['id' => 4, 'name' => 'Packaging & Cup', 'icon' => 'cup', 'stocks_count' => 1],
-                ['id' => 5, 'name' => 'Bahan Makanan', 'icon' => 'food', 'stocks_count' => 1],
-            ];
-            $categoryNames = [
-                'Semua Kategori',
-                'Biji Kopi & Bubuk',
-                'Susu & Dairy',
-                'Sirup & Topping',
-                'Packaging & Cup',
-                'Bahan Makanan',
-            ];
+            // Jangan pernah kirim ID palsu ke frontend: ID 1-5 yang tidak ada
+            // di database bikin PUT/DELETE dari modal Kelola Kategori jadi 404.
+            $categoriesData = [];
+            $categoryNames = ['Semua Kategori'];
         } else {
             $categoriesData = $dbCategories->map(fn($c) => [
                 'id' => $c->id,

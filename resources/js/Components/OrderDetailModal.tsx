@@ -9,6 +9,7 @@ import {
 } from "@/Components/ui/dialog";
 import { Button } from "@/Components/ui/button";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { getImageSrc } from "@/lib/utils";
 import {
     Check,
     X,
@@ -139,16 +140,9 @@ export default function OrderDetailModal({
                                         <div className="flex items-center gap-3">
                                             {item.menu_image && (
                                                 <img
-                                                    src={
-                                                        item.menu_image.startsWith(
-                                                            "http",
-                                                        ) ||
-                                                            item.menu_image.startsWith(
-                                                                "/",
-                                                            )
-                                                            ? item.menu_image
-                                                            : `/storage/${item.menu_image}`
-                                                    }
+                                                    src={getImageSrc(
+                                                        item.menu_image,
+                                                    )}
                                                     alt={item.menu_name}
                                                     className="w-12 h-12 rounded-lg object-cover bg-[#f1f5f9]"
                                                 />
