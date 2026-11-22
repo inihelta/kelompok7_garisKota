@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\order;
-use App\Models\menu;
+use App\Models\Order;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +18,11 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $yesterday = Carbon::yesterday();
 
-        $todayRevenue = (float) order::where('order_status', 'completed')
+        $todayRevenue = (float) Order::where('order_status', 'completed')
             ->whereDate('created_at', $today)
             ->sum('total_price');
 
-        $yesterdayRevenue = (float) order::where('order_status', 'completed')
+        $yesterdayRevenue = (float) Order::where('order_status', 'completed')
             ->whereDate('created_at', $yesterday)
             ->sum('total_price');
 
@@ -33,8 +33,8 @@ class DashboardController extends Controller
             $revenueGrowth = 100;
         }
 
-        $todayOrdersCount = order::whereDate('created_at', $today)->count();
-        $yesterdayOrdersCount = order::whereDate('created_at', $yesterday)->count();
+        $todayOrdersCount = Order::whereDate('created_at', $today)->count();
+        $yesterdayOrdersCount = Order::whereDate('created_at', $yesterday)->count();
 
         $ordersGrowth = 0;
         if ($yesterdayOrdersCount > 0) {
@@ -50,8 +50,8 @@ class DashboardController extends Controller
                 $targetDate = Carbon::today()->subDays($i);
                 $dateStr = $targetDate->toDateString();
 
-                $dayOrders = order::whereDate('created_at', $dateStr)->count();
-                $dayRevenue = (float) order::where('order_status', 'completed')
+                $dayOrders = Order::whereDate('created_at', $dateStr)->count();
+                $dayRevenue = (float) Order::where('order_status', 'completed')
                     ->whereDate('created_at', $dateStr)
                     ->sum('total_price');
 
@@ -72,7 +72,7 @@ class DashboardController extends Controller
         $performance30Days = $buildPerformanceData(30);
 
         // 4. Top - Selling Menu (6 Menu terlaris dari order_items)
-        $topSelling = menu::select('menus.id', 'menus.name', 'menus.image', 'menus.price')
+        $topSelling = Menu::select('menus.id', 'menus.name', 'menus.image', 'menus.price')
             ->selectRaw('COALESCE(SUM(order_items.quantity), 0) as total_sold')
             ->leftJoin('order_items', 'menus.id', '=', 'order_items.menu_id')
             ->leftJoin('orders', function ($join) {
@@ -95,7 +95,7 @@ class DashboardController extends Controller
             });
 
         // 5. Tabel Pesanan Terbaru (Paginated 3 data per halaman sesuai screenshot)
-        $recentOrders = order::with(['table', 'orderItems.menu', 'payment'])
+        $recentOrders = Order::with(['table', 'orderItems.menu', 'payment'])
             ->latest()
             ->paginate(3)
             ->withQueryString()

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Stock;
 use App\Models\StockCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class StockController extends Controller
 {
@@ -62,7 +61,6 @@ class StockController extends Controller
         }
 
         return inertia('Stok', [
-            'auth' => Auth::user(),
             'stockItems' => $stocks,
             'categories' => $categoryNames,
             'categoryList' => $categoriesData,

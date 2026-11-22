@@ -41,6 +41,14 @@ router.on("httpException", (event) => {
     }
 });
 
+// Replace history state on logout so back button skips authenticated pages
+router.on("finish", (event) => {
+    const page = event.detail.page;
+    if (page.url === "/login" && document.referrer.includes("/dashboard")) {
+        history.replaceState(null, "", "/login");
+    }
+});
+
 // Mount Toast globally
 const toastRoot = document.createElement("div");
 toastRoot.id = "toast-root";

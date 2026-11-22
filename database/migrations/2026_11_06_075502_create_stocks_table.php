@@ -11,28 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('stock_categories')) {
-            Schema::create('stock_categories', function (Blueprint $table) {
-                $table->id();
-                $table->string('name')->unique();
-                $table->enum('icon', ['coffee', 'milk', 'droplet', 'cup', 'food', 'package'])->default('package');
-                $table->timestamps();
-            });
-        }
-
-        if (!Schema::hasTable('stocks')) {
-            Schema::create('stocks', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('stock_category_id')->constrained('stock_categories')->onDelete('cascade');
-                $table->string('name');
-                $table->string('sku')->unique();
-                $table->decimal('stock', 10, 2)->default(0);
-                $table->string('unit')->default('Pcs');
-                $table->decimal('min_stock', 10, 2)->default(0);
-                $table->decimal('est_daily', 10, 2)->default(0);
-                $table->timestamps();
-            });
-        }
+        Schema::create('stocks', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('stock_category_id')->constrained('stock_categories')->onDelete('cascade');
+            $table->string('name');
+            $table->string('sku')->unique();
+            $table->decimal('stock', 10, 2)->default(0);
+            $table->string('unit')->default('Pcs');
+            $table->decimal('min_stock', 10, 2)->default(0);
+            $table->decimal('est_daily', 10, 2)->default(0);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -40,7 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock_categories');
         Schema::dropIfExists('stocks');
     }
 };

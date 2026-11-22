@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\order;
-use App\Models\payment;
+use App\Models\Order;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -69,11 +69,11 @@ class IncomeController extends Controller
         }
 
         // 1. Metric: Pendapatan Periode & Periode Sebelumnya
-        $periodRevenue = (float) order::where('order_status', 'completed')
+        $periodRevenue = (float) Order::where('order_status', 'completed')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->sum('total_price');
 
-        $prevRevenue = (float) order::where('order_status', 'completed')
+        $prevRevenue = (float) Order::where('order_status', 'completed')
             ->whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->sum('total_price');
 
@@ -85,10 +85,10 @@ class IncomeController extends Controller
         }
 
         // 2. Metric: Pesanan Periode & Periode Sebelumnya (completed only)
-        $periodCompletedOrders = order::where('order_status', 'completed')
+        $periodCompletedOrders = Order::where('order_status', 'completed')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
-        $prevCompletedOrders = order::where('order_status', 'completed')
+        $prevCompletedOrders = Order::where('order_status', 'completed')
             ->whereBetween('created_at', [$prevStartDate, $prevEndDate])
             ->count();
 
@@ -100,8 +100,8 @@ class IncomeController extends Controller
         }
 
         // 3. Metric: Rata-rata Transaksi (AOV)
-        $totalCompletedOrdersAllTime = order::where('order_status', 'completed')->count();
-        $totalRevenueAllTime = (float) order::where('order_status', 'completed')->sum('total_price');
+        $totalCompletedOrdersAllTime = Order::where('order_status', 'completed')->count();
+        $totalRevenueAllTime = (float) Order::where('order_status', 'completed')->sum('total_price');
 
         $averageTransaction = 0;
         if ($periodCompletedOrders > 0 && $periodRevenue > 0) {
@@ -120,8 +120,8 @@ class IncomeController extends Controller
                 $targetDate = Carbon::today()->subDays($i);
                 $dateStr = $targetDate->toDateString();
 
-                $dayOrders = order::whereDate('created_at', $dateStr)->count();
-                $dayRevenue = (float) order::where('order_status', 'completed')
+                $dayOrders = Order::whereDate('created_at', $dateStr)->count();
+                $dayRevenue = (float) Order::where('order_status', 'completed')
                     ->whereDate('created_at', $dateStr)
                     ->sum('total_price');
 
@@ -142,7 +142,7 @@ class IncomeController extends Controller
         $performance30Days = $buildPerformanceData(30);
 
         // 6. Sumber Pendapatan (Berdasarkan Metode Pembayaran di Tabel payments)
-        $paymentData = payment::select('payment_method')
+        $paymentData = Payment::select('payment_method')
             ->selectRaw('SUM(payment_amount) as total_amount')
             ->selectRaw('COUNT(*) as total_count')
             ->where('payment_status', 'done')
@@ -179,11 +179,11 @@ class IncomeController extends Controller
         }
 
         // 7. Tabel Pesanan Terbaru (Filter sesuai tanggal, fallback ke semua pesanan jika kosong)
-        $recentOrdersQuery = order::with(['table', 'orderItems.menu', 'payment'])
+        $recentOrdersQuery = Order::with(['table', 'orderItems.menu', 'payment'])
             ->whereBetween('created_at', [$startDate, $endDate]);
 
         if ($recentOrdersQuery->count() === 0) {
-            $recentOrdersQuery = order::with(['table', 'orderItems.menu', 'payment']);
+            $recentOrdersQuery = Order::with(['table', 'orderItems.menu', 'payment']);
         }
 
         $recentOrders = $recentOrdersQuery->latest()

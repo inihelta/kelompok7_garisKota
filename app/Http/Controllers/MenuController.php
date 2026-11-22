@@ -84,6 +84,6 @@ class MenuController extends Controller
 
         $menu->delete();
 
-        return redirect()->route('dashboard.menu')->with('success', 'Menu deleted successfully.');
+        return redirect()->route('dashboard.menu')->with('success', 'Menu berhasil dihapus.');
     }
 }

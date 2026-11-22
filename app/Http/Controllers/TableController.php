@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\table;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
@@ -12,7 +12,7 @@ class TableController extends Controller
      */
     public function index()
     {
-        $tables = table::with(['orders' => function ($query) {
+        $tables = Table::with(['orders' => function ($query) {
             $query->whereIn('order_status', ['pending', 'processing'])
                 ->with('orderItems')
                 ->latest();

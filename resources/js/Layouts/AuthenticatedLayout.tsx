@@ -2,6 +2,7 @@ import { useState, PropsWithChildren } from "react";
 import Sidebar from "@/Components/Sidebar";
 import Header from "@/Components/Header";
 import { User } from "@/types";
+import AuthGuard from "@/Components/AuthGuard";
 
 interface AuthenticatedLayoutProps {
     user?: User | null;
@@ -35,8 +36,10 @@ export default function AuthenticatedLayout({
                     user={user}
                 />
                 <main className="px-[22px] pt-[12px] pb-[24px]">
+                <AuthGuard requireAuth={true}>
                     {children}
-                </main>
+                </AuthGuard>
+            </main>
             </div>
         </div>
     );
