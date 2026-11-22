@@ -3,12 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\category;
-use App\Models\menu;
-use App\Models\table;
-use App\Models\order;
-use App\Models\orderItem;
-use App\Models\payment;
+use App\Models\Category;
+use App\Models\Menu;
+use App\Models\Table;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\StockCategory;
 use App\Models\Stock;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
