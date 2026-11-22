@@ -114,4 +114,29 @@ class OrderControllerTest extends TestCase
         $response = $this->get('/dashboard/pesanan');
         $response->assertRedirect('/login');
     }
+
+    public function test_performance_indexes_exist(): void
+    {
+        // Tanpa index ini, query dashboard/pendapatan/pesanan full table scan.
+        $expected = [
+            'orders' => [['order_status', 'created_at'], ['created_at'], ['table_id']],
+            'order_items' => [['order_id'], ['menu_id']],
+            'payments' => [['payment_status', 'created_at']],
+        ];
+
+        foreach ($expected as $table => $indexes) {
+            $existing = array_map(
+                fn ($index) => $index['columns'],
+                \Illuminate\Support\Facades\Schema::getIndexes($table)
+            );
+
+            foreach ($indexes as $wanted) {
+                $this->assertContains(
+                    $wanted,
+                    $existing,
+                    "Index {$table}(" . implode(',', $wanted) . ") hilang — jalankan php artisan migrate."
+                );
+            }
+        }
+    }
 }

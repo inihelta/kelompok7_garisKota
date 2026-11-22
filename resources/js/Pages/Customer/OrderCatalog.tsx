@@ -12,7 +12,14 @@ import CategoryJumpModal from "@/Components/Customer/CategoryJumpModal";
 import FloatingCartBar from "@/Components/Customer/FloatingCartBar";
 import OrderCheckoutModal from "@/Components/Customer/OrderCheckoutModal";
 import DesktopCartSidebar from "@/Components/Customer/DesktopCartSidebar";
-import { Search, X, QrCode, AlertTriangle, Coffee, ShoppingBag } from "lucide-react";
+import {
+    Search,
+    X,
+    QrCode,
+    AlertTriangle,
+    Coffee,
+    ShoppingBag,
+} from "lucide-react";
 import { formatIDR } from "@/lib/utils";
 
 interface OrderCatalogProps {
@@ -21,7 +28,11 @@ interface OrderCatalogProps {
     menus: CustomerMenu[];
     isInvalidTable?: boolean;
     error?: string | null;
-    activeOrder?: { id: number; order_status: string; total_price: number } | null;
+    activeOrder?: {
+        id: number;
+        order_status: string;
+        total_price: number;
+    } | null;
 }
 
 export default function OrderCatalog({
@@ -41,6 +52,7 @@ export default function OrderCatalog({
     // Shared checkout form state
     const [customerName, setCustomerName] = useState("");
     const [nameError, setNameError] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState<"qris" | "cash">("qris");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Active item note modal state
@@ -193,6 +205,7 @@ export default function OrderCatalog({
         const payload = {
             table_token: table?.token,
             customer_name: customerName.trim(),
+            payment_method: paymentMethod,
             items: cartItems.map((item) => ({
                 menu_id: item.menu.id,
                 quantity: item.quantity,
@@ -219,7 +232,7 @@ export default function OrderCatalog({
     if (isInvalidTable || !table) {
         return (
             <div className="flex min-h-screen flex-col items-center justify-center bg-[#f8fafc] px-6 text-center">
-                <Head title="Meja Tidak Ditemukan - Garis Kota" />
+                <Head title="Meja Tidak Ditemukan" />
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 border border-rose-100 mb-4 shadow-xs">
                     <AlertTriangle className="h-8 w-8" />
                 </div>
@@ -240,11 +253,9 @@ export default function OrderCatalog({
 
     return (
         <div className="min-h-screen bg-white lg:bg-[#f8fafc] pb-28 lg:pb-12 text-gray-900 font-sans antialiased">
-            <Head title={`Pesan di Meja #${table.table_number} - Garis Kota`} />
+            <Head title={`Pesan di Meja #${table.table_number}`} />
 
-            {/* Responsive Container: Fluid edge-to-edge on mobile/tablet, centered 2-col on desktop */}
             <div className="mx-auto w-full lg:max-w-6xl px-0 lg:px-6 py-0 lg:py-6">
-                {/* 1. Header with Table Info (Full width at top on desktop) */}
                 <div className="mb-0 lg:mb-6">
                     <CustomerHeader table={table} />
                 </div>
@@ -257,7 +268,10 @@ export default function OrderCatalog({
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-amber-900">
-                                    Pesanan #{activeOrder.id} sedang {activeOrder.order_status === "pending" ? "menunggu antrean" : "diproses"}
+                                    Pesanan #{activeOrder.id} sedang{" "}
+                                    {activeOrder.order_status === "pending"
+                                        ? "menunggu antrean"
+                                        : "diproses"}
                                 </p>
                                 <p className="text-xs text-amber-700">
                                     Total: {formatIDR(activeOrder.total_price)}
@@ -451,6 +465,8 @@ export default function OrderCatalog({
                             setCustomerName={setCustomerName}
                             nameError={nameError}
                             isSubmitting={isSubmitting}
+                            paymentMethod={paymentMethod}
+                            setPaymentMethod={setPaymentMethod}
                             onAdd={(menuId) => {
                                 const m = menus.find(
                                     (item) => item.id === menuId,
@@ -493,6 +509,8 @@ export default function OrderCatalog({
                     nameError={nameError}
                     isSubmitting={isSubmitting}
                     onSubmit={handleSubmitOrder}
+                    paymentMethod={paymentMethod}
+                    setPaymentMethod={setPaymentMethod}
                 />
 
                 {/* Single Item Note Prompt Modal */}

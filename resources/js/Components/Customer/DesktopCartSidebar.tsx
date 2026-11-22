@@ -14,6 +14,9 @@ import {
     Coffee,
     AlertCircle,
     ShoppingBasket,
+    Receipt,
+    QrCode,
+    ConciergeBell,
 } from "lucide-react";
 
 interface DesktopCartSidebarProps {
@@ -25,6 +28,8 @@ interface DesktopCartSidebarProps {
     setCustomerName: (name: string) => void;
     nameError: string;
     isSubmitting: boolean;
+    paymentMethod?: "qris" | "cash";
+    setPaymentMethod?: (method: "qris" | "cash") => void;
     onAdd: (menuId: number) => void;
     onRemove: (menuId: number) => void;
     onUpdateNotes: (menuId: number, notes: string) => void;
@@ -40,6 +45,8 @@ export default function DesktopCartSidebar({
     setCustomerName,
     nameError,
     isSubmitting,
+    paymentMethod,
+    setPaymentMethod,
     onAdd,
     onRemove,
     onUpdateNotes,
@@ -47,6 +54,12 @@ export default function DesktopCartSidebar({
 }: DesktopCartSidebarProps) {
     const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
     const [tempNote, setTempNote] = useState("");
+    const [internalPaymentMethod, setInternalPaymentMethod] = useState<
+        "qris" | "cash"
+    >("qris");
+
+    const selectedPayment = paymentMethod ?? internalPaymentMethod;
+    const setSelectedPayment = setPaymentMethod ?? setInternalPaymentMethod;
 
     const cartItems = Object.values(cart).filter((item) => item.quantity > 0);
 
@@ -81,7 +94,7 @@ export default function DesktopCartSidebar({
             </div>
 
             {/* Content area: Scrollable items */}
-            <div className="overflow-y-auto py-3.5 space-y-3 pr-1 max-h-[340px] no-scrollbar">
+            <div className="overflow-y-auto py-3.5 space-y-3 pr-1 max-h-[260px] xl:max-h-[300px] no-scrollbar">
                 {cartItems.length === 0 ? (
                     <div className="py-6 px-4 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200/80">
                         <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-white text-gray-400 border border-gray-200/60 mb-2 shadow-2xs">
@@ -261,12 +274,66 @@ export default function DesktopCartSidebar({
                     </div>
                 </div>
 
-                {/* Cashier Payment Notice */}
-                <div className="flex items-center gap-2 rounded-xl bg-amber-50/70 border border-amber-200/60 px-3 py-2 text-[11px] text-amber-800">
-                    <Store className="size-7 shrink-0 text-amber-600" />
-                    <span>
-                        Pembayaran dilakukan di kasir setelah pesanan terkirim.
-                    </span>
+                {/* Metode Pembayaran */}
+                <div className="rounded-2xl border border-gray-100 p-3 space-y-2.5 bg-gray-50">
+                    <div className="flex items-center gap-2 pb-2 border-b border-dashed border-gray-200/70">
+                        <Receipt className="h-4 w-4 text-[#D91A20]" />
+                        <span className="text-xs font-bold text-gray-800">
+                            Metode Pembayaran
+                        </span>
+                    </div>
+
+                    <div className="space-y-2">
+                        <div
+                            onClick={() => setSelectedPayment("qris")}
+                            className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
+                                selectedPayment === "qris"
+                                    ? "border-[#D91A20] bg-white ring-1 ring-[#D91A20]/20"
+                                    : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                            }`}
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-[#D91A20]">
+                                    <QrCode className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs font-semibold text-gray-900">
+                                    QRIS
+                                </span>
+                            </div>
+                            <div
+                                className={`flex h-5 w-5 items-center justify-center rounded-full transition-all ${
+                                    selectedPayment === "qris"
+                                        ? "border-[3.5px] border-[#D91A20] bg-white"
+                                        : "border border-gray-300 bg-white"
+                                }`}
+                            />
+                        </div>
+
+                        <div
+                            onClick={() => setSelectedPayment("cash")}
+                            className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
+                                selectedPayment === "cash"
+                                    ? "border-[#D91A20] bg-white ring-1 ring-[#D91A20]/20"
+                                    : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                            }`}
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-[#D91A20]">
+                                    <ConciergeBell className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs font-semibold text-gray-800">
+                                    Tunai di kasir
+                                </span>
+                            </div>
+                            <div
+                                className={`flex h-5 w-5 items-center justify-center rounded-full transition-all ${
+                                    selectedPayment === "cash"
+                                        ? "border-[3.5px] border-[#D91A20] bg-white"
+                                        : "border border-gray-300 bg-white"
+                                }`}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Submit Button */}

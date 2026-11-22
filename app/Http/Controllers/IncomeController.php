@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Services\PerformanceChart;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -114,32 +115,8 @@ class IncomeController extends Controller
         $totalCost = round($periodRevenue * 0.53);
 
         // 5. Performa Penjualan (7 Hari & 30 Hari)
-        $buildPerformanceData = function ($days) {
-            $data = [];
-            for ($i = $days - 1; $i >= 0; $i--) {
-                $targetDate = Carbon::today()->subDays($i);
-                $dateStr = $targetDate->toDateString();
-
-                $dayOrders = Order::whereDate('created_at', $dateStr)->count();
-                $dayRevenue = (float) Order::where('order_status', 'completed')
-                    ->whereDate('created_at', $dateStr)
-                    ->sum('total_price');
-
-                $data[] = [
-                    'day_index' => $days - 1 - $i,
-                    'label' => $days === 7
-                        ? (string) ($days - 1 - $i)
-                        : $targetDate->format('d/m'),
-                    'date' => $targetDate->translatedFormat('d M'),
-                    'pesanan' => $dayOrders,
-                    'pendapatan' => $dayRevenue,
-                ];
-            }
-            return $data;
-        };
-
-        $performance7Days = $buildPerformanceData(7);
-        $performance30Days = $buildPerformanceData(30);
+        $performance7Days = PerformanceChart::build(7);
+        $performance30Days = PerformanceChart::build(30);
 
         // 6. Sumber Pendapatan (Berdasarkan Metode Pembayaran di Tabel payments)
         $paymentData = Payment::select('payment_method')

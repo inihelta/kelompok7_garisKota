@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Jua&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap");
+/* Inter tidak perlu dimuat dari Google: fontsource (--fontsource-variable/inter)
+   sudah menyediakan "Inter Variable" yang dipakai --font-sans. */
+@import url("https://fonts.googleapis.com/css2?family=Jua&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap");
 @import "lenis/dist/lenis.css";
 @import "tailwindcss";
 @import "tw-animate-css";

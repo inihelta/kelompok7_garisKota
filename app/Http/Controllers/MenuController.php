@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Category;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -34,7 +35,7 @@ class MenuController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('menus', config('filesystems.menu'));
+            $validated['image'] = ImageOptimizer::storeUpload($request->file('image'));
         }
 
         Menu::create($validated);
@@ -59,7 +60,7 @@ class MenuController extends Controller
             if ($menu->image && Storage::disk(config('filesystems.menu'))->exists($menu->image)) {
                 Storage::disk(config('filesystems.menu'))->delete($menu->image);
             }
-            $validated['image'] = $request->file('image')->store('menus', config('filesystems.menu'));
+            $validated['image'] = ImageOptimizer::storeUpload($request->file('image'));
         } elseif ($request->boolean('remove_image')) {
             if ($menu->image && Storage::disk(config('filesystems.menu'))->exists($menu->image)) {
                 Storage::disk(config('filesystems.menu'))->delete($menu->image);

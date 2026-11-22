@@ -96,6 +96,7 @@ class CustomerOrderController extends Controller
         $validated = $request->validate([
             'table_token' => 'required|string',
             'customer_name' => 'required|string|max:100',
+            'payment_method' => 'nullable|string|in:qris,cash',
             'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:menus,id',
             'items.*.quantity' => 'required|integer|min:1|max:50',
@@ -162,10 +163,10 @@ class CustomerOrderController extends Controller
                     $order->orderItems()->create($orderItem);
                 }
 
-                // Buat Payment Record (Cash di Kasir)
+                // Buat Payment Record
                 Payment::create([
                     'order_id' => $order->id,
-                    'payment_method' => 'cash',
+                    'payment_method' => $validated['payment_method'] ?? 'cash',
                     'payment_amount' => $totalPrice,
                     'payment_status' => 'pending',
                     'transaction_ref' => 'GK-' . strtoupper(uniqid()),

@@ -231,6 +231,32 @@ php artisan test --filter=OrderControllerTest
 
 ---
 
+## ⚡ Optimasi Performa & Deploy
+
+Beberapa optimasi performa sudah tertanam di kode. Jalankan ini saat deploy:
+
+```bash
+php artisan migrate            # Index DB (orders, order_items, payments) — satu kali
+php artisan images:optimize    # Konversi gambar menu lama → WebP (sekali jalan, hemat ~17 MB)
+php artisan optimize           # Cache config, route & view (wajib di produksi)
+```
+
+Konfigurasi `.env` yang disarankan:
+
+| Kunci | Development | Produksi |
+| :---- | :---------- | :------- |
+| `APP_DEBUG` | `true` | **`false`** (debug aktif bikin tiap error merender halaman debug berat) |
+| `CACHE_STORE` | `database` | `file` atau `redis` |
+| `MENU_DISK` | `public` | `public` atau `s3` (lihat `docs/hybrid_storage_s3.md`) |
+
+Yang sudah otomatis di kode:
+- **Upload gambar dikonversi ke WebP** (maks 1024px, kualitas 80) — `images:optimize` hanya untuk file lama.
+- **Bundle dipisah**: chunk `vendor` (react/inertia) tidak berubah saat kode aplikasi berubah, jadi cache browser lebih awet; chart recharts tetap dimuat hanya di halaman yang memakainya.
+- **Chart dashboard & pendapatan** memakai query `groupBy` (dulu 74 query per halaman, sekarang ~2) + index agar tidak full table scan.
+- **Gambar menu** memakai `loading="lazy"` sehingga hanya gambar yang masuk viewport yang diunduh.
+
+---
+
 ## 📁 Struktur Direktori Proyek
 
 ```

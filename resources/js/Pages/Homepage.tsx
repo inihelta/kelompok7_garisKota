@@ -30,14 +30,14 @@ export default function Homepage() {
         () => {
             gsap.to(heroRef.current, {
                 borderRadius: "1rem",
-                scale: 0.98,
+                scale: 0.95,
                 scrollTrigger: {
                     trigger: containerRef.current,
                     pin: true,
                     start: "center center",
                     end: "+=350px",
                     scrub: 1,
-                    markers: true,
+                    // markers: true,
                 },
             });
         },
@@ -94,7 +94,7 @@ export default function Homepage() {
 
                     <section
                         ref={tutorialRef}
-                        className="rounded-2xl sm:rounded-3xl bg-white border border-[#e5dfd3] p-6 sm:p-10 md:p-14 shadow-2xs"
+                        className="rounded-2xl w-dvw h-dvh scale-95 sm:rounded-3xl bg-white border border-[#e5dfd3] p-6 sm:p-10 md:p-14 shadow-2xs"
                     >
                         <div className="max-w-3xl">
                             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1c1917] tracking-tight">
@@ -162,8 +162,8 @@ export default function Homepage() {
                                         Pilih hidangan dan minuman yang Anda
                                         inginkan. Anda dapat menambahkan catatan
                                         khusus per item seperti tingkat
-                                        kemanisan (*less sugar*), es dipisah,
-                                        atau preferensi rasa lainnya.
+                                        kemanisan (<b>less sugar</b>), es
+                                        dipisah, atau preferensi rasa lainnya.
                                     </p>
                                 </div>
                             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Menu;
+use App\Services\PerformanceChart;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +19,13 @@ class DashboardController extends Controller
         $today = Carbon::today();
         $yesterday = Carbon::yesterday();
 
+        // whereBetween (bukan whereDate) supaya index (created_at) terpakai
         $todayRevenue = (float) Order::where('order_status', 'completed')
-            ->whereDate('created_at', $today)
+            ->whereBetween('created_at', [$today->startOfDay(), $today->endOfDay()])
             ->sum('total_price');
 
         $yesterdayRevenue = (float) Order::where('order_status', 'completed')
-            ->whereDate('created_at', $yesterday)
+            ->whereBetween('created_at', [$yesterday->startOfDay(), $yesterday->endOfDay()])
             ->sum('total_price');
 
         $revenueGrowth = 0;
@@ -33,8 +35,8 @@ class DashboardController extends Controller
             $revenueGrowth = 100;
         }
 
-        $todayOrdersCount = Order::whereDate('created_at', $today)->count();
-        $yesterdayOrdersCount = Order::whereDate('created_at', $yesterday)->count();
+        $todayOrdersCount = Order::whereBetween('created_at', [$today->startOfDay(), $today->endOfDay()])->count();
+        $yesterdayOrdersCount = Order::whereBetween('created_at', [$yesterday->startOfDay(), $yesterday->endOfDay()])->count();
 
         $ordersGrowth = 0;
         if ($yesterdayOrdersCount > 0) {
@@ -44,32 +46,8 @@ class DashboardController extends Controller
         }
 
         // 3. Performa Penjualan (7 Hari Terakhir & 30 Hari Terakhir)
-        $buildPerformanceData = function ($days) {
-            $data = [];
-            for ($i = $days - 1; $i >= 0; $i--) {
-                $targetDate = Carbon::today()->subDays($i);
-                $dateStr = $targetDate->toDateString();
-
-                $dayOrders = Order::whereDate('created_at', $dateStr)->count();
-                $dayRevenue = (float) Order::where('order_status', 'completed')
-                    ->whereDate('created_at', $dateStr)
-                    ->sum('total_price');
-
-                $data[] = [
-                    'day_index' => $days - 1 - $i,
-                    'label' => $days === 7
-                        ? (string) ($days - 1 - $i)
-                        : $targetDate->format('d/m'),
-                    'date' => $targetDate->translatedFormat('d M'),
-                    'pesanan' => $dayOrders,
-                    'pendapatan' => $dayRevenue,
-                ];
-            }
-            return $data;
-        };
-
-        $performance7Days = $buildPerformanceData(7);
-        $performance30Days = $buildPerformanceData(30);
+        $performance7Days = PerformanceChart::build(7);
+        $performance30Days = PerformanceChart::build(30);
 
         // 4. Top - Selling Menu (6 Menu terlaris dari order_items)
         $topSelling = Menu::select('menus.id', 'menus.name', 'menus.image', 'menus.price')

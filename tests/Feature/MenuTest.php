@@ -157,4 +157,27 @@ class MenuTest extends TestCase
             "File harus tersimpan di disk yang dikonfigurasi (local), bukan hardcode 'public'"
         );
     }
+
+    public function test_uploaded_image_is_converted_to_webp(): void
+    {
+        // Fake disk supaya test tidak menulis file asli ke storage (junk orphan)
+        \Illuminate\Support\Facades\Storage::fake('public');
+
+        $response = $this->actingAs($this->user)->post('/menus', [
+            'name' => 'Kopi Susu',
+            'category_id' => $this->category->id,
+            'price' => 25000,
+            'stock' => 10,
+            'status' => 'tersedia',
+            'image' => UploadedFile::fake()->image('menu.png', 800, 600),
+        ]);
+
+        $response->assertRedirect();
+
+        $path = Menu::first()->image;
+        $this->assertStringEndsWith('.webp', $path, 'Upload harus dikonversi ke WebP');
+
+        $binary = \Illuminate\Support\Facades\Storage::disk(config('filesystems.menu'))->get($path);
+        $this->assertSame('WEBP', substr($binary, 8, 4), 'Isi file harus format WebP yang valid');
+    }
 }

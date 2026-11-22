@@ -13,6 +13,9 @@ import {
     Store,
     AlertCircle,
     Loader2,
+    Receipt,
+    ConciergeBell,
+    QrCode,
 } from "lucide-react";
 
 interface OrderCheckoutModalProps {
@@ -27,6 +30,8 @@ interface OrderCheckoutModalProps {
     nameError?: string;
     isSubmitting?: boolean;
     onSubmit?: (e: React.FormEvent) => void;
+    paymentMethod?: "qris" | "cash";
+    setPaymentMethod?: (method: "qris" | "cash") => void;
 }
 
 export default function OrderCheckoutModal({
@@ -41,15 +46,20 @@ export default function OrderCheckoutModal({
     nameError: propNameError,
     isSubmitting: propIsSubmitting,
     onSubmit: propOnSubmit,
+    paymentMethod: propPaymentMethod,
+    setPaymentMethod: propSetPaymentMethod,
 }: OrderCheckoutModalProps) {
     const [localName, setLocalName] = useState("");
     const [localNameError, setLocalNameError] = useState("");
     const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
+    const [localPaymentMethod, setLocalPaymentMethod] = useState<"qris" | "cash">("qris");
 
     const customerName = propCustomerName !== undefined ? propCustomerName : localName;
     const setCustomerName = propSetCustomerName || setLocalName;
     const nameError = propNameError !== undefined ? propNameError : localNameError;
     const isSubmitting = propIsSubmitting !== undefined ? propIsSubmitting : localIsSubmitting;
+    const paymentMethod = propPaymentMethod !== undefined ? propPaymentMethod : localPaymentMethod;
+    const setPaymentMethod = propSetPaymentMethod || setLocalPaymentMethod;
 
     const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
     const [tempNote, setTempNote] = useState("");
@@ -324,22 +334,67 @@ export default function OrderCheckoutModal({
                         </div>
                     </div>
 
-                    {/* Metode Pembayaran Card */}
-                    <div className="rounded-2xl border border-gray-200 bg-white p-3.5 flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-[#D91A20] border border-red-100">
-                                <Store className="h-4 w-4" />
+                    {/* Metode Pembayaran */}
+                    <div className="rounded-2xl border border-gray-200/80 bg-white p-3 space-y-2.5 shadow-2xs">
+                        <div className="flex items-center gap-2 pb-2 border-b border-dashed border-red-200/70">
+                            <Receipt className="h-4 w-4 text-[#D91A20]" />
+                            <span className="text-xs font-bold text-gray-800">
+                                Metode Pembayaran
+                            </span>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div
+                                onClick={() => setPaymentMethod("qris")}
+                                className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
+                                    paymentMethod === "qris"
+                                        ? "border-[#D91A20] bg-white shadow-2xs ring-1 ring-[#D91A20]/20"
+                                        : "border-gray-200 bg-white hover:border-gray-300"
+                                }`}
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-[#D91A20]">
+                                        <QrCode className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-bold text-gray-900">
+                                        QRIS
+                                    </span>
+                                </div>
+                                <div
+                                    className={`flex h-5 w-5 items-center justify-center rounded-full transition-all ${
+                                        paymentMethod === "qris"
+                                            ? "border-[3.5px] border-[#D91A20] bg-white"
+                                            : "border border-gray-300 bg-white"
+                                    }`}
+                                />
                             </div>
-                            <div>
-                                <p className="text-xs font-bold text-gray-900">
-                                    Bayar di Kasir
-                                </p>
-                                <p className="text-[11px] text-gray-500">
-                                    Tunai atau QRIS Kasir saat pesanan dibuat
-                                </p>
+
+                            {/* Option 2: Tunai di kasir */}
+                            <div
+                                onClick={() => setPaymentMethod("cash")}
+                                className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
+                                    paymentMethod === "cash"
+                                        ? "border-[#D91A20] bg-white shadow-2xs ring-1 ring-[#D91A20]/20"
+                                        : "border-gray-200 bg-white hover:border-gray-300"
+                                }`}
+                            >
+                                <div className="flex items-center gap-2.5">
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-[#D91A20]">
+                                        <ConciergeBell className="h-4 w-4" />
+                                    </div>
+                                    <span className="text-xs font-medium text-gray-800">
+                                        Tunai di kasir
+                                    </span>
+                                </div>
+                                <div
+                                    className={`flex h-5 w-5 items-center justify-center rounded-full transition-all ${
+                                        paymentMethod === "cash"
+                                            ? "border-[3.5px] border-[#D91A20] bg-white"
+                                            : "border border-gray-300 bg-white"
+                                    }`}
+                                />
                             </div>
                         </div>
-                        <CheckCircle2 className="h-5 w-5 text-[#D91A20]" />
                     </div>
                 </div>
 

@@ -20,6 +20,20 @@ export default defineConfig({
             "@": "/resources/js",
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                // Vendor dipisah supaya file besar (react/inertia) tidak ikut
+                // berubah hash setiap kali kode aplikasi berubah — cache browser
+                // tetap valid. recharts tetap chunk terpisah agar tidak ikut
+                // diunduh di halaman yang tidak memakai chart.
+                manualChunks: {
+                    vendor: ["react", "react-dom", "@inertiajs/react"],
+                    "vendor-charts": ["recharts"],
+                },
+            },
+        },
+    },
     server: {
         watch: {
             ignored: ["**/storage/framework/views/**"],
