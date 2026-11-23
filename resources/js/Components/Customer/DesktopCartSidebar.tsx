@@ -94,7 +94,7 @@ export default function DesktopCartSidebar({
             </div>
 
             {/* Content area: Scrollable items */}
-            <div className="overflow-y-auto py-3.5 space-y-3 pr-1 max-h-[260px] xl:max-h-[300px] no-scrollbar">
+            <div className="overflow-y-auto py-3.5 space-y-3 pr-1 max-h-[360px] xl:max-h-[420px] no-scrollbar">
                 {cartItems.length === 0 ? (
                     <div className="py-6 px-4 text-center bg-gray-50/50 rounded-2xl border border-dashed border-gray-200/80">
                         <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-white text-gray-400 border border-gray-200/60 mb-2 shadow-2xs">

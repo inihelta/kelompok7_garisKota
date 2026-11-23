@@ -74,6 +74,8 @@ export default function Meja({
         "create" | "edit" | "remove" | "qr" | null
     >(null);
     const [qrUrl, setQrUrl] = useState<string>("");
+    const [copyCooldown, setCopyCooldown] = useState(false);
+    const [printCooldown, setPrintCooldown] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
@@ -600,6 +602,8 @@ export default function Meja({
                     onOpenChange={(open) => {
                         if (!open) {
                             setQrUrl("");
+                            setCopyCooldown(false);
+                            setPrintCooldown(false);
                         }
                         setActiveDialog(open ? "qr" : null);
                     }}
@@ -634,11 +638,15 @@ export default function Meja({
                                             </code>
                                             <button
                                                 type="button"
+                                                disabled={copyCooldown}
                                                 onClick={() => {
+                                                    if (copyCooldown) return;
                                                     navigator.clipboard.writeText(qrUrl);
                                                     toast.success("Link disalin ke clipboard");
+                                                    setCopyCooldown(true);
+                                                    setTimeout(() => setCopyCooldown(false), 1000);
                                                 }}
-                                                className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+                                                className="p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                 title="Salin link"
                                             >
                                                 <Copy className="w-4 h-4 text-gray-600" />
@@ -646,7 +654,9 @@ export default function Meja({
                                         </div>
                                         <button
                                             type="button"
+                                            disabled={printCooldown}
                                             onClick={() => {
+                                                if (printCooldown) return;
                                                 const printWindow = window.open("", "_blank");
                                                 if (printWindow) {
                                                     printWindow.document.write(`
@@ -673,11 +683,13 @@ export default function Meja({
                                                     `);
                                                     printWindow.document.close();
                                                 }
+                                                setPrintCooldown(true);
+                                                setTimeout(() => setPrintCooldown(false), 2000);
                                             }}
-                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors"
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <Printer className="w-4 h-4" />
-                                            <span>Cetak QR Code</span>
+                                            <span>{printCooldown ? "Tunggu..." : "Cetak QR Code"}</span>
                                         </button>
                                     </div>
                                 </>
