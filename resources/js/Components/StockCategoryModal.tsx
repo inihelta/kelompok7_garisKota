@@ -4,6 +4,7 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/Components/ui/dialog";
@@ -65,6 +66,7 @@ export default function StockCategoryModal({
     const [editingIcon, setEditingIcon] =
         useState<StockCategoryIcon>("package");
     const [error, setError] = useState<string | null>(null);
+    const [categoryToDelete, setCategoryToDelete] = useState<StockCategoryItem | null>(null);
 
     const renderIconComponent = (
         iconId?: string,
@@ -343,7 +345,7 @@ export default function StockCategoryModal({
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        onDeleteCategory(cat.id)
+                                                        setCategoryToDelete(cat)
                                                     }
                                                     className="w-8 h-8 rounded-md border border-[#fee2e2] bg-[#fee2e2] flex items-center justify-center text-[#ef4444] hover:bg-[#fecaca] transition"
                                                     title="Hapus kategori"
@@ -369,6 +371,45 @@ export default function StockCategoryModal({
                     </Button>
                 </div>
             </DialogContent>
+
+            {/* Modal Konfirmasi Hapus Kategori Bahan Baku */}
+            <Dialog
+                open={!!categoryToDelete}
+                onOpenChange={(open) => !open && setCategoryToDelete(null)}
+            >
+                <DialogContent className="sm:max-w-md bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                    <DialogHeader>
+                        <DialogTitle className="text-base font-bold text-[#1e293b]">
+                            Hapus Kategori "{categoryToDelete?.name}"?
+                        </DialogTitle>
+                        <DialogDescription className="text-xs text-[#64748b] leading-relaxed">
+                            Tindakan ini tidak dapat dibatalkan. Kategori bahan baku ini akan dihapus dari sistem manajemen stok.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="pt-3 mt-3 border-t border-gray-100 flex gap-2 sm:justify-end">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setCategoryToDelete(null)}
+                            className="text-xs"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="button"
+                            className="bg-[#D91A20] hover:bg-[#b91c1c] text-white text-xs px-4 rounded-lg font-medium shadow-sm transition-all cursor-pointer"
+                            onClick={() => {
+                                if (categoryToDelete) {
+                                    onDeleteCategory(categoryToDelete.id);
+                                    setCategoryToDelete(null);
+                                }
+                            }}
+                        >
+                            Ya, Hapus Kategori
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </Dialog>
     );
 }
