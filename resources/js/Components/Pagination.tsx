@@ -40,6 +40,21 @@ export default function Pagination({
         return label;
     };
 
+    const toRelativeUrl = (url: string | null) => {
+        if (!url) return "";
+        try {
+            const parsed = new URL(
+                url,
+                typeof window !== "undefined"
+                    ? window.location.origin
+                    : "http://localhost",
+            );
+            return parsed.pathname + parsed.search + parsed.hash;
+        } catch {
+            return url;
+        }
+    };
+
     if (links && links.length > 0) {
         return (
             <div className="flex justify-between items-center pt-3 text-[14px] text-[#64748b] flex-wrap gap-2">
@@ -87,7 +102,7 @@ export default function Pagination({
                         return (
                             <Link
                                 key={index}
-                                href={link.url}
+                                href={toRelativeUrl(link.url)}
                                 preserveScroll
                                 preserveState
                                 className={`w-8 h-8 rounded-[8px] flex items-center justify-center text-xs font-medium transition-all ${
