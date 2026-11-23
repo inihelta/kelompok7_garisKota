@@ -17,16 +17,18 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $today = Carbon::today();
-        $yesterday = Carbon::yesterday();
+        $todayStart = Carbon::today()->startOfDay();
+        $todayEnd = Carbon::today()->endOfDay();
+        $yesterdayStart = Carbon::yesterday()->startOfDay();
+        $yesterdayEnd = Carbon::yesterday()->endOfDay();
 
-        // whereBetween (bukan whereDate) supaya index (created_at) terpakai
+        // whereBetween dengan start & end terpisah agar objek Carbon tidak termutasi
         $todayRevenue = (float) Order::where('order_status', 'completed')
-            ->whereBetween('created_at', [$today->startOfDay(), $today->endOfDay()])
+            ->whereBetween('created_at', [$todayStart, $todayEnd])
             ->sum('total_price');
 
         $yesterdayRevenue = (float) Order::where('order_status', 'completed')
-            ->whereBetween('created_at', [$yesterday->startOfDay(), $yesterday->endOfDay()])
+            ->whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])
             ->sum('total_price');
 
         $revenueGrowth = 0;
@@ -36,8 +38,8 @@ class DashboardController extends Controller
             $revenueGrowth = 100;
         }
 
-        $todayOrdersCount = Order::whereBetween('created_at', [$today->startOfDay(), $today->endOfDay()])->count();
-        $yesterdayOrdersCount = Order::whereBetween('created_at', [$yesterday->startOfDay(), $yesterday->endOfDay()])->count();
+        $todayOrdersCount = Order::whereBetween('created_at', [$todayStart, $todayEnd])->count();
+        $yesterdayOrdersCount = Order::whereBetween('created_at', [$yesterdayStart, $yesterdayEnd])->count();
 
         $ordersGrowth = 0;
         if ($yesterdayOrdersCount > 0) {
@@ -46,17 +48,9 @@ class DashboardController extends Controller
             $ordersGrowth = 100;
         }
 
-        // 3. Performa Penjualan (7 Hari Terakhir & 30 Hari Terakhir) - use cached data
-        $performance7Days = Cache::get('performance.days7');
-        $performance30Days = Cache::get('performance.days30');
-
-        if ($performance7Days === null || $performance30Days === null) {
-            // Fallback: build on-demand (e.g., first load before cron runs)
-            $performance7Days = PerformanceChart::build(7);
-            $performance30Days = PerformanceChart::build(30);
-            Cache::forever('performance.days7', $performance7Days);
-            Cache::forever('performance.days30', $performance30Days);
-        }
+        // 3. Performa Penjualan (7 Hari Terakhir & 30 Hari Terakhir) - cache dengan TTL 5 menit
+        $performance7Days = Cache::remember('performance.days7', 300, fn() => PerformanceChart::build(7));
+        $performance30Days = Cache::remember('performance.days30', 300, fn() => PerformanceChart::build(30));
 
         // 4. Top - Selling Menu (6 Menu terlaris dari order_items)
         $topSelling = Menu::select('menus.id', 'menus.name', 'menus.image', 'menus.price')
